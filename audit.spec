@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.6.8
+Version: 0.6.9
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -123,6 +123,11 @@ fi
 
 
 %changelog
+* Thu Mar 17 2005 Steve Grubb <sgrubb@redhat.com> 0.6.9-1
+- Added patch for filesystem watch
+- Added version information to audit start message
+- Change netlink code to use ack in order to get error notification
+
 * Wed Mar 10 2005 Steve Grubb <sgrubb@redhat.com> 0.6.8-1
 - removed the pam_loginuid library - its going to pam
 
