@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.6.5
+Version: 0.6.6
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -67,8 +67,9 @@ cd $RPM_BUILD_ROOT/%{_libdir}
 ln -s ../../%{_lib}/libaudit.so libaudit.so
 cd $curdir
 
-# Not ready to distribute - nuke it
+# Not ready to distribute - nuke 'em
 rm -f $RPM_BUILD_ROOT/sbin/ausearch
+rm -f $RPM_BUILD_ROOT/sbin/autrace
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -123,6 +124,14 @@ fi
 
 
 %changelog
+* Tue Mar 8 2005 Steve Grubb <sgrubb@redhat.com> 0.6.6-1
+- Fix audit_set_pid to try to read a reply, but its non-fatal if no reply.
+- Remove the read status during init
+- Change to using pthreads sync mechanism for stopping system
+- Worker thread should ignore all signals
+- Change main loop to use select for inbound event handling
+- Gave pam_loginuid a "failok" option for testing
+
 * Thu Mar 3 2005 Steve Grubb <sgrubb@redhat.com> 0.6.5-1
 - Lots of code cleanups
 - Added write_pid function to auditd
