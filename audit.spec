@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.6.1
+Version: 0.6.2
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -8,6 +8,8 @@ URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: glibc-kernheaders pam-devel libtool
+BuildRequires: automake >= 1.9
+BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
 Requires: chkconfig
 
@@ -98,17 +100,30 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc ChangeLog
+%doc ChangeLog sample.rules
 %attr(0644,root,root) %{_mandir}/man8/*
 %attr(750,root,root) /sbin/auditctl
 %attr(750,root,root) /sbin/auditd
 %attr(755,root,root) /lib/security/pam_audit.so
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %config(noreplace) %attr(640,root,root) /etc/auditd.conf
+%config(noreplace) %attr(640,root,root) /etc/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 
 %changelog
+* Fri Feb 11 2005 Steve Grubb <sgrubb@redhat.com> 0.6.2-1
+- New version
+- Add R option to auditctl to allow reading rules from file.
+- Do not allow task creation list to have syscall auditing
+- Add D option to allow deleting all rules with 1 command
+- Added pam_audit man page & sample.rules
+- Mod initscript to call auditctl to load rules at start-up
+- Write message to log file for daemon start up
+- Write message that daemon is shutting down
+- Modify auditd shutdown to wait until logger thread is finished
+- Add sample rule file to docs
+
 * Sat Jan 08 2005 Steve Grubb <sgrubb@redhat.com> 0.6.1-1
 - New version: rework auditctl and its man pages.
 - Added admin_space_left config option as last chance before
