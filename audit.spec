@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.6.2
+Version: 0.6.3
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -43,7 +43,8 @@ framework libraries.
 
 %build
 autoreconf -fv --install
-./configure --sbindir=/sbin --mandir=%{_mandir} --libdir=/lib --with-pam=yes
+export CFLAGS="$RPM_OPT_FLAGS"
+./configure --sbindir=/sbin --mandir=%{_mandir} --libdir=/%{_lib} --with-pam=yes
 make
 
 %install
@@ -104,7 +105,7 @@ fi
 %attr(0644,root,root) %{_mandir}/man8/*
 %attr(750,root,root) /sbin/auditctl
 %attr(750,root,root) /sbin/auditd
-%attr(755,root,root) /lib/security/pam_audit.so
+%attr(755,root,root) /%{_lib}/security/pam_audit.so
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %config(noreplace) %attr(640,root,root) /etc/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit.rules
@@ -112,6 +113,12 @@ fi
 
 
 %changelog
+* Sun Feb 20 2005 Steve Grubb <sgrubb@redhat.com> 0.6.3-1
+- Change pam install from /lib/security to /%{_lib}/security
+- Change pam_audit to write loginuid to /proc/pid/loginuid
+- Add pam_session_close handle
+- Update to newest kernel headers
+
 * Fri Feb 11 2005 Steve Grubb <sgrubb@redhat.com> 0.6.2-1
 - New version
 - Add R option to auditctl to allow reading rules from file.
