@@ -1,17 +1,16 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.5.3
+Version: 0.5.4
 Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildRequires: pam-devel
+BuildRequires: glibc-kernheaders pam-devel libtool
 Requires: chkconfig
 
 %description
-
 The audit package contains the user space utilities for
 storing and processing the audit records generate by
 the audit subsystem in the Linux 2.6 kernel.
@@ -20,7 +19,7 @@ the audit subsystem in the Linux 2.6 kernel.
 Summary: Header files and libraries for libaudit
 License: LGPL
 Group: Development/Libraries
-Requires: libselinux = %{version}
+Requires: %{name} = %{version}-%{release}
 
 %description devel
 The audit-devel package contains the static libraries and header files
@@ -33,6 +32,12 @@ libraries.
 %build
 autoreconf -fv --install
 ./configure --sbindir=/sbin --mandir=%{_mandir} --libdir=/lib --with-pam=yes
+
+# This is crazy hack until I solve the dependency problem libtool/automake
+# seems to have making a dynamicly created source file.
+#cd lib
+#make syscalltab.h
+#cd .. 
 make
 
 %install
@@ -47,11 +52,13 @@ mkdir -p $RPM_BUILD_ROOT/%{_includedir}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}
 install -m 0644 lib/libaudit.h $RPM_BUILD_ROOT/%{_includedir}
 install -m 0644 lib/libaudit.a $RPM_BUILD_ROOT/%{_libdir}
+#install -m 0644 lib/libaudit.so $RPM_BUILD_ROOT/%{_libdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
+/sbin/ldconfig 2>/dev/null
 if [ $1 = 1 ]; then
    /sbin/chkconfig --add auditd
 fi
@@ -63,6 +70,7 @@ if [ $1 = 0 ]; then
 fi
 
 %postun
+/sbin/ldconfig 2>/dev/null
 if [ $1 -ge 1 ]; then
    /sbin/service auditd condrestart > /dev/null 2>&1
 fi
@@ -71,7 +79,7 @@ fi
 %defattr(-,root,root)
 %{_libdir}/libaudit.a
 %{_includedir}/libaudit.h
-#%{_mandir}/man3/*
+%{_mandir}/man3/*
 
 
 %files
@@ -87,6 +95,9 @@ fi
 
 
 %changelog
+* Fri Dec 03 2004 Steve Grubb <sgrubb@redhat.com> 0.5.4-1
+- New version
+
 * Mon Nov 22 2004 Steve Grubb <sgrubb@redhat.com> 0.5.3-1
 - New version
 
