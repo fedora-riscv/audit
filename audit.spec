@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.5.1
+Version: 0.5.2
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -20,7 +20,7 @@ the audit subsystem in the Linux 2.6 kernel.
 
 %build
 autoreconf -fv --install
-./configure --sbindir=/sbin --mandir=%{_mandir}
+./configure --sbindir=/sbin --mandir=%{_mandir} --with-pam=yes
 make
 
 %install
@@ -41,13 +41,16 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) %{_mandir}/man8/*
 %attr(750,root,root) /sbin/auditctl
 %attr(750,root,root) /sbin/auditd
-#%attr(755,root,root) /lib/security/pam_audit.so
+%attr(755,root,root) /lib/security/pam_audit.so
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 
 
 %changelog
+* Mon Nov 15 2004 Steve Grubb <sgrubb@redhat.com> 0.5.2-1
+- New version
+
 * Wed Nov 10 2004 Steve Grubb <sgrubb@redhat.com> 0.5.1-1
 - Added initscript pieces
 - New version
