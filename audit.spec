@@ -6,6 +6,7 @@ License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/faith/audit/
 Source0: %{name}-%{version}.tar.gz
+Patch1: audit-0.5.2-x86_64.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: pam-devel
 
@@ -17,6 +18,7 @@ the audit subsystem in the Linux 2.6 kernel.
 
 %prep
 %setup -q
+%patch1 -p1 -b .x86_64
 
 %build
 autoreconf -fv --install
