@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.6.3
-Release: 3
+Version: 0.6.4
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -104,11 +104,12 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc ChangeLog sample.rules
+%doc README COPYING ChangeLog sample.rules
 %attr(0644,root,root) %{_mandir}/man8/*
 %attr(750,root,root) /sbin/auditctl
 %attr(750,root,root) /sbin/auditd
-%attr(755,root,root) /%{_lib}/security/pam_audit.so
+%attr(750,root,root) /sbin/ausearch
+%attr(755,root,root) /%{_lib}/security/pam_loginuid.so
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %config(noreplace) %attr(640,root,root) /etc/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit.rules
@@ -116,6 +117,11 @@ fi
 
 
 %changelog
+* Wed Feb 23 2005 Steve Grubb <sgrubb@redhat.com> 0.6.4-1
+- Rename pam_audit to pam_loginuid to reflect what it does
+- Fix bug in detecting space left on partition
+- Fix bug in handling of suspended logging
+
 * Wed Feb 23 2005 David Woodhouse <dwmw2@redhat.com> 0.6.3-3
 - Include stdint.h in libaudit.h and require new glibc-kernheaders
 
