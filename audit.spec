@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.6.6
+Version: 0.6.7
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -124,6 +124,11 @@ fi
 
 
 %changelog
+* Wed Mar 9 2005 Steve Grubb <sgrubb@redhat.com> 0.6.7-1
+- Fixed bug setting loginuid
+- Added num_logs to configure number of logs when rotating
+- Added code for rotating logs
+
 * Tue Mar 8 2005 Steve Grubb <sgrubb@redhat.com> 0.6.6-1
 - Fix audit_set_pid to try to read a reply, but its non-fatal if no reply.
 - Remove the read status during init
