@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.5.4
+Version: 0.5.5
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -90,11 +90,15 @@ fi
 %attr(750,root,root) /sbin/auditd
 %attr(755,root,root) /lib/security/pam_audit.so
 %attr(755,root,root) /etc/rc.d/init.d/auditd
+%config(noreplace) %attr(640,root,root) /etc/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 
 
 %changelog
+* Fri Dec 10 2004 Steve Grubb <sgrubb@redhat.com> 0.5.5-1
+- New version
+
 * Fri Dec 03 2004 Steve Grubb <sgrubb@redhat.com> 0.5.4-1
 - New version
 
