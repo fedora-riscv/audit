@@ -1,14 +1,14 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.6.4
+Version: 0.6.5
 Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
-Patch0: audit-0.6.3-stdint.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildRequires: glibc-kernheaders pam-devel libtool
+BuildRequires: pam-devel libtool
+BuildRequires: glibc-kernheaders >= 2.4-9.1.90
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
@@ -42,7 +42,6 @@ framework libraries.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 autoreconf -fv --install
@@ -63,7 +62,13 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}
 install -m 0644 lib/libaudit.h $RPM_BUILD_ROOT/%{_includedir}
 # This winds up in the wrong place when libtool is involved
 mv $RPM_BUILD_ROOT/%{_lib}/libaudit.a $RPM_BUILD_ROOT%{_libdir}
-mv $RPM_BUILD_ROOT/%{_lib}/libaudit.la $RPM_BUILD_ROOT%{_libdir}
+curdir=`pwd`
+cd $RPM_BUILD_ROOT/%{_libdir}
+ln -s ../../%{_lib}/libaudit.so libaudit.so
+cd $curdir
+
+# Not ready to distribute - nuke it
+rm -f $RPM_BUILD_ROOT/sbin/ausearch
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -98,7 +103,8 @@ fi
 
 %files libs-devel
 %defattr(-,root,root)
-%{_libdir}/libaudit.*
+%{_libdir}/libaudit.a
+%{_libdir}/libaudit.so
 %{_includedir}/libaudit.h
 %{_mandir}/man3/*
 
@@ -108,7 +114,7 @@ fi
 %attr(0644,root,root) %{_mandir}/man8/*
 %attr(750,root,root) /sbin/auditctl
 %attr(750,root,root) /sbin/auditd
-%attr(750,root,root) /sbin/ausearch
+#%attr(750,root,root) /sbin/ausearch
 %attr(755,root,root) /%{_lib}/security/pam_loginuid.so
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %config(noreplace) %attr(640,root,root) /etc/auditd.conf
@@ -117,6 +123,16 @@ fi
 
 
 %changelog
+* Thu Mar 3 2005 Steve Grubb <sgrubb@redhat.com> 0.6.5-1
+- Lots of code cleanups
+- Added write_pid function to auditd
+- Added audit_log to libaudit
+- Don't check file length in foreground mode of auditd
+- Added *if_enabled functions to send messages only if audit system is enabled
+- If syscall name is unknown when printing rules, use the syscall number
+- Rework the build system to produce singly threaded public libraries
+- Create a multithreaded version of libaudit for the audit daemon's use
+
 * Wed Feb 23 2005 Steve Grubb <sgrubb@redhat.com> 0.6.4-1
 - Rename pam_audit to pam_loginuid to reflect what it does
 - Fix bug in detecting space left on partition
