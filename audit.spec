@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.6
+Version: 0.6.1
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -109,6 +109,11 @@ fi
 
 
 %changelog
+* Sat Jan 08 2005 Steve Grubb <sgrubb@redhat.com> 0.6.1-1
+- New version: rework auditctl and its man pages.
+- Added admin_space_left config option as last chance before
+  running out of disk space.
+
 * Wed Jan 05 2005 Steve Grubb <sgrubb@redhat.com> 0.6-1
 - New version
 - Split package up to libs, libs-devel, and audit.
