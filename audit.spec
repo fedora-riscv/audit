@@ -1,13 +1,13 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.6.7
+Version: 0.6.8
 Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildRequires: pam-devel libtool
+BuildRequires: libtool
 BuildRequires: glibc-kernheaders >= 2.4-9.1.90
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
@@ -46,14 +46,14 @@ framework libraries.
 %build
 autoreconf -fv --install
 export CFLAGS="$RPM_OPT_FLAGS"
-./configure --sbindir=/sbin --mandir=%{_mandir} --libdir=/%{_lib} --with-pam=yes
+./configure --sbindir=/sbin --mandir=%{_mandir} --libdir=/%{_lib}
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{sbin,etc/{sysconfig,rc.d/init.d}}
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man8
-mkdir -p $RPM_BUILD_ROOT/%{_lib}/security
+mkdir -p $RPM_BUILD_ROOT/%{_lib}
 make DESTDIR=$RPM_BUILD_ROOT install
 
 mkdir -p $RPM_BUILD_ROOT/%{_includedir}
@@ -116,7 +116,6 @@ fi
 %attr(750,root,root) /sbin/auditctl
 %attr(750,root,root) /sbin/auditd
 #%attr(750,root,root) /sbin/ausearch
-%attr(755,root,root) /%{_lib}/security/pam_loginuid.so
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %config(noreplace) %attr(640,root,root) /etc/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit.rules
@@ -124,6 +123,9 @@ fi
 
 
 %changelog
+* Wed Mar 10 2005 Steve Grubb <sgrubb@redhat.com> 0.6.8-1
+- removed the pam_loginuid library - its going to pam
+
 * Wed Mar 9 2005 Steve Grubb <sgrubb@redhat.com> 0.6.7-1
 - Fixed bug setting loginuid
 - Added num_logs to configure number of logs when rotating
