@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
 Version: 0.6.9
-Release: 1
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -123,6 +123,9 @@ fi
 
 
 %changelog
+* Thu Mar 24 2005 Steve Grubb <sgrubb@redhat.com> 0.6.9-2
+- Rebuilt
+
 * Thu Mar 17 2005 Steve Grubb <sgrubb@redhat.com> 0.6.9-1
 - Added patch for filesystem watch
 - Added version information to audit start message
