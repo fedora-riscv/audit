@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
 Version: 0.6.3
-Release: 1
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -51,7 +51,7 @@ make
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{sbin,etc/{sysconfig,rc.d/init.d}}
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man8
-mkdir -p $RPM_BUILD_ROOT/lib/security
+mkdir -p $RPM_BUILD_ROOT/%{_lib}/security
 make DESTDIR=$RPM_BUILD_ROOT install
 
 mkdir -p $RPM_BUILD_ROOT/%{_includedir}
@@ -59,8 +59,8 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}
 # We manually install this since Makefile doesn't
 install -m 0644 lib/libaudit.h $RPM_BUILD_ROOT/%{_includedir}
 # This winds up in the wrong place when libtool is involved
-mv $RPM_BUILD_ROOT/lib/libaudit.a $RPM_BUILD_ROOT%{_libdir}
-mv $RPM_BUILD_ROOT/lib/libaudit.la $RPM_BUILD_ROOT%{_libdir}
+mv $RPM_BUILD_ROOT/%{_lib}/libaudit.a $RPM_BUILD_ROOT%{_libdir}
+mv $RPM_BUILD_ROOT/%{_lib}/libaudit.la $RPM_BUILD_ROOT%{_libdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -91,7 +91,7 @@ fi
 
 %files libs
 %defattr(-,root,root)
-%attr(755,root,root) /lib/libaudit.*
+%attr(755,root,root) /%{_lib}/libaudit.*
 
 %files libs-devel
 %defattr(-,root,root)
@@ -113,6 +113,9 @@ fi
 
 
 %changelog
+* Sun Feb 20 2005 Steve Grubb <sgrubb@redhat.com> 0.6.3-2
+- Another lib64 correction
+
 * Sun Feb 20 2005 Steve Grubb <sgrubb@redhat.com> 0.6.3-1
 - Change pam install from /lib/security to /%{_lib}/security
 - Change pam_audit to write loginuid to /proc/pid/loginuid
