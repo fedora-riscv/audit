@@ -20,7 +20,7 @@ the audit subsystem in the Linux 2.6 kernel.
 
 %build
 autoreconf -fv --install
-./configure --sbindir=/sbin --mandir=%{_mandir} --with-pam=yes
+./configure --sbindir=/sbin --mandir=%{_mandir} --libdir=/lib --with-pam=yes
 make
 
 %install
