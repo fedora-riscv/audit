@@ -1,11 +1,12 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
 Version: 0.6.3
-Release: 2
+Release: 3
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
+Patch0: audit-0.6.3-stdint.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: glibc-kernheaders pam-devel libtool
 BuildRequires: automake >= 1.9
@@ -32,6 +33,7 @@ Summary: Header files and static library for libaudit
 License: LGPL
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
+Requires: glibc-kernheaders >= 2.4-9.1.90
 
 %description libs-devel
 The audit-libs-devel package contains the static libraries and header 
@@ -40,6 +42,7 @@ framework libraries.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 autoreconf -fv --install
@@ -113,6 +116,9 @@ fi
 
 
 %changelog
+* Wed Feb 23 2005 David Woodhouse <dwmw2@redhat.com> 0.6.3-3
+- Include stdint.h in libaudit.h and require new glibc-kernheaders
+
 * Sun Feb 20 2005 Steve Grubb <sgrubb@redhat.com> 0.6.3-2
 - Another lib64 correction
 
