@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.5.5
+Version: 0.5.6
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -32,12 +32,6 @@ libraries.
 %build
 autoreconf -fv --install
 ./configure --sbindir=/sbin --mandir=%{_mandir} --libdir=/lib --with-pam=yes
-
-# This is crazy hack until I solve the dependency problem libtool/automake
-# seems to have making a dynamicly created source file.
-#cd lib
-#make syscalltab.h
-#cd .. 
 make
 
 %install
@@ -47,12 +41,13 @@ mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man8
 mkdir -p $RPM_BUILD_ROOT/lib/security
 make DESTDIR=$RPM_BUILD_ROOT install
 
-# We manually install these since Makefile doesn't
 mkdir -p $RPM_BUILD_ROOT/%{_includedir}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}
+# We manually install this since Makefile doesn't
 install -m 0644 lib/libaudit.h $RPM_BUILD_ROOT/%{_includedir}
-install -m 0644 lib/libaudit.a $RPM_BUILD_ROOT/%{_libdir}
-#install -m 0644 lib/libaudit.so $RPM_BUILD_ROOT/%{_libdir}
+# This winds up in the wrong place when libtool is involved
+mv $RPM_BUILD_ROOT/lib/libaudit.a $RPM_BUILD_ROOT%{_libdir}
+mv $RPM_BUILD_ROOT/lib/libaudit.la $RPM_BUILD_ROOT%{_libdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -77,7 +72,7 @@ fi
 
 %files devel
 %defattr(-,root,root)
-%{_libdir}/libaudit.a
+%{_libdir}/libaudit.*
 %{_includedir}/libaudit.h
 %{_mandir}/man3/*
 
@@ -89,6 +84,7 @@ fi
 %attr(750,root,root) /sbin/auditctl
 %attr(750,root,root) /sbin/auditd
 %attr(755,root,root) /lib/security/pam_audit.so
+%attr(755,root,root) /lib/libaudit.*
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %config(noreplace) %attr(640,root,root) /etc/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
@@ -96,6 +92,9 @@ fi
 
 
 %changelog
+* Fri Dec 17 2004 Steve Grubb <sgrubb@redhat.com> 0.5.6-1
+- New version
+
 * Fri Dec 10 2004 Steve Grubb <sgrubb@redhat.com> 0.5.5-1
 - New version
 
