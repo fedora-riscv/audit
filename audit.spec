@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.6.9
-Release: 2
+Version: 0.6.10
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -54,6 +54,7 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{sbin,etc/{sysconfig,rc.d/init.d}}
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man8
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
+mkdir -p $RPM_BUILD_ROOT/%{_var}/log/audit
 make DESTDIR=$RPM_BUILD_ROOT install
 
 mkdir -p $RPM_BUILD_ROOT/%{_includedir}
@@ -113,18 +114,24 @@ fi
 %defattr(-,root,root,-)
 %doc README COPYING ChangeLog sample.rules
 %attr(0644,root,root) %{_mandir}/man8/*
-%attr(750,root,root) /sbin/auditctl
-%attr(750,root,root) /sbin/auditd
+%attr(750,root,root)  /sbin/auditctl
+%attr(750,root,root)  /sbin/auditd
 #%attr(750,root,root) /sbin/ausearch
+#%attr(750,root,root) /sbin/autrace
 %attr(755,root,root) /etc/rc.d/init.d/auditd
+%attr(750,root,root) %{_var}/log/audit
 %config(noreplace) %attr(640,root,root) /etc/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 
 %changelog
-* Thu Mar 24 2005 Steve Grubb <sgrubb@redhat.com> 0.6.9-2
-- Rebuilt
+* Fri Apr  1 2005 Steve Grubb <sgrubb@redhat.com> 0.6.10-1
+- Code cleanups
+- Support the arch field for auditctl
+- Add version to auditctl
+- Documentation updates
+- Moved default location of the audit log to /var/log/audit
 
 * Thu Mar 17 2005 Steve Grubb <sgrubb@redhat.com> 0.6.9-1
 - Added patch for filesystem watch
