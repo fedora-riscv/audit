@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.6.10
+Version: 0.6.11
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -126,6 +126,13 @@ fi
 
 
 %changelog
+* Mon Apr 18 2005 Steve Grubb <sgrubb@redhat.com> 0.6.11-1
+- Check log file size on start up
+- Added priority_boost config item
+- Reworked arch support
+- Reworked how run level is changed
+- Make allowances for ECONNREFUSED
+
 * Fri Apr  1 2005 Steve Grubb <sgrubb@redhat.com> 0.6.10-1
 - Code cleanups
 - Support the arch field for auditctl
