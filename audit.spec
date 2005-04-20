@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.6.11
+Version: 0.6.12
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -70,16 +70,14 @@ cd $curdir
 
 # Not ready to distribute - nuke 'em
 rm -f $RPM_BUILD_ROOT/sbin/ausearch
-rm -f $RPM_BUILD_ROOT/sbin/autrace
+rm -f $RPM_BUILD_ROOT/%{_mandir}/man8/ausearch.8
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post libs
-/sbin/ldconfig 2>/dev/null
+%post libs -p /sbin/ldconfig
 
 %post
-/sbin/ldconfig 2>/dev/null
 if [ $1 = 1 ]; then
    /sbin/chkconfig --add auditd
 fi
@@ -94,7 +92,6 @@ fi
 /sbin/ldconfig 2>/dev/null
 
 %postun
-/sbin/ldconfig 2>/dev/null
 if [ $1 -ge 1 ]; then
    /sbin/service auditd condrestart > /dev/null 2>&1
 fi
@@ -117,7 +114,7 @@ fi
 %attr(750,root,root)  /sbin/auditctl
 %attr(750,root,root)  /sbin/auditd
 #%attr(750,root,root) /sbin/ausearch
-#%attr(750,root,root) /sbin/autrace
+%attr(750,root,root) /sbin/autrace
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
 %config(noreplace) %attr(640,root,root) /etc/auditd.conf
@@ -126,6 +123,11 @@ fi
 
 
 %changelog
+* Wed Apr 20 2005 Steve Grubb <sgrubb@redhat.com> 0.6.12-1
+- Fixed bug where elf type wasn't being set when given numerically
+- Added autrace program (similar to strace)
+- Fixed bug when logs = 2 and ROTATE is the action, only 1 log resulted
+
 * Mon Apr 18 2005 Steve Grubb <sgrubb@redhat.com> 0.6.11-1
 - Check log file size on start up
 - Added priority_boost config item
