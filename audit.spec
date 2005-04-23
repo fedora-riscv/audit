@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.6.12
+Version: 0.7
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -68,10 +68,6 @@ cd $RPM_BUILD_ROOT/%{_libdir}
 ln -s ../../%{_lib}/libaudit.so libaudit.so
 cd $curdir
 
-# Not ready to distribute - nuke 'em
-rm -f $RPM_BUILD_ROOT/sbin/ausearch
-rm -f $RPM_BUILD_ROOT/%{_mandir}/man8/ausearch.8
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -113,7 +109,7 @@ fi
 %attr(0644,root,root) %{_mandir}/man8/*
 %attr(750,root,root)  /sbin/auditctl
 %attr(750,root,root)  /sbin/auditd
-#%attr(750,root,root) /sbin/ausearch
+%attr(750,root,root) /sbin/ausearch
 %attr(750,root,root) /sbin/autrace
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
@@ -123,6 +119,12 @@ fi
 
 
 %changelog
+* Sat Apr 23 2005 Steve Grubb <sgrubb@redhat.com> 0.7-1
+- In auditctl -l, loop until all rules are printed
+- Update autrace not to run if rules are currently loaded
+- Added code to switch to single user mode when disk is full
+- Added the ausearch program
+
 * Wed Apr 20 2005 Steve Grubb <sgrubb@redhat.com> 0.6.12-1
 - Fixed bug where elf type wasn't being set when given numerically
 - Added autrace program (similar to strace)
