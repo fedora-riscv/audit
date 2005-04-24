@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.7
+Version: 0.7.1
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,6 +119,13 @@ fi
 
 
 %changelog
+* Sun Apr 24 2005 Steve Grubb <sgrubb@redhat.com> 0.7.1-1
+- Make sure time calc is done using localtime
+- Raise rlimits for file size & cpu usage
+- Added new disk_error_action config item to auditd.conf
+- Rework memory management of event buffer
+- Handled all errors in event logging thread
+
 * Sat Apr 23 2005 Steve Grubb <sgrubb@redhat.com> 0.7-1
 - In auditctl -l, loop until all rules are printed
 - Update autrace not to run if rules are currently loaded
