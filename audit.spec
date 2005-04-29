@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.7.1
+Version: 0.7.2
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,6 +119,12 @@ fi
 
 
 %changelog
+* Wed Apr 27 2005 Steve Grubb <sgrubb@redhat.com> 0.7.2-1
+- Allow ausearch uid & gid to be non-numeric (root, wheel, etc)
+- Fix problems with changing run level
+- Added new code for logging shutdown reason credentials
+- Update DAEMON messages to use better timestamp
+
 * Sun Apr 24 2005 Steve Grubb <sgrubb@redhat.com> 0.7.1-1
 - Make sure time calc is done using localtime
 - Raise rlimits for file size & cpu usage
