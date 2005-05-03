@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.7.2
-Release: 2
+Version: 0.7.3
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -119,6 +119,12 @@ fi
 
 
 %changelog
+* Tue May 03 2005 Steve Grubb <sgrubb@redhat.com> 0.7.3-1
+- Add code to get watch list to auditctl
+- Get -f & -hn working in ausearch
+- Added search by terminal, exe, and syscall to ausearch program
+- Added -w parameter to match whole word in ausearch
+
 * Wed Apr 27 2005 Steve Grubb <sgrubb@redhat.com> 0.7.2-1
 - Allow ausearch uid & gid to be non-numeric (root, wheel, etc)
 - Fix problems with changing run level
