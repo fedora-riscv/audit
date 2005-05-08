@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.7.3
-Release: 2
+Version: 0.7.4
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -119,6 +119,10 @@ fi
 
 
 %changelog
+* Sun May 08 2005 Steve Grubb <sgrubb@redhat.com> 0.7.4-1
+- Make sure ausearch ts & te obey DST.
+- Code cleanups to make file system watches work correctly
+
 * Tue May 03 2005 Steve Grubb <sgrubb@redhat.com> 0.7.3-1
 - Add code to get watch list to auditctl
 - Get -f & -hn working in ausearch
