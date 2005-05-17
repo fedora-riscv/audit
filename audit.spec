@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.7.4
+Version: 0.8.1
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,6 +119,17 @@ fi
 
 
 %changelog
+* Tue May 17 2005 Steve Grubb <sgrubb@redhat.com> 0.8.1-1
+- Fix code to "or" uid  & gid checks for ausearch -ua & -ga
+- Change msg() to audit_msg() to avoid conflicts
+- Parse socket messages for hostname in ausearch
+
+* Thu May 12 2005 Steve Grubb <sgrubb@redhat.com> 0.8-1
+- ausearch fix bugs related to -f & -x
+- Parse messages using new types
+- Properly unescape filenames
+- Update interface for sending userspace messages to use more types
+
 * Sun May 08 2005 Steve Grubb <sgrubb@redhat.com> 0.7.4-1
 - Make sure ausearch ts & te obey DST.
 - Code cleanups to make file system watches work correctly
