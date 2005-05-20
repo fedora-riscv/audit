@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.8.1
+Version: 0.8.2
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,6 +119,13 @@ fi
 
 
 %changelog
+* Thu May 20 2005 Steve Grubb <sgrubb@redhat.com> 0.8.2-1
+- Update documentation
+- Handle user space audit events in more uniform way
+- Update all parsers for more robustness with new kernel changes
+- Create quiet mode for error messages
+- Make rotated logs readonly
+
 * Tue May 17 2005 Steve Grubb <sgrubb@redhat.com> 0.8.1-1
 - Fix code to "or" uid  & gid checks for ausearch -ua & -ga
 - Change msg() to audit_msg() to avoid conflicts
