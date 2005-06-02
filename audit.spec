@@ -1,14 +1,14 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.8.2
-Release: 2
+Version: 0.9.2
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool
-BuildRequires: glibc-kernheaders >= 2.4-9.1.90
+BuildRequires: glibc-kernheaders >= 2.4-9.1.95
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
@@ -119,6 +119,22 @@ fi
 
 
 %changelog
+* Thu Jun 2 2005 Steve Grubb <sgrubb@redhat.com> 0.9.2-1
+- Step up to new glibc-kernheaders
+
+* Thu Jun 2 2005 Steve Grubb <sgrubb@redhat.com> 0.9.1-1
+- AUDITD_CLEAN_STOP config option in /etc/sysconfig/auditd
+- When unknown, show raw record in ausearch.
+- Add CWD message type support
+
+* Wed May 25 2005 Steve Grubb <sgrubb@redhat.com> 0.9-1
+- Translate numeric info to human readable for ausearch output
+- add '-if' option to ausearch to select input file
+- add '-c' option to ausearch to allow searching by comm field
+- init script now deletes all rules when daemon stops
+- Make auditctl display perms correctly in watch listings
+- Make auditctl -D remove all watches
+
 * Thu May 20 2005 Steve Grubb <sgrubb@redhat.com> 0.8.2-1
 - Update documentation
 - Handle user space audit events in more uniform way
