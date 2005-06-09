@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.2
+Version: 0.9.3
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,6 +119,13 @@ fi
 
 
 %changelog
+* Thu Jun 9 2005 Steve Grubb <sgrubb@redhat.com> 0.9.3-1
+- Change filename handling to use linked list in ausearch
+- Add man pages for audit_setloginuid & audit_getloginuid
+- Fix problem where you couldn't set rule on unset loginuid's
+- Adjust memory management for sighup needs
+- Fix problem where netlink timeout counter wasn't being reset
+
 * Thu Jun 2 2005 Steve Grubb <sgrubb@redhat.com> 0.9.2-1
 - Step up to new glibc-kernheaders
 
