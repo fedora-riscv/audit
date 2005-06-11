@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.3
+Version: 0.9.4
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,6 +119,12 @@ fi
 
 
 %changelog
+* Sat Jun 11 2005 Steve Grubb <sgrubb@redhat.com> 0.9.4-1
+- Rule and watch insert no longer automatically dumps list
+- auditctl rules can now use auid instead of loginuid
+- Add sighup support for daemon reconfiguration
+- Move some functions into private.h
+
 * Thu Jun 9 2005 Steve Grubb <sgrubb@redhat.com> 0.9.3-1
 - Change filename handling to use linked list in ausearch
 - Add man pages for audit_setloginuid & audit_getloginuid
