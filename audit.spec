@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.4
+Version: 0.9.5
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,6 +119,11 @@ fi
 
 
 %changelog
+* Tue Jun 14 2005 Steve Grubb <sgrubb@redhat.com> 0.9.5-1
+- interpret socketcall & ipc based on a0 in ausearch
+- change call sequence to make user space messages faster
+- update return val for auditctl
+
 * Sat Jun 11 2005 Steve Grubb <sgrubb@redhat.com> 0.9.4-1
 - Rule and watch insert no longer automatically dumps list
 - auditctl rules can now use auid instead of loginuid
