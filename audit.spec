@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.5
+Version: 0.9.6
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,6 +119,11 @@ fi
 
 
 %changelog
+* Thu Jun 16 2005 Steve Grubb <sgrubb@redhat.com> 0.9.6-1
+- fix bug in incremental flush where is wrongly reported an error
+- ausearch should not do uid check for -if option
+- adjust ipc interpretation to not use ipc.h
+
 * Tue Jun 14 2005 Steve Grubb <sgrubb@redhat.com> 0.9.5-1
 - interpret socketcall & ipc based on a0 in ausearch
 - change call sequence to make user space messages faster
