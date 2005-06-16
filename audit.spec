@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.6
+Version: 0.9.7
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,6 +119,11 @@ fi
 
 
 %changelog
+* Thu Jun 16 2005 Steve Grubb <sgrubb@redhat.com> 0.9.7-1
+- fixed bug in send_user_message which errored on pam logins
+- Change nanosleeps over to select loops
+- Change the 'e' option to auditctl -p to 'x'
+
 * Thu Jun 16 2005 Steve Grubb <sgrubb@redhat.com> 0.9.6-1
 - fix bug in incremental flush where is wrongly reported an error
 - ausearch should not do uid check for -if option
