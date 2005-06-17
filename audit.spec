@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.7
+Version: 0.9.8
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,6 +119,10 @@ fi
 
 
 %changelog
+* Fri Jun 17 2005 Steve Grubb <sgrubb@redhat.com> 0.9.8-1
+- Added support for FS_INODE and USYS_CONFIG records
+- More cleanup of user space message functions
+
 * Thu Jun 16 2005 Steve Grubb <sgrubb@redhat.com> 0.9.7-1
 - fixed bug in send_user_message which errored on pam logins
 - Change nanosleeps over to select loops
