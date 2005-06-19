@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.8
+Version: 0.9.9
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,6 +119,9 @@ fi
 
 
 %changelog
+* Sun Jun 19 2005 Steve Grubb <sgrubb@redhat.com> 0.9.9-1
+- Fix user messages for people with older kernels
+
 * Fri Jun 17 2005 Steve Grubb <sgrubb@redhat.com> 0.9.8-1
 - Added support for FS_INODE and USYS_CONFIG records
 - More cleanup of user space message functions
