@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.9
+Version: 0.9.10
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,6 +119,11 @@ fi
 
 
 %changelog
+* Mon Jun 19 2005 Steve Grubb <sgrubb@redhat.com> 0.9.10-1
+- Make sure the bad packet is drained when retrying user messages
+- Add support for new user and watch filter lists
+- Interpret flags field in ausearch
+
 * Sun Jun 19 2005 Steve Grubb <sgrubb@redhat.com> 0.9.9-1
 - Fix user messages for people with older kernels
 
