@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.10
+Version: 0.9.11
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,7 +119,13 @@ fi
 
 
 %changelog
-* Mon Jun 19 2005 Steve Grubb <sgrubb@redhat.com> 0.9.10-1
+* Tue Jun 21 2005 Steve Grubb <sgrubb@redhat.com> 0.9.11-1
+- Change packet draining to nonblocking
+- Interpret id field in ausearch
+- Add error message if not able to create log
+- Ignore netlink acks when asking for rule & watch list
+
+* Mon Jun 20 2005 Steve Grubb <sgrubb@redhat.com> 0.9.10-1
 - Make sure the bad packet is drained when retrying user messages
 - Add support for new user and watch filter lists
 - Interpret flags field in ausearch
