@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.11
+Version: 0.9.12
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -119,6 +119,12 @@ fi
 
 
 %changelog
+* Wed Jun 22 2005 Steve Grubb <sgrubb@redhat.com> 0.9.12-1
+- Add some syslog messages for a couple exits
+- Add some unlinks of the pid file in a couple error exits
+- Make some options of auditctl not expect a reply
+- Update support for user and watch filter lists
+
 * Tue Jun 21 2005 Steve Grubb <sgrubb@redhat.com> 0.9.11-1
 - Change packet draining to nonblocking
 - Interpret id field in ausearch
