@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.12
+Version: 0.9.13
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -67,6 +67,9 @@ curdir=`pwd`
 cd $RPM_BUILD_ROOT/%{_libdir}
 ln -s ../../%{_lib}/libaudit.so libaudit.so
 cd $curdir
+# Remove these items so they don't get picked up.
+rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.so
+rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.la
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -119,6 +122,10 @@ fi
 
 
 %changelog
+* Thu Jun 23 2005 Steve Grubb <sgrubb@redhat.com> 0.9.13-1
+- Remove /lib/libaudit.so & .la from audit-libs package
+- In auditctl, if syscall not given, default to all
+
 * Wed Jun 22 2005 Steve Grubb <sgrubb@redhat.com> 0.9.12-1
 - Add some syslog messages for a couple exits
 - Add some unlinks of the pid file in a couple error exits
