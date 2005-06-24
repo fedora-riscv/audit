@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.13
+Version: 0.9.14
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -122,6 +122,10 @@ fi
 
 
 %changelog
+* Fri Jun 24 2005 Steve Grubb <sgrubb@redhat.com> 0.9.14-1
+- make auditctl -s work again
+- make AUDITD_CLEAN_STOP test in init scripts case insensitive
+
 * Thu Jun 23 2005 Steve Grubb <sgrubb@redhat.com> 0.9.13-1
 - Remove /lib/libaudit.so & .la from audit-libs package
 - In auditctl, if syscall not given, default to all
