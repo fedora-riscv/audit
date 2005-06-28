@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.14
+Version: 0.9.15
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -122,6 +122,9 @@ fi
 
 
 %changelog
+* Tue Jun 27 2005 Steve Grubb <sgrubb@redhat.com> 0.9.15-1
+- Update log rotation handling to be more robust
+
 * Fri Jun 24 2005 Steve Grubb <sgrubb@redhat.com> 0.9.14-1
 - make auditctl -s work again
 - make AUDITD_CLEAN_STOP test in init scripts case insensitive
