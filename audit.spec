@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.15
+Version: 0.9.16
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -33,7 +33,7 @@ Summary: Header files and static library for libaudit
 License: LGPL
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
-Requires: glibc-kernheaders >= 2.4-9.1.90
+Requires: glibc-kernheaders >= 2.4-9.1.95
 
 %description libs-devel
 The audit-libs-devel package contains the static libraries and header 
@@ -122,6 +122,11 @@ fi
 
 
 %changelog
+* Thu Jul 07 2005 Steve Grubb <sgrubb@redhat.com> 0.9.16-1
+- Adjust umask
+- Adjust length of strings for file system watches to not include NUL
+- Remove extra error message from audit_send
+
 * Tue Jun 27 2005 Steve Grubb <sgrubb@redhat.com> 0.9.15-1
 - Update log rotation handling to be more robust
 
