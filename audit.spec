@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.16
+Version: 0.9.17
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -77,12 +77,10 @@ rm -rf $RPM_BUILD_ROOT
 %post libs -p /sbin/ldconfig
 
 %post
-if [ $1 = 1 ]; then
-   /sbin/chkconfig --add auditd
-fi
+/sbin/chkconfig --add auditd
 
 %preun
-if [ $1 = 0 ]; then
+if [ "$1" = 0 ]; then
    /sbin/service auditd stop > /dev/null 2>&1
    /sbin/chkconfig --del auditd
 fi
@@ -122,6 +120,10 @@ fi
 
 
 %changelog
+* Tue Jul 12 2005 Steve Grubb <sgrubb@redhat.com> 0.9.17-1
+- Fix ausearch buffers to hold long filenames
+- Make a0 long long for 64 bit kernels & 32 bit ausearch.
+
 * Thu Jul 07 2005 Steve Grubb <sgrubb@redhat.com> 0.9.16-1
 - Adjust umask
 - Adjust length of strings for file system watches to not include NUL
