@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.18
+Version: 0.9.19
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -120,6 +120,9 @@ fi
 
 
 %changelog
+* Thu Jul 14 2005 Steve Grubb <sgrubb@redhat.com> 0.9.19-1
+- ausearch remove debug code
+
 * Thu Jul 14 2005 Steve Grubb <sgrubb@redhat.com> 0.9.18-1
 - auditd message formatter use MAX_AUDIT_MESSAGE_LENGTH to prevent clipping
 
