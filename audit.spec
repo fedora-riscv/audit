@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.17
+Version: 0.9.18
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -80,7 +80,7 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/chkconfig --add auditd
 
 %preun
-if [ "$1" = 0 ]; then
+if [ $1 -eq 0 ]; then
    /sbin/service auditd stop > /dev/null 2>&1
    /sbin/chkconfig --del auditd
 fi
@@ -120,6 +120,9 @@ fi
 
 
 %changelog
+* Thu Jul 14 2005 Steve Grubb <sgrubb@redhat.com> 0.9.18-1
+- auditd message formatter use MAX_AUDIT_MESSAGE_LENGTH to prevent clipping
+
 * Tue Jul 12 2005 Steve Grubb <sgrubb@redhat.com> 0.9.17-1
 - Fix ausearch buffers to hold long filenames
 - Make a0 long long for 64 bit kernels & 32 bit ausearch.
