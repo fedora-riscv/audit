@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
 Version: 0.9.19
-Release: 1
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -65,7 +65,8 @@ install -m 0644 lib/libaudit.h $RPM_BUILD_ROOT/%{_includedir}
 mv $RPM_BUILD_ROOT/%{_lib}/libaudit.a $RPM_BUILD_ROOT%{_libdir}
 curdir=`pwd`
 cd $RPM_BUILD_ROOT/%{_libdir}
-ln -s ../../%{_lib}/libaudit.so libaudit.so
+LIBNAME=`basename \`ls $RPM_BUILD_ROOT/%{_lib}/libaudit.so.*.*.*\``
+ln -s ../../%{_lib}/$LIBNAME libaudit.so
 cd $curdir
 # Remove these items so they don't get picked up.
 rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.so
@@ -120,6 +121,9 @@ fi
 
 
 %changelog
+* Mon Jul 18 2005 Tomas Mraz <tmraz@redhat.com> 0.9.19-2
+- make /usr/lib/libaudit.so point at the right file
+
 * Thu Jul 14 2005 Steve Grubb <sgrubb@redhat.com> 0.9.19-1
 - ausearch remove debug code
 
