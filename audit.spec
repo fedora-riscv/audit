@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.19
-Release: 2
+Version: 0.9.20
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -107,7 +107,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc README COPYING ChangeLog sample.rules
+%doc README COPYING ChangeLog sample.rules contrib/capp.rules
 %attr(0644,root,root) %{_mandir}/man8/*
 %attr(750,root,root)  /sbin/auditctl
 %attr(750,root,root)  /sbin/auditd
@@ -121,8 +121,12 @@ fi
 
 
 %changelog
-* Mon Jul 18 2005 Tomas Mraz <tmraz@redhat.com> 0.9.19-2
-- make /usr/lib/libaudit.so point at the right file
+* Thu Jul 29 2005 Steve Grubb <sgrubb@redhat.com> 0.9.20-1
+- Fix ausearch to handle no audit log better
+- Fix auditctl blank line handling
+- Trim trailing '/' from file system watches in auditctl
+- Catch cases where parameter was passed without option being given to auditctl
+- Add CAPP sample configuration
 
 * Thu Jul 14 2005 Steve Grubb <sgrubb@redhat.com> 0.9.19-1
 - ausearch remove debug code
