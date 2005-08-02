@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 0.9.20
+Version: 1.0
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -121,7 +121,14 @@ fi
 
 
 %changelog
-* Thu Jul 29 2005 Steve Grubb <sgrubb@redhat.com> 0.9.20-1
+* Tue Aug 2 2005 Steve Grubb <sgrubb@redhat.com> 1.0-1
+- Update sample CAPP config
+- Remove warning for trimming file path in auditctl
+- Make auditctl tolerate duplicate rule and watches
+- auditd has new option so it doesn't overwrite log files
+- Fixed bug in autrace that was reporting bad descriptor
+
+* Fri Jul 29 2005 Steve Grubb <sgrubb@redhat.com> 0.9.20-1
 - Fix ausearch to handle no audit log better
 - Fix auditctl blank line handling
 - Trim trailing '/' from file system watches in auditctl
