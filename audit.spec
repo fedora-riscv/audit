@@ -124,6 +124,7 @@ fi
 * Wed Aug 3 2005 Steve Grubb <sgrubb@redhat.com> 1.0.1-1
 - Add check for fields that cannot be used with syscall entry in auditctl
 - Make auditctl not tolerate duplicate rule and watches
+- Remove uid check in ausearch
 
 * Tue Aug 2 2005 Steve Grubb <sgrubb@redhat.com> 1.0-1
 - Update sample CAPP config
