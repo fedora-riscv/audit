@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.0
+Version: 1.0.1
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -121,6 +121,10 @@ fi
 
 
 %changelog
+* Wed Aug 3 2005 Steve Grubb <sgrubb@redhat.com> 1.0.1-1
+- Add check for fields that cannot be used with syscall entry in auditctl
+- Make auditctl not tolerate duplicate rule and watches
+
 * Tue Aug 2 2005 Steve Grubb <sgrubb@redhat.com> 1.0-1
 - Update sample CAPP config
 - Remove warning for trimming file path in auditctl
