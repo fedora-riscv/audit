@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.0.1
-Release: 2
+Version: 1.0.2
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -121,6 +121,11 @@ fi
 
 
 %changelog
+* Mon Aug 8 2005 Steve Grubb <sgrubb@redhat.com> 1.0.2-1
+- Make sure error packets get eaten.
+- Fix a few error messages in auditctl
+- Fix handling of unsupported watches when reading rules from file in auditctl
+
 * Wed Aug 3 2005 Steve Grubb <sgrubb@redhat.com> 1.0.1-1
 - Add check for fields that cannot be used with syscall entry in auditctl
 - Make auditctl not tolerate duplicate rule and watches
