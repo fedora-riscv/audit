@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.0.2
+Version: 1.0.3
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -91,7 +91,7 @@ fi
 
 %postun
 if [ $1 -ge 1 ]; then
-   /sbin/service auditd condrestart > /dev/null 2>&1
+   /sbin/service auditd condrestart > /dev/null 2>&1 || :
 fi
 
 %files libs
@@ -121,6 +121,13 @@ fi
 
 
 %changelog
+* Mon Aug 22 2005 Steve Grubb <sgrubb@redhat.com> 1.0.3-1
+- adjust file perms of newly created log file in auditd
+- fix 2 memory leaks and an out of bounds access in auditd
+- fix case where auditd was closing netlink descriptor too early
+- fix watch rules not to take field arguments in auditctl
+- fix bug where inode, devmajor, devminor, exit, and success fields in auditctl rules were not getting the correct value stored
+
 * Mon Aug 8 2005 Steve Grubb <sgrubb@redhat.com> 1.0.2-1
 - Make sure error packets get eaten.
 - Fix a few error messages in auditctl
