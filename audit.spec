@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.0.3
+Version: 1.0.4
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -121,6 +121,13 @@ fi
 
 
 %changelog
+* Fri Sep 23 2005 Steve Grubb <sgrubb@redhat.com> 1.0.4-1
+- Make rate & backlog 32 bit unsigned int in auditctl
+- In auditctl, if -F arch is given with -t option, don't require list
+- Update auditd man page
+- Add size check to audit_send
+- Update message for audit_open failure when kernel doesn't support audit
+
 * Mon Aug 22 2005 Steve Grubb <sgrubb@redhat.com> 1.0.3-1
 - adjust file perms of newly created log file in auditd
 - fix 2 memory leaks and an out of bounds access in auditd
