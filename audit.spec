@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
 Version: 1.0.4
-Release: 1
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -121,6 +121,9 @@ fi
 
 
 %changelog
+* Fri Sep 23 2005 Steve Grubb <sgrubb@redhat.com> 1.0.4-2
+- Rebuilt
+
 * Fri Sep 23 2005 Steve Grubb <sgrubb@redhat.com> 1.0.4-1
 - Make rate & backlog 32 bit unsigned int in auditctl
 - In auditctl, if -F arch is given with -t option, don't require list
