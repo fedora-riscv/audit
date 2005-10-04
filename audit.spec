@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.0.4
-Release: 2
+Version: 1.0.5
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -112,6 +112,7 @@ fi
 %attr(750,root,root)  /sbin/auditctl
 %attr(750,root,root)  /sbin/auditd
 %attr(750,root,root) /sbin/ausearch
+%attr(750,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
@@ -121,8 +122,13 @@ fi
 
 
 %changelog
-* Fri Sep 23 2005 Steve Grubb <sgrubb@redhat.com> 1.0.4-2
-- Rebuilt
+* Tue Oct 4 2005 Steve Grubb <sgrubb@redhat.com> 1.0.5-1
+- ausearch can now search on SE Linux contexts
+- added aureport program to analyse logs
+- aureport added report option for each log's start and end time
+- increased random number selected for initial seq number in auditd
+- add new user space defines to libaudit.h
+- add add standard logging functions to libaudit
 
 * Fri Sep 23 2005 Steve Grubb <sgrubb@redhat.com> 1.0.4-1
 - Make rate & backlog 32 bit unsigned int in auditctl
