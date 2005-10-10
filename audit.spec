@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.0.5
+Version: 1.0.6
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -122,9 +122,17 @@ fi
 
 
 %changelog
+* Mon Oct 10 2005 Steve Grubb <sgrubb@redhat.com> 1.0.6-1
+- in aureport, add column labels to reports
+- added watch report to aureport
+- added interpreting mode to aureport
+- added user space avc standard message to libaudit
+- aureport & ausearch now use builtin log locations when bad config file
+- add email alert to low disk space warning actions in auditd
+
 * Tue Oct 4 2005 Steve Grubb <sgrubb@redhat.com> 1.0.5-1
 - ausearch can now search on SE Linux contexts
-- added aureport program to analyse logs
+- added aureport program to analyze logs
 - aureport added report option for each log's start and end time
 - increased random number selected for initial seq number in auditd
 - add new user space defines to libaudit.h
