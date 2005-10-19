@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.0.6
+Version: 1.0.7
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -16,7 +16,7 @@ Requires: chkconfig
 
 %description
 The audit package contains the user space utilities for
-storing and processing the audit records generate by
+storing and searching the audit records generate by
 the audit subsystem in the Linux 2.6 kernel.
 
 %package libs
@@ -109,8 +109,8 @@ fi
 %defattr(-,root,root,-)
 %doc README COPYING ChangeLog sample.rules contrib/capp.rules
 %attr(0644,root,root) %{_mandir}/man8/*
-%attr(750,root,root)  /sbin/auditctl
-%attr(750,root,root)  /sbin/auditd
+%attr(750,root,root) /sbin/auditctl
+%attr(750,root,root) /sbin/auditd
 %attr(750,root,root) /sbin/ausearch
 %attr(750,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
@@ -122,6 +122,11 @@ fi
 
 
 %changelog
+* Wed Oct 19 2005 Steve Grubb <sgrubb@redhat.com> 1.0.7-1
+- Update reports
+- Add new message types
+- Bug fixes
+
 * Mon Oct 10 2005 Steve Grubb <sgrubb@redhat.com> 1.0.6-1
 - in aureport, add column labels to reports
 - added watch report to aureport
