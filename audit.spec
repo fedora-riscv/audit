@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.0.7
+Version: 1.0.8
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -122,6 +122,14 @@ fi
 
 
 %changelog
+* Mon Oct 24 2005 Steve Grubb <sgrubb@redhat.com> 1.0.8-1
+- Update man pages
+- Add email alert for admin_space_left in auditd
+- Aureport cleanups
+- Add anomaly & response to anomaly reports to aureport
+- Summary report runs by default in aureport
+- Updated syscall number tables
+
 * Wed Oct 19 2005 Steve Grubb <sgrubb@redhat.com> 1.0.7-1
 - Update reports
 - Add new message types
