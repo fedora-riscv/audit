@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.0.8
+Version: 1.0.9
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -122,6 +122,13 @@ fi
 
 
 %changelog
+* Wed Nov 2 2005 Steve Grubb <sgrubb@redhat.com> 1.0.9-1
+- Updated message types that auditd recognizes
+- Added a couple more message types
+- Added new standard logging format function
+- Update default config
+- Make ausearch -m take a list of message types
+
 * Mon Oct 24 2005 Steve Grubb <sgrubb@redhat.com> 1.0.8-1
 - Update man pages
 - Add email alert for admin_space_left in auditd
