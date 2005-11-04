@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.0.9
+Version: 1.0.10
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -107,7 +107,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc README COPYING ChangeLog sample.rules contrib/capp.rules
+%doc README COPYING ChangeLog sample.rules contrib/capp.rules init.d/auditd.cron
 %attr(0644,root,root) %{_mandir}/man8/*
 %attr(750,root,root) /sbin/auditctl
 %attr(750,root,root) /sbin/auditd
@@ -122,6 +122,14 @@ fi
 
 
 %changelog
+* Fri Nov 4 2005 Steve Grubb <sgrubb@redhat.com> 1.0.10-1
+- Add --failed/success flags to aureport to select specific events for reports
+- Add --summary to get totals of reported objects
+- Add ability to force log rotation by sending sigusr1 to auditd
+- Add -i flag to auditctl to ignore errors when reading rules from a file
+- Reformat aureports so date & time are always given
+- Add cron script for log rotation to docs
+
 * Wed Nov 2 2005 Steve Grubb <sgrubb@redhat.com> 1.0.9-1
 - Updated message types that auditd recognizes
 - Added a couple more message types
