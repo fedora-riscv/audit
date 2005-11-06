@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.0.10
+Version: 1.0.11
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -122,6 +122,13 @@ fi
 
 
 %changelog
+* Sun Nov 6 2005 Steve Grubb <sgrubb@redhat.com> 1.0.11-1
+- Fix memory leaks in aureport & ausearch
+- Fix auditd reconfig to change mail accts, too
+- Fix stray pointer in sorting of aureport
+- Added new message type
+- Add results to all DAEMON messages
+
 * Fri Nov 4 2005 Steve Grubb <sgrubb@redhat.com> 1.0.10-1
 - Add --failed/success flags to aureport to select specific events for reports
 - Add --summary to get totals of reported objects
