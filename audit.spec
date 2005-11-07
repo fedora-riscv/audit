@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.0.11
+Version: 1.0.12
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -122,6 +122,10 @@ fi
 
 
 %changelog
+* Mon Nov 7 2005 Steve Grubb <sgrubb@redhat.com> 1.0.12-1
+- Add 2 more summary reports
+- Add 2 more message types
+
 * Sun Nov 6 2005 Steve Grubb <sgrubb@redhat.com> 1.0.11-1
 - Fix memory leaks in aureport & ausearch
 - Fix auditd reconfig to change mail accts, too
