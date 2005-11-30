@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.1
+Version: 1.1.1
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -40,13 +40,24 @@ The audit-libs-devel package contains the static libraries and header
 files needed for developing applications that need to use the audit 
 framework libraries.
 
+%package libs-python
+Summary: Python bindings for libaudit
+License: LGPL
+Group: Development/Libraries
+Requires: %{name}-libs = %{version}-%{release}
+Requires: glibc-kernheaders >= 2.4-9.1.95
+
+%description libs-python
+The audit-libs-python package contains the bindings so that libaudit
+can be used by python.
+
 %prep
 %setup -q
 
 %build
 autoreconf -fv --install
 export CFLAGS="$RPM_OPT_FLAGS"
-./configure --sbindir=/sbin --mandir=%{_mandir} --libdir=/%{_lib}
+%configure --sbindir=/sbin --libdir=/%{_lib}
 make
 
 %install
@@ -71,6 +82,8 @@ cd $curdir
 # Remove these items so they don't get picked up.
 rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.so
 rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.la
+rm -f $RPM_BUILD_ROOT/%{_libdir}/python2.4/site-packages/_audit.a
+rm -f $RPM_BUILD_ROOT/%{_libdir}/python2.4/site-packages/_audit.la
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -105,6 +118,11 @@ fi
 %{_includedir}/libaudit.h
 %{_mandir}/man3/*
 
+%files libs-python
+%defattr(-,root,root)
+%{_libdir}/python2.4/site-packages/_audit.so
+/usr/lib/python2.4/site-packages/audit.py*
+
 %files
 %defattr(-,root,root,-)
 %doc  README COPYING ChangeLog sample.rules contrib/capp.rules contrib/lspp.rules init.d/auditd.cron
@@ -123,6 +141,15 @@ fi
 
 
 %changelog
+* Wed Nov 30 2005 Steve Grubb <sgrubb@redhat.com> 1.1.1-1
+- Add support for alpha processors
+- Update the audisp code
+- Add locale code in ausearch and aureport
+- Add new rule operator patch
+- Add exclude filter patch
+- Cleanup make files
+- Add python bindings
+
 * Wed Nov 9 2005 Steve Grubb <sgrubb@redhat.com> 1.1-1
 - Add initial version of audisp. Just a placeholder at this point
 - Remove -t from auditctl
