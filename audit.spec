@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.1.1
+Version: 1.1.2
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -141,6 +141,9 @@ fi
 
 
 %changelog
+* Thu Dec 5 2005 Steve Grubb <sgrubb@redhat.com> 1.1.2-1
+- Add more message types
+
 * Wed Nov 30 2005 Steve Grubb <sgrubb@redhat.com> 1.1.1-1
 - Add support for alpha processors
 - Update the audisp code
