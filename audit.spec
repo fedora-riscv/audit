@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
 Version: 1.1.3
-Release: 1
+Release: 1.1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -146,6 +146,9 @@ fi
 
 
 %changelog
+* Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> - 1.1.3-1.1
+- rebuilt for new gcc4.1 snapshot and glibc changes
+
 * Thu Jan 5 2006 Steve Grubb <sgrubb@redhat.com> 1.1.3-1
 - Add timestamp to daemon_config messages (#174865)
 - Add error checking of year for aureport & ausearh
