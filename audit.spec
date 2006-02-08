@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.1.3
-Release: 1.1
+Version: 1.1.4
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -146,12 +146,24 @@ fi
 
 
 %changelog
+* Wed Feb 8 2006 Steve Grubb <sgrubb@redhat.com> 1.1.4-1
+- Fix bug in autrace where it didn't run on kernels without file watch support
+- Add syslog message to auditd saying what program was started for dispatcher
+- Remove audit_send_user from public api
+- Fix bug in USER_LOGIN messages where ausearch does not translate
+  msg='uid=500: into acct name (#178102).
+- Change comm with dispatcher to socketpair from pipe
+- Change auditd to use custom daemonize to avoid race in init scripts
+- Update error message when deleting a rule that doesn't exist (#176239)
+- Call shutdown_dispatcher when auditd stops
+- Add new logging function audit_log_semanage_message
+
 * Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> - 1.1.3-1.1
 - rebuilt for new gcc4.1 snapshot and glibc changes
 
 * Thu Jan 5 2006 Steve Grubb <sgrubb@redhat.com> 1.1.3-1
 - Add timestamp to daemon_config messages (#174865)
-- Add error checking of year for aureport & ausearh
+- Add error checking of year for aureport & ausearch
 - Treat af_unix sockets as files for searching and reporting
 - Update capp & lspp rules to combine syscalls for higher performance
 - Adjusted the chkconfig line for auditd to start a little earlier
