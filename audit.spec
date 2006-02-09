@@ -1,12 +1,13 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
 Version: 1.1.4
-Release: 1
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 Patch1: audit-1.1.3-initscript-disabled.patch
+Patch2: audit-1.1.4-semanage.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig
 BuildRequires: glibc-kernheaders >= 2.4-9.1.95
@@ -56,6 +57,7 @@ can be used by python.
 %setup -q
 # When in production, uncomment this so the patch is applied
 #%patch1 -p1
+%patch2 -p1
 
 %build
 autoreconf -fv --install
@@ -146,6 +148,9 @@ fi
 
 
 %changelog
+* Thu Feb 9 2006 Steve Grubb <sgrubb@redhat.com> 1.1.4-2
+- Change audit_log_semanage_message to take new params.
+
 * Wed Feb 8 2006 Steve Grubb <sgrubb@redhat.com> 1.1.4-1
 - Fix bug in autrace where it didn't run on kernels without file watch support
 - Add syslog message to auditd saying what program was started for dispatcher
