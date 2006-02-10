@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
 Version: 1.1.4
-Release: 4
+Release: 5
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -148,7 +148,7 @@ fi
 
 
 %changelog
-* Fri Feb 10 2006 Steve Grubb <sgrubb@redhat.com> 1.1.4-4
+* Fri Feb 10 2006 Steve Grubb <sgrubb@redhat.com> 1.1.4-5
 - Change audit_log_semanage_message to check strlen as well as NULL.
 
 * Thu Feb 9 2006 Steve Grubb <sgrubb@redhat.com> 1.1.4-3
