@@ -1,13 +1,12 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.1.4
-Release: 5.1
+Version: 1.1.5
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 Patch1: audit-1.1.3-initscript-disabled.patch
-Patch2: audit-1.1.4-semanage.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig
 BuildRequires: glibc-kernheaders >= 2.4-9.1.95
@@ -57,7 +56,6 @@ can be used by python.
 %setup -q
 # When in production, uncomment this so the patch is applied
 #%patch1 -p1
-%patch2 -p1
 
 %build
 autoreconf -fv --install
@@ -148,6 +146,15 @@ fi
 
 
 %changelog
+* Wed Mar 6 2006 Steve Grubb <sgrubb@redhat.com> 1.1.5-1
+- Changed audit_log_semanage_message to take new params
+- In aureport, add class between syscall and permission in avc report
+- Fix bug where fsync is called in debug mode
+- Add optional support for tty in SYSCALL records for ausearch/aureport
+- Reinstate legacy rule operator support
+- Add man pages
+- Auditd ignore most signals
+
 * Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 1.1.4-5.1
 - bump again for double-long bug on ppc(64)
 
