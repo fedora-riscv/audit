@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.1.5
+Version: 1.1.6
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -8,7 +8,7 @@ URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 Patch1: audit-1.1.3-initscript-disabled.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildRequires: libtool swig
+BuildRequires: libtool swig python-devel
 BuildRequires: glibc-kernheaders >= 2.4-9.1.95
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
@@ -77,14 +77,19 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}
 install -m 0644 lib/libaudit.h $RPM_BUILD_ROOT/%{_includedir}
 # This winds up in the wrong place when libtool is involved
 mv $RPM_BUILD_ROOT/%{_lib}/libaudit.a $RPM_BUILD_ROOT%{_libdir}
+mv $RPM_BUILD_ROOT/%{_lib}/libauparse.a $RPM_BUILD_ROOT%{_libdir}
 curdir=`pwd`
 cd $RPM_BUILD_ROOT/%{_libdir}
 LIBNAME=`basename \`ls $RPM_BUILD_ROOT/%{_lib}/libaudit.so.*.*.*\``
 ln -s ../../%{_lib}/$LIBNAME libaudit.so
+LIBNAME=`basename \`ls $RPM_BUILD_ROOT/%{_lib}/libauparse.so.*.*.*\``
+ln -s ../../%{_lib}/$LIBNAME libauparse.so
 cd $curdir
 # Remove these items so they don't get picked up.
 rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.so
+rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.so
 rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.la
+rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.la
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python2.4/site-packages/_audit.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python2.4/site-packages/_audit.la
 # Temp remove this file
@@ -115,11 +120,14 @@ fi
 %files libs
 %defattr(-,root,root)
 %attr(755,root,root) /%{_lib}/libaudit.*
+%attr(755,root,root) /%{_lib}/libauparse.*
 
 %files libs-devel
 %defattr(-,root,root)
 %{_libdir}/libaudit.a
+%{_libdir}/libauparse.a
 %{_libdir}/libaudit.so
+%{_libdir}/libauparse.so
 %{_includedir}/libaudit.h
 %{_mandir}/man3/*
 
@@ -146,6 +154,11 @@ fi
 
 
 %changelog
+* Thu Apr 6 2006 Steve Grubb <sgrubb@redhat.com> 1.1.6-1
+- New message types
+- Support new rule format found in 2.6.17 and later kernels
+- Add support for audit by role, clearance, type, sensitivity
+
 * Wed Mar 6 2006 Steve Grubb <sgrubb@redhat.com> 1.1.5-1
 - Changed audit_log_semanage_message to take new params
 - In aureport, add class between syscall and permission in avc report
