@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.1.6
+Version: 1.2
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -154,6 +154,9 @@ fi
 
 
 %changelog
+* Fri Apr 7 2006 Steve Grubb <sgrubb@redhat.com> 1.2-1
+- Add support for new file system auditing kernel subsystem
+
 * Thu Apr 6 2006 Steve Grubb <sgrubb@redhat.com> 1.1.6-1
 - New message types
 - Support new rule format found in 2.6.17 and later kernels
