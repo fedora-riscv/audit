@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.2
+Version: 1.2.1
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -154,6 +154,14 @@ fi
 
 
 %changelog
+* Sun Apr 16 2006 Steve Grubb <sgrubb@redhat.com> 1.2.1-1
+- New message type for trusted apps
+- Add new keywords today, yesterday, now for ausearch and aureport
+- Make audit_log_user_avc_message really send to syslog on error
+- Updated syscall tables in auditctl
+- Deprecated the 'possible' action for syscall rules in auditctl
+- Update watch code to use file syscalls instead of 'all' in auditctl
+
 * Fri Apr 7 2006 Steve Grubb <sgrubb@redhat.com> 1.2-1
 - Add support for new file system auditing kernel subsystem
 
