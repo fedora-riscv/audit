@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
 Version: 1.2.1
-Release: 1
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -9,7 +9,7 @@ Source0: %{name}-%{version}.tar.gz
 Patch1: audit-1.1.3-initscript-disabled.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
-BuildRequires: glibc-kernheaders >= 2.4-9.1.95
+BuildRequires: kernel-headers >= 2.4-9.1.95
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
@@ -154,6 +154,9 @@ fi
 
 
 %changelog
+* Wed Apr 25 2006 David Woodhouse <dwmw2@redhat.com> 1.2.1-2
+- Require kernel-headers, not glibc-kernheaders
+
 * Sun Apr 16 2006 Steve Grubb <sgrubb@redhat.com> 1.2.1-1
 - New message type for trusted apps
 - Add new keywords today, yesterday, now for ausearch and aureport
