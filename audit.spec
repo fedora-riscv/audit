@@ -8,7 +8,7 @@ URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 Patch1: audit-1.1.3-initscript-disabled.patch
 Patch2: audit-1.2.1-include.patch
-Patch3: audit-1.2-1-headerabuse.patch
+Patch3: audit-1.2-1-header-abuse.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
 BuildRequires: kernel-headers >= 2.4-9.1.95
