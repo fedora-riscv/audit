@@ -7,6 +7,8 @@ Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 Patch1: audit-1.1.3-initscript-disabled.patch
+Patch2: audit-1.2.1-include.patch
+Patch3: audit-1.2-1-headerabuse.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
 BuildRequires: kernel-headers >= 2.4-9.1.95
@@ -34,7 +36,7 @@ Summary: Header files and static library for libaudit
 License: LGPL
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
-Requires: glibc-kernheaders >= 2.4-9.1.95
+Requires: kernel-headers >= 2.6.16
 
 %description libs-devel
 The audit-libs-devel package contains the static libraries and header 
@@ -46,7 +48,7 @@ Summary: Python bindings for libaudit
 License: LGPL
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
-Requires: glibc-kernheaders >= 2.4-9.1.95
+Requires: kernel-headers >= 2.6.16
 
 %description libs-python
 The audit-libs-python package contains the bindings so that libaudit
@@ -56,6 +58,8 @@ can be used by python.
 %setup -q
 # When in production, uncomment this so the patch is applied
 #%patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
 autoreconf -fv --install
@@ -156,6 +160,8 @@ fi
 %changelog
 * Wed Apr 25 2006 David Woodhouse <dwmw2@redhat.com> 1.2.1-2
 - Require kernel-headers, not glibc-kernheaders
+- Fix redefinition of audit_rule_data with new kernel headers
+- Remove abuse of __KERNEL__ in lookup_table.c
 
 * Sun Apr 16 2006 Steve Grubb <sgrubb@redhat.com> 1.2.1-1
 - New message type for trusted apps
