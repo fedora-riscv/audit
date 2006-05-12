@@ -1,17 +1,14 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.2.1
-Release: 2
+Version: 1.2.2
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
-Patch1: audit-1.1.3-initscript-disabled.patch
-Patch2: audit-1.2.1-include.patch
-Patch3: audit-1.2.1-header-abuse.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
-BuildRequires: kernel-headers >= 2.4-9.1.95
+BuildRequires: glibc-kernheaders >= 3.0-14
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
@@ -36,7 +33,7 @@ Summary: Header files and static library for libaudit
 License: LGPL
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
-Requires: kernel-headers >= 2.6.16
+Requires: glibc-kernheaders >= 2.4-9.1.95
 
 %description libs-devel
 The audit-libs-devel package contains the static libraries and header 
@@ -48,7 +45,7 @@ Summary: Python bindings for libaudit
 License: LGPL
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
-Requires: kernel-headers >= 2.6.16
+Requires: glibc-kernheaders >= 2.4-9.1.95
 
 %description libs-python
 The audit-libs-python package contains the bindings so that libaudit
@@ -56,10 +53,6 @@ can be used by python.
 
 %prep
 %setup -q
-# When in production, uncomment this so the patch is applied
-#%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 %build
 autoreconf -fv --install
@@ -96,8 +89,6 @@ rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.la
 rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.la
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python2.4/site-packages/_audit.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python2.4/site-packages/_audit.la
-# Temp remove this file
-rm -f $RPM_BUILD_ROOT/sbin/audispd
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -106,6 +97,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add auditd
+if [ -f /etc/auditd.conf ]; then
+   mv /etc/auditd.conf /etc/audit/auditd.conf
+fi
+if [ -f /etc/audit.rules ]; then
+   mv /etc/audit.rules /etc/audit/audit.rules
+fi
 
 %preun
 if [ $1 -eq 0 ]; then
@@ -149,15 +146,26 @@ fi
 %attr(750,root,root) /sbin/ausearch
 %attr(750,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
-#%attr(750,root,root) /sbin/audispd
+%attr(750,root,root) /sbin/audispd
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
-%config(noreplace) %attr(640,root,root) /etc/auditd.conf
-%config(noreplace) %attr(640,root,root) /etc/audit.rules
+%attr(755,root,root) %dir /etc/audit
+%config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
+%config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 
 %changelog
+* Fri May 12 2006 Steve Grubb <sgrubb@redhat.com> 1.2.2-1
+- Updates for new glibc-kernheaders
+- Change auditctl to collect list of rules then delete them on -D
+- Update capp.rules and lspp.rules to comment out rules for the possible list
+- Add new message types
+- Support sigusr1 sender identity of newer kernels
+- Add support for ppid in auditctl and ausearch
+- fix auditctl to trim the '/' from watches
+- Move audit daemon config files to /etc/audit for better SE Linux protection
+
 * Wed Apr 25 2006 David Woodhouse <dwmw2@redhat.com> 1.2.1-2
 - Require kernel-headers, not glibc-kernheaders
 - Fix redefinition of audit_rule_data with new kernel headers
@@ -188,15 +196,6 @@ fi
 - Add man pages
 - Auditd ignore most signals
 
-* Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 1.1.4-5.1
-- bump again for double-long bug on ppc(64)
-
-* Fri Feb 10 2006 Steve Grubb <sgrubb@redhat.com> 1.1.4-5
-- Change audit_log_semanage_message to check strlen as well as NULL.
-
-* Thu Feb 9 2006 Steve Grubb <sgrubb@redhat.com> 1.1.4-3
-- Change audit_log_semanage_message to take new params.
-
 * Wed Feb 8 2006 Steve Grubb <sgrubb@redhat.com> 1.1.4-1
 - Fix bug in autrace where it didn't run on kernels without file watch support
 - Add syslog message to auditd saying what program was started for dispatcher
@@ -208,9 +207,6 @@ fi
 - Update error message when deleting a rule that doesn't exist (#176239)
 - Call shutdown_dispatcher when auditd stops
 - Add new logging function audit_log_semanage_message
-
-* Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> - 1.1.3-1.1
-- rebuilt for new gcc4.1 snapshot and glibc changes
 
 * Thu Jan 5 2006 Steve Grubb <sgrubb@redhat.com> 1.1.3-1
 - Add timestamp to daemon_config messages (#174865)
