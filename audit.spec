@@ -149,7 +149,7 @@ fi
 %attr(750,root,root) /sbin/audispd
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
-%attr(755,root,root) %dir /etc/audit
+%attr(750,root,root) %dir /etc/audit
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
