@@ -1,14 +1,14 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
 Version: 1.2.2
-Release: 1
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
-BuildRequires: glibc-kernheaders >= 3.0-14
+BuildRequires: kernel-headers >= 2.6.16
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
@@ -33,7 +33,7 @@ Summary: Header files and static library for libaudit
 License: LGPL
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
-Requires: glibc-kernheaders >= 2.4-9.1.95
+Requires: kernel-headers >= 2.6.16
 
 %description libs-devel
 The audit-libs-devel package contains the static libraries and header 
@@ -45,7 +45,7 @@ Summary: Python bindings for libaudit
 License: LGPL
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
-Requires: glibc-kernheaders >= 2.4-9.1.95
+Requires: kernel-headers >= 2.6.16
 
 %description libs-python
 The audit-libs-python package contains the bindings so that libaudit
@@ -156,6 +156,9 @@ fi
 
 
 %changelog
+* Tue May 16 2006 David Woodhouse <dwmw2@redhat.com> 1.2.2-2
+- Require kernel-headers, not glibc-kernheaders. Again.
+
 * Fri May 12 2006 Steve Grubb <sgrubb@redhat.com> 1.2.2-1
 - Updates for new glibc-kernheaders
 - Change auditctl to collect list of rules then delete them on -D
