@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
-Version: 1.2.3
+Version: 1.2.4
 Release: 1
 License: GPL
 Group: System Environment/Daemons
@@ -125,6 +125,7 @@ fi
 %defattr(-,root,root)
 %attr(755,root,root) /%{_lib}/libaudit.*
 %attr(755,root,root) /%{_lib}/libauparse.*
+%config(noreplace) %attr(640,root,root) /etc/libaudit.conf
 
 %files libs-devel
 %defattr(-,root,root)
@@ -159,6 +160,16 @@ fi
 
 
 %changelog
+* Fri Jun 30 2006 Steve Grubb <sgrubb@redhat.com> 1.2.4-1
+- Add support for the new filter key
+- Update syscall tables for 2.6.17
+- Add audit failure query function
+- Switch out gethostbyname call with getaddrinfo
+- Add audit by obj capability for 2.6.18 kernel
+- Ausearch & aureport now fail if no args to -te
+- New auditd.conf option to choose blocking/non-blocking dispatcher comm
+- Ausearch improved search by label
+
 * Fri May 25 2006 Steve Grubb <sgrubb@redhat.com> 1.2.3-1
 - Apply patch to ensure watches only associate with exit filter
 - Apply patch to correctly show new operators when new listing format is used
