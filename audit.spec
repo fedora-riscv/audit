@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing.
 Name: audit
 Version: 1.2.4
-Release: 1
+Release: 1.1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -160,6 +160,9 @@ fi
 
 
 %changelog
+* Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - 1.2.4-1.1
+- rebuild
+
 * Fri Jun 30 2006 Steve Grubb <sgrubb@redhat.com> 1.2.4-1
 - Add support for the new filter key
 - Update syscall tables for 2.6.17
