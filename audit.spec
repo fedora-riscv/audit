@@ -1,14 +1,14 @@
-Summary: User space tools for 2.6 kernel auditing.
+Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.2.4
-Release: 1.1
+Version: 1.2.5
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
-BuildRequires: kernel-headers >= 2.6.16
+BuildRequires: kernel-headers >= 2.6.17
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
@@ -33,7 +33,7 @@ Summary: Header files and static library for libaudit
 License: LGPL
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
-Requires: kernel-headers >= 2.6.16
+Requires: kernel-headers >= 2.6.17
 
 %description libs-devel
 The audit-libs-devel package contains the static libraries and header 
@@ -45,7 +45,7 @@ Summary: Python bindings for libaudit
 License: LGPL
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
-Requires: kernel-headers >= 2.6.16
+Requires: kernel-headers >= 2.6.17
 
 %description libs-python
 The audit-libs-python package contains the bindings so that libaudit
@@ -65,13 +65,11 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{sbin,etc/{sysconfig,rc.d/init.d}}
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man8
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
+mkdir -p $RPM_BUILD_ROOT/usr/{lib,lib32}/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/log/audit
 make DESTDIR=$RPM_BUILD_ROOT install
 
-mkdir -p $RPM_BUILD_ROOT/%{_includedir}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}
-# We manually install this since Makefile doesn't
-install -m 0644 lib/libaudit.h $RPM_BUILD_ROOT/%{_includedir}
 # This winds up in the wrong place when libtool is involved
 mv $RPM_BUILD_ROOT/%{_lib}/libaudit.a $RPM_BUILD_ROOT%{_libdir}
 mv $RPM_BUILD_ROOT/%{_lib}/libauparse.a $RPM_BUILD_ROOT%{_libdir}
@@ -90,9 +88,6 @@ rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.la
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python2.4/site-packages/_audit.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python2.4/site-packages/_audit.la
 
-# Temp remove this file
-rm -f $RPM_BUILD_ROOT/sbin/audispd
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -105,6 +100,14 @@ if [ -f /etc/auditd.conf ]; then
 fi
 if [ -f /etc/audit.rules ]; then
    mv /etc/audit.rules /etc/audit/audit.rules
+fi
+if [ -f /etc/audit/auditd.conf ]; then
+   tmp=`mktemp /etc/audit/auditd-post.XXXXXX`
+   if [ -n $tmp ]; then
+      sed 's|#dispatcher|dispatcher|g' /etc/audit/auditd.conf > $tmp && \
+      cat $tmp > /etc/audit/auditd.conf
+      rm -f $tmp
+   fi
 fi
 
 %preun
@@ -150,16 +153,23 @@ fi
 %attr(750,root,root) /sbin/ausearch
 %attr(750,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
-#%attr(750,root,root) /sbin/audispd
+%attr(750,root,root) /sbin/audispd
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
+%attr(750,root,root) %dir /usr/lib/audit
+%attr(750,root,root) %dir /usr/lib32/audit
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
+/usr/lib/python2.4/site-packages/AuditMsg.py*
 
 
 %changelog
+* Thu Jul 13 2006 Steve Grubb <sgrubb@redhat.com> 1.2.5-1
+- Switch out dispatcher
+- Fix bug upgrading rule types
+
 * Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - 1.2.4-1.1
 - rebuild
 
