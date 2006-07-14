@@ -1,11 +1,13 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.2.5
-Release: 1
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
+patch: audit-setroubleshoot.patch
+
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.17
@@ -53,6 +55,7 @@ can be used by python.
 
 %prep
 %setup -q
+%patch -p1 -b setroubleshoot
 
 %build
 autoreconf -fv --install
@@ -141,8 +144,10 @@ fi
 
 %files libs-python
 %defattr(-,root,root)
-%{_libdir}/python2.4/site-packages/_audit.so
-/usr/lib/python2.4/site-packages/audit.py*
+%attr(750,root,root) /sbin/audispd
+%{_libdir}/python*/site-packages/_audit.so
+/usr/lib/python*/site-packages/audit.py*
+/usr/lib/python*/site-packages/AuditMsg.py*
 
 %files
 %defattr(-,root,root,-)
@@ -153,7 +158,6 @@ fi
 %attr(750,root,root) /sbin/ausearch
 %attr(750,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
-%attr(750,root,root) /sbin/audispd
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
@@ -162,10 +166,11 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
-/usr/lib/python2.4/site-packages/AuditMsg.py*
-
 
 %changelog
+* Fri Jul 14 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-2
+- Fixes for setroubleshoot
+
 * Thu Jul 13 2006 Steve Grubb <sgrubb@redhat.com> 1.2.5-1
 - Switch out dispatcher
 - Fix bug upgrading rule types
