@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.2.5
-Release: 2
+Release: 3
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -55,7 +55,7 @@ can be used by python.
 
 %prep
 %setup -q
-%patch -p1 -b setroubleshoot
+%patch -p1 -b .setroubleshoot
 
 %build
 autoreconf -fv --install
@@ -168,6 +168,9 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Wed Jul 19 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-3
+- More fixes for setroubleshoot to handle failing plugin
+
 * Fri Jul 14 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-2
 - Fixes for setroubleshoot
 
