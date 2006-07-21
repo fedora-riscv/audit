@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.2.5
-Release: 3
+Release: 4
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -168,6 +168,9 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Fri Jul 21 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-4
+- Eliminate avc package from audisp
+
 * Wed Jul 19 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-3
 - More fixes for setroubleshoot to handle failing plugin
 
