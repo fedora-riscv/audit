@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.2.5
-Release: 4
+Release: 5
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -68,7 +68,7 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{sbin,etc/{sysconfig,rc.d/init.d}}
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man8
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
-mkdir -p $RPM_BUILD_ROOT/usr/{lib,lib32}/audit
+mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/log/audit
 make DESTDIR=$RPM_BUILD_ROOT install
 
@@ -161,13 +161,16 @@ fi
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
-%attr(750,root,root) %dir /usr/lib/audit
-%attr(750,root,root) %dir /usr/lib32/audit
+%attr(750,root,root) %dir %{_libdir}/audit
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Fri Jul 21 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-5
+- Fix dispatcher to handle sigchld
+- Fix library location for 64 bit
+
 * Fri Jul 21 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-4
 - Eliminate avc package from audisp
 
