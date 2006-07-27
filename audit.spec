@@ -15,6 +15,7 @@ BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
 Requires: chkconfig
+Prereq: coreutils
 
 %description
 The audit package contains the user space utilities for
@@ -170,6 +171,7 @@ fi
 * Fri Jul 21 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-5
 - Fix dispatcher to handle sigchld
 - Fix library location for 64 bit
+- Add Prereq
 
 * Fri Jul 21 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-4
 - Eliminate avc package from audisp
