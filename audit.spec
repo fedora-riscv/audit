@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.2.5
-Release: 5
+Release: 6
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -168,6 +168,9 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Wed Aug 2 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-6
+- Change audisp to use a named pipe
+
 * Fri Jul 21 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-5
 - Fix dispatcher to handle sigchld
 - Fix library location for 64 bit
