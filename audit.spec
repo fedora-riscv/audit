@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.2.5
-Release: 7
+Release: 8
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -168,6 +168,10 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Fri Aug 18 2006 Jesse Keating <jkeating@redhat.com> - 1.2.5-8
+- rebuilt with latest binutils to pick up 64K -z commonpagesize on ppc*
+  (#203001)
+
 * Wed Aug 8 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-7
 - Remove debug lines from dispatcher
 
