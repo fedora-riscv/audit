@@ -1,12 +1,11 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.2.5
-Release: 8
+Version: 1.2.6
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
-patch: audit-setroubleshoot.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
@@ -56,7 +55,6 @@ can be used by python.
 
 %prep
 %setup -q
-%patch -p1 -b .setroubleshoot
 
 %build
 autoreconf -fv --install
@@ -168,6 +166,14 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Sat Aug 26 2006 Steve Grubb <sgrubb@redhat.com> 1.2.6-1
+- Apply updates to dispatcher
+- Fix a couple bugs regarding MLS labels
+- Resurrect -p option
+- Tighten rules with exclude filter
+- Fix parsing issue which lead to segfault in some cases
+- Fix option parsing to ignore malformed lines
+
 * Fri Aug 18 2006 Jesse Keating <jkeating@redhat.com> - 1.2.5-8
 - rebuilt with latest binutils to pick up 64K -z commonpagesize on ppc*
   (#203001)
