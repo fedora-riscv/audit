@@ -1,12 +1,13 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.2.6
-Release: 2
+Release: 3
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 Patch1: audit-perms.patch
+Patch2: audit-events.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.17
@@ -56,6 +57,7 @@ can be used by python.
 %prep
 %setup -q
 %patch1 -p1
+%patch2 -p1
 
 %build
 autoreconf -fv --install
@@ -167,6 +169,9 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Wed Aug 30 2006 Steve Grubb <sgrubb@redhat.com> 1.2.6-3
+- Rename audit event socket
+
 * Mon Aug 28 2006 Steve Grubb <sgrubb@redhat.com> 1.2.6-2
 - Another minor update to auditctl -p option
 
