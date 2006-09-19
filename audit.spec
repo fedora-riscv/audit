@@ -1,13 +1,11 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.2.6
-Release: 3
+Version: 1.2.7
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
-Patch1: audit-perms.patch
-Patch2: audit-events.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.17
@@ -56,8 +54,6 @@ can be used by python.
 
 %prep
 %setup -q
-%patch1 -p1
-%patch2 -p1
 
 %build
 autoreconf -fv --install
@@ -169,6 +165,15 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Mon Sep 18 2006 Steve Grubb <sgrubb@redhat.com> 1.2.7-1
+- Fix logging messages to use addr if passed.
+- Apply patches from Tony Jones correcting no kernel support messages
+- Updated syscall tables for 2.6.18 kernel
+- Remove deprecated functions: audit_log, audit_log_avc, audit_log_if_enabled
+- Disallow syscall auditing on exclude list
+- Improve time handling in ausearch and aureport (#191394)
+- Attempt to reconstruct full path from relative for searching
+
 * Wed Aug 30 2006 Steve Grubb <sgrubb@redhat.com> 1.2.6-3
 - Rename audit event socket
 
