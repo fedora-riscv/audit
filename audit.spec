@@ -1,14 +1,14 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.2.7
-Release: 2
+Version: 1.2.8
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
-BuildRequires: kernel-headers >= 2.6.17
+BuildRequires: kernel-headers >= 2.6.18
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
@@ -34,7 +34,7 @@ Summary: Header files and static library for libaudit
 License: LGPL
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
-Requires: kernel-headers >= 2.6.17
+Requires: kernel-headers >= 2.6.18
 
 %description libs-devel
 The audit-libs-devel package contains the static libraries and header 
@@ -46,7 +46,7 @@ Summary: Python bindings for libaudit
 License: LGPL
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
-Requires: kernel-headers >= 2.6.17
+Requires: kernel-headers >= 2.6.18
 
 %description libs-python
 The audit-libs-python package contains the bindings so that libaudit
@@ -165,7 +165,17 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
-* Mon Sep 18 2006 Steve Grubb <sgrubb@redhat.com> 1.2.7-1
+* Fri Sep 29 2006 Steve Grubb <sgrubb@redhat.com> 1.2.8-1
+- Add dist tag and bump version (#208532)
+- Make internal auditd buffers bigger for context info
+- Correct address resolving of hostname in logging functions
+- Do not allow multiple msgtypes in same audit rule in auditctl (#207666)
+- Only =, != operators for arch & inode fields in auditctl (#206427)
+- Updated audit message type table
+- Remove watches from aureport since FS_WATCH is deprecated
+- Add audit_log_avc back temporarily (#208152)
+ 
+* Mon Sep 18 2006 Steve Grubb <sgrubb@redhat.com> 1.2.7-2
 - Fix logging messages to use addr if passed.
 - Apply patches from Tony Jones correcting no kernel support messages
 - Updated syscall tables for 2.6.18 kernel
