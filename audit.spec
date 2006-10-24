@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.2.8
+Version: 1.2.9
 Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
@@ -73,19 +73,19 @@ make DESTDIR=$RPM_BUILD_ROOT install
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}
 # This winds up in the wrong place when libtool is involved
 mv $RPM_BUILD_ROOT/%{_lib}/libaudit.a $RPM_BUILD_ROOT%{_libdir}
-mv $RPM_BUILD_ROOT/%{_lib}/libauparse.a $RPM_BUILD_ROOT%{_libdir}
+#mv $RPM_BUILD_ROOT/%{_lib}/libauparse.a $RPM_BUILD_ROOT%{_libdir}
 curdir=`pwd`
 cd $RPM_BUILD_ROOT/%{_libdir}
 LIBNAME=`basename \`ls $RPM_BUILD_ROOT/%{_lib}/libaudit.so.*.*.*\``
 ln -s ../../%{_lib}/$LIBNAME libaudit.so
-LIBNAME=`basename \`ls $RPM_BUILD_ROOT/%{_lib}/libauparse.so.*.*.*\``
-ln -s ../../%{_lib}/$LIBNAME libauparse.so
+#LIBNAME=`basename \`ls $RPM_BUILD_ROOT/%{_lib}/libauparse.so.*.*.*\``
+#ln -s ../../%{_lib}/$LIBNAME libauparse.so
 cd $curdir
 # Remove these items so they don't get picked up.
 rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.so
-rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.so
+#rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.so
 rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.la
-rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.la
+#rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.la
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python2.4/site-packages/_audit.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python2.4/site-packages/_audit.la
 
@@ -128,15 +128,15 @@ fi
 %files libs
 %defattr(-,root,root)
 %attr(755,root,root) /%{_lib}/libaudit.*
-%attr(755,root,root) /%{_lib}/libauparse.*
+#%attr(755,root,root) /%{_lib}/libauparse.*
 %config(noreplace) %attr(640,root,root) /etc/libaudit.conf
 
 %files libs-devel
 %defattr(-,root,root)
 %{_libdir}/libaudit.a
-%{_libdir}/libauparse.a
+#%{_libdir}/libauparse.a
 %{_libdir}/libaudit.so
-%{_libdir}/libauparse.so
+#%{_libdir}/libauparse.so
 %{_includedir}/libaudit.h
 %{_mandir}/man3/*
 
@@ -165,6 +165,17 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Tue Oct 24 2006 Steve Grubb <sgrubb@redhat.com> 1.2.9-1
+- In auditd if num_logs is zero, don't rotate on SIGUSR1 (#208834)
+- Fix some defines in libaudit.h
+- Some auditd config strings were not initialized in aureport (#211443)
+- Updated man pages
+- Add Netlabel event types to libaudit
+- Update aureports to current audit event types
+- Update autrace a little
+- Deprecated all the old audit_rule functions from public API
+- Drop auparse library for the moment
+
 * Fri Sep 29 2006 Steve Grubb <sgrubb@redhat.com> 1.2.8-1
 - Add dist tag and bump version (#208532)
 - Make internal auditd buffers bigger for context info
