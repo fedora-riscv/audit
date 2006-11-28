@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.2.9
+Version: 1.3
 Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
@@ -165,6 +165,20 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Tue Nov 28 2006 Steve Grubb <sgrubb@redhat.com> 1.3-1
+- ausearch & aureport implement uid/gid caching
+- In ausearch & aureport, extract addr when hostname is unknown
+- In ausearch & aureport, test audit log presence O_RDONLY
+- New ausearch/aureport time keywords: recent, this-week, this-month, this-year
+- Added --add & --delete option to aureport
+- Update res parsing in config change events
+- Increase the size on audit daemon buffers
+- Parse avc_path records in ausearch/aureport
+- ausearch has new output mode, raw, for extracting events
+- ausearch/aureport can now read stdin
+- Rework AVC processing in ausearch/aureport
+- Added long options to ausearch and aureport
+
 * Tue Oct 24 2006 Steve Grubb <sgrubb@redhat.com> 1.2.9-1
 - In auditd if num_logs is zero, don't rotate on SIGUSR1 (#208834)
 - Fix some defines in libaudit.h
