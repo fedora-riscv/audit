@@ -1,11 +1,12 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
+Patch1: audit-1.3.1-parse.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -54,6 +55,7 @@ can be used by python.
 
 %prep
 %setup -q
+%patch1 -p1
 
 %build
 autoreconf -fv --install
@@ -165,6 +167,9 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Thu Nov 30 2006 Steve Grubb <sgrubb@redhat.com> 1.3-2
+- Fix minor parsing problem and add new msg types
+
 * Tue Nov 28 2006 Steve Grubb <sgrubb@redhat.com> 1.3-1
 - ausearch & aureport implement uid/gid caching
 - In ausearch & aureport, extract addr when hostname is unknown
