@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -91,6 +91,9 @@ rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.la
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python2.4/site-packages/_audit.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python2.4/site-packages/_audit.la
 
+# On platforms with 32 & 64 bit libs, we need to coordinate the timestamp
+touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -167,6 +170,9 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Thu Nov 30 2006 Steve Grubb <sgrubb@redhat.com> 1.3-3
+- Fix timestamp for libaudit.conf (#218053)
+
 * Thu Nov 30 2006 Steve Grubb <sgrubb@redhat.com> 1.3-2
 - Fix minor parsing problem and add new msg types
 
