@@ -1,12 +1,11 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.3
-Release: 4%{?dist}
+Version: 1.3.1
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
-Patch1: audit-1.3.1-parse.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -55,7 +54,6 @@ can be used by python.
 
 %prep
 %setup -q
-%patch1 -p1
 
 %build
 autoreconf -fv --install
@@ -170,6 +168,11 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Sun Dec 10 2006 Steve Grubb <sgrubb@redhat.com> 1.3.1-1
+- Fix a couple parsing problems (#217952)
+- Add tgkill to S390* syscall tables (#218484)
+- Fix error messages in ausearch/aureport
+
 * Wed Dec  6 2006 Jeremy Katz <katzj@redhat.com> - 1.3-4
 - rebuild against python 2.5
 
