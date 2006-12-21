@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.3.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -146,9 +146,9 @@ fi
 %files libs-python
 %defattr(-,root,root)
 %attr(750,root,root) /sbin/audispd
-%{_libdir}/python*/site-packages/_audit.so
-/usr/lib/python*/site-packages/audit.py*
-/usr/lib/python*/site-packages/AuditMsg.py*
+%{_libdir}/python2.5/site-packages/_audit.so
+/usr/lib/python2.5/site-packages/audit.py*
+/usr/lib/python2.5/site-packages/AuditMsg.py*
 
 %files
 %defattr(-,root,root,-)
@@ -168,6 +168,9 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Sun Dec 10 2006 Steve Grubb <sgrubb@redhat.com> 1.3.1-2
+- rebuild again for python 2.5
+
 * Sun Dec 10 2006 Steve Grubb <sgrubb@redhat.com> 1.3.1-1
 - Fix a couple parsing problems (#217952)
 - Add tgkill to S390* syscall tables (#218484)
