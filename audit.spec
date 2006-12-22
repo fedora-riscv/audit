@@ -148,9 +148,9 @@ fi
 %files libs-python
 %defattr(-,root,root)
 %attr(750,root,root) /sbin/audispd
-%{_libdir}/python*/site-packages/_audit.so
-/usr/lib/python*/site-packages/audit.py*
-/usr/lib/python*/site-packages/AuditMsg.py*
+%{_libdir}/python?.?/site-packages/_audit.so
+/usr/lib/python?.?/site-packages/audit.py*
+/usr/lib/python?.?/site-packages/AuditMsg.py*
 
 %files
 %defattr(-,root,root,-)
@@ -158,8 +158,8 @@ fi
 %attr(0644,root,root) %{_mandir}/man8/*
 %attr(750,root,root) /sbin/auditctl
 %attr(750,root,root) /sbin/auditd
-%attr(750,root,root) /sbin/ausearch
-%attr(750,root,root) /sbin/aureport
+%attr(755,root,root) /sbin/ausearch
+%attr(755,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
