@@ -6,6 +6,7 @@ License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
+Patch1: audit-1.3.1-python.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -54,6 +55,7 @@ can be used by python.
 
 %prep
 %setup -q
+%patch1 -p1
 
 %build
 autoreconf -fv --install
