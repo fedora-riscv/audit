@@ -148,9 +148,9 @@ fi
 %files libs-python
 %defattr(-,root,root)
 %attr(750,root,root) /sbin/audispd
-%{_libdir}/python2.5/site-packages/_audit.so
-/usr/lib/python2.5/site-packages/audit.py*
-/usr/lib/python2.5/site-packages/AuditMsg.py*
+%{_libdir}/python*/site-packages/_audit.so
+/usr/lib/python*/site-packages/audit.py*
+/usr/lib/python*/site-packages/AuditMsg.py*
 
 %files
 %defattr(-,root,root,-)
