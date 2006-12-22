@@ -171,7 +171,7 @@ fi
 
 %changelog
 * Sun Dec 10 2006 Steve Grubb <sgrubb@redhat.com> 1.3.1-2
-- rebuild again for python 2.5
+- Make more adjustments for python 2.5
 
 * Sun Dec 10 2006 Steve Grubb <sgrubb@redhat.com> 1.3.1-1
 - Fix a couple parsing problems (#217952)
