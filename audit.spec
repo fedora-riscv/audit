@@ -1,12 +1,11 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.3.1
-Release: 2%{?dist}
+Version: 1.4
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
-Patch1: audit-1.3.1-python.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -55,7 +54,6 @@ can be used by python.
 
 %prep
 %setup -q
-%patch1 -p1
 
 %build
 autoreconf -fv --install
@@ -75,21 +73,23 @@ make DESTDIR=$RPM_BUILD_ROOT install
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}
 # This winds up in the wrong place when libtool is involved
 mv $RPM_BUILD_ROOT/%{_lib}/libaudit.a $RPM_BUILD_ROOT%{_libdir}
-#mv $RPM_BUILD_ROOT/%{_lib}/libauparse.a $RPM_BUILD_ROOT%{_libdir}
+mv $RPM_BUILD_ROOT/%{_lib}/libauparse.a $RPM_BUILD_ROOT%{_libdir}
 curdir=`pwd`
 cd $RPM_BUILD_ROOT/%{_libdir}
 LIBNAME=`basename \`ls $RPM_BUILD_ROOT/%{_lib}/libaudit.so.*.*.*\``
 ln -s ../../%{_lib}/$LIBNAME libaudit.so
-#LIBNAME=`basename \`ls $RPM_BUILD_ROOT/%{_lib}/libauparse.so.*.*.*\``
-#ln -s ../../%{_lib}/$LIBNAME libauparse.so
+LIBNAME=`basename \`ls $RPM_BUILD_ROOT/%{_lib}/libauparse.so.*.*.*\``
+ln -s ../../%{_lib}/$LIBNAME libauparse.so
 cd $curdir
 # Remove these items so they don't get picked up.
 rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.so
-#rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.so
+rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.so
 rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.la
-#rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.la
+rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.la
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_audit.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_audit.la
+rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_auparse.a
+rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_auparse.la
 
 # On platforms with 32 & 64 bit libs, we need to coordinate the timestamp
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
@@ -133,24 +133,28 @@ fi
 %files libs
 %defattr(-,root,root)
 %attr(755,root,root) /%{_lib}/libaudit.*
-#%attr(755,root,root) /%{_lib}/libauparse.*
+%attr(755,root,root) /%{_lib}/libauparse.*
 %config(noreplace) %attr(640,root,root) /etc/libaudit.conf
 
 %files libs-devel
 %defattr(-,root,root)
 %{_libdir}/libaudit.a
-#%{_libdir}/libauparse.a
+%{_libdir}/libauparse.a
 %{_libdir}/libaudit.so
-#%{_libdir}/libauparse.so
+%{_libdir}/libauparse.so
 %{_includedir}/libaudit.h
+%{_includedir}/auparse.h
+%{_includedir}/auparse-defs.h
 %{_mandir}/man3/*
 
 %files libs-python
 %defattr(-,root,root)
 %attr(750,root,root) /sbin/audispd
 %{_libdir}/python?.?/site-packages/_audit.so
+%{_libdir}/python?.?/site-packages/_auparse.so
 /usr/lib/python?.?/site-packages/audit.py*
 /usr/lib/python?.?/site-packages/AuditMsg.py*
+/usr/lib/python?.?/site-packages/auparse.py*
 
 %files
 %defattr(-,root,root,-)
@@ -170,6 +174,16 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Sun Feb 04 2007 Steve Grubb <sgrubb@redhat.com> 1.4-1
+- New report about authentication attempts
+- Updates for python 2.5
+- update autrace to have resource usage mode
+- update auditctl to support immutable config
+- added audit_log_user_command function to libaudit api
+- interpret capabilities
+- added audit event parsing library
+- updates for 2.6.20 kernel
+
 * Sun Dec 10 2006 Steve Grubb <sgrubb@redhat.com> 1.3.1-2
 - Make more adjustments for python 2.5
 
