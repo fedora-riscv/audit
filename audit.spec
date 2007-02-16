@@ -1,17 +1,18 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.4
+Version: 1.4.1
 Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
+Requires: %{name}-libs-python = %{version}-%{release}
 Requires: chkconfig
 Prereq: coreutils
 
@@ -174,6 +175,13 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Fri Feb 16 2007 Steve Grubb <sgrubb@redhat.com> 1.4.1-1
+- updated audit_rule_fieldpair_data to handle perm correctly (#226780)
+- Finished search options for audit parsing library
+- Fix ausearch -se to work correctly
+- Fix auditd init script for /usr on netdev (#228528)
+- Parse avc seperms better when there are more than one
+
 * Sun Feb 04 2007 Steve Grubb <sgrubb@redhat.com> 1.4-1
 - New report about authentication attempts
 - Updates for python 2.5
