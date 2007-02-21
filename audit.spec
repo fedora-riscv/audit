@@ -59,7 +59,7 @@ and libauparse can be used by python.
 %build
 autoreconf -fv --install
 %configure --sbindir=/sbin --libdir=/%{_lib}
-make %{?_smp_mflags}
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
