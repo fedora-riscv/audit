@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.4.2
+Version: 1.5
 Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
@@ -12,7 +12,6 @@ BuildRequires: kernel-headers >= 2.6.18
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
-Requires: %{name}-libs-python = %{version}-%{release}
 Requires: chkconfig
 Prereq: coreutils
 
@@ -63,7 +62,7 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{sbin,etc/{sysconfig,rc.d/init.d}}
+mkdir -p $RPM_BUILD_ROOT/{sbin,etc/{sysconfig,audisp.d,rc.d/init.d}}
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man8
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
@@ -153,27 +152,33 @@ fi
 %{_libdir}/python?.?/site-packages/_audit.so
 %{_libdir}/python?.?/site-packages/_auparse.so
 /usr/lib/python?.?/site-packages/audit.py*
-/usr/lib/python?.?/site-packages/AuditMsg.py*
 /usr/lib/python?.?/site-packages/auparse.py*
+/usr/lib/python?.?/site-packages/AuditMsg.py*
 
 %files
 %defattr(-,root,root,-)
-%doc  README COPYING ChangeLog sample.rules contrib/capp.rules contrib/lspp.rules contrib/skeleton.c init.d/auditd.cron
+%doc  README COPYING ChangeLog sample.rules contrib/capp.rules contrib/lspp.rules contrib/skeleton.c init.d/auditd.cron audisp/README-CONF_D audisp/README-PLUGINS_D
 %attr(0644,root,root) %{_mandir}/man8/*
 %attr(750,root,root) /sbin/auditctl
 %attr(750,root,root) /sbin/auditd
 %attr(755,root,root) /sbin/ausearch
 %attr(755,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
+%attr(750,root,root) %{_libexecdir}/*
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
+%attr(750,root,root) %dir /etc/audisp.d
 %attr(750,root,root) %dir %{_libdir}/audit
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
+%config(noreplace) %attr(640,root,root) /etc/audispd.conf
 
 %changelog
+* Tue Feb 20 2007 Steve Grubb <sgrubb@redhat.com> 1.5-1
+- NEW audit dispatcher program & plugin framework
+
 * Tue Feb 20 2007 Steve Grubb <sgrubb@redhat.com> 1.4.2-1
 - Add man pages
 - Reduce text relocations in parser library
