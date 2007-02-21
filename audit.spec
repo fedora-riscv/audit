@@ -7,7 +7,7 @@ Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: libtool swig python-devel
+BuildRequires: libtool swig python-devel pkgconfig
 BuildRequires: kernel-headers >= 2.6.18
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
