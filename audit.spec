@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.4.1
+Version: 1.4.2
 Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
@@ -51,16 +51,15 @@ Requires: kernel-headers >= 2.6.18
 
 %description libs-python
 The audit-libs-python package contains the bindings so that libaudit
-can be used by python.
+and libauparse can be used by python.
 
 %prep
 %setup -q
 
 %build
 autoreconf -fv --install
-export CFLAGS="$RPM_OPT_FLAGS"
 %configure --sbindir=/sbin --libdir=/%{_lib}
-make
+make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -175,6 +174,13 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Tue Feb 20 2007 Steve Grubb <sgrubb@redhat.com> 1.4.2-1
+- Add man pages
+- Reduce text relocations in parser library
+- Add -n option to auditd for no fork
+- Add exec option to space_left, admin_space_left, disk_full,
+  and disk_error - eg EXEC /usr/local/script
+
 * Fri Feb 16 2007 Steve Grubb <sgrubb@redhat.com> 1.4.1-1
 - updated audit_rule_fieldpair_data to handle perm correctly (#226780)
 - Finished search options for audit parsing library
