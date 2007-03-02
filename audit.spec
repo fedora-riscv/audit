@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -191,6 +191,9 @@ fi
 %doc %attr(640,root,root) /etc/audispd/policies.d/README-CONF_POLICIES_D
 
 %changelog
+* Fri Mar 2 2007 Steve Grubb <sgrubb@redhat.com> 1.5-2
+- rebuild
+
 * Fri Mar 2 2007 Steve Grubb <sgrubb@redhat.com> 1.5-1
 - NEW audit dispatcher program & plugin framework
 - Correct hidden variables in libauparse
