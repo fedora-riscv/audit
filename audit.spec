@@ -52,6 +52,14 @@ Requires: kernel-headers >= 2.6.18
 The audit-libs-python package contains the bindings so that libaudit
 and libauparse can be used by python.
 
+%package audispd-plugins
+Summary: Default plugins for the audit dispatcher
+License: LGPL
+Group: System Environment/Daemons
+
+%description audispd-plugins
+The audispd-plugins package contains plugins for the audit dispatcher.
+
 %prep
 %setup -q
 
@@ -153,31 +161,44 @@ fi
 %{_libdir}/python?.?/site-packages/_auparse.so
 /usr/lib/python?.?/site-packages/audit.py*
 /usr/lib/python?.?/site-packages/auparse.py*
-/usr/lib/python?.?/site-packages/AuditMsg.py*
+
+%files audispd-plugins
+%defattr(-,root,root)
+%{_libexecdir}/*
 
 %files
 %defattr(-,root,root,-)
-%doc  README COPYING ChangeLog sample.rules contrib/capp.rules contrib/lspp.rules contrib/skeleton.c init.d/auditd.cron audisp/README-CONF_D audisp/README-PLUGINS_D
+%doc  README COPYING ChangeLog sample.rules contrib/capp.rules contrib/nispom.rules contrib/lspp.rules contrib/skeleton.c init.d/auditd.cron
 %attr(0644,root,root) %{_mandir}/man8/*
+%attr(0644,root,root) %{_mandir}/man5/*
 %attr(750,root,root) /sbin/auditctl
 %attr(750,root,root) /sbin/auditd
 %attr(755,root,root) /sbin/ausearch
 %attr(755,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
-%attr(750,root,root) %{_libexecdir}/*
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
-%attr(750,root,root) %dir /etc/audisp.d
+%attr(750,root,root) %dir /etc/audispd
+%attr(750,root,root) %dir /etc/audispd/plugins.d
+%attr(750,root,root) %dir /etc/audispd/policies.d
 %attr(750,root,root) %dir %{_libdir}/audit
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
-%config(noreplace) %attr(640,root,root) /etc/audispd.conf
+%config(noreplace) %attr(640,root,root) /etc/audispd/audispd.conf
+%doc %attr(640,root,root) /etc/audispd/plugins.d/README-CONF_PLUGINS_D
+%doc %attr(640,root,root) /etc/audispd/policies.d/README-CONF_POLICIES_D
 
 %changelog
-* Tue Feb 20 2007 Steve Grubb <sgrubb@redhat.com> 1.5-1
+* Fri Mar 2 2007 Steve Grubb <sgrubb@redhat.com> 1.5-1
 - NEW audit dispatcher program & plugin framework
+- Correct hidden variables in libauparse
+- Added NISPOM sample rules
+- Verify accessibility of files passed in auparse_init
+- Fix bug in parser library interpreting socketcalls
+- Add support for stdio FILE pointer in auparse_init
+- Adjust init script to allow anyone to status auditd (#230626)
 
 * Tue Feb 20 2007 Steve Grubb <sgrubb@redhat.com> 1.4.2-1
 - Add man pages
