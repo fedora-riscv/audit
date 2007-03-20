@@ -1,7 +1,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.5
-Release: 2%{?dist}
+Version: 1.5.1
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -191,6 +191,15 @@ fi
 %doc %attr(640,root,root) /etc/audispd/policies.d/README-CONF_POLICIES_D
 
 %changelog
+* Tue Mar 20 2007 Steve Grubb <sgrubb@redhat.com> 1.5.1-1
+- Updated autrace to monitor *at syscalls
+- Add support in libaudit for AUDIT_BIT_TEST(^) and AUDIT_MASK_TEST (&)
+- Finish reworking auditd config parser
+- In auparse, interpret open, fcntl, and clone flags
+- In auparse, when interpreting execve record types, run args through unencode
+- Add support for OBJ_PID message type
+- Event dispatcher updates
+
 * Fri Mar 2 2007 Steve Grubb <sgrubb@redhat.com> 1.5-2
 - rebuild
 
