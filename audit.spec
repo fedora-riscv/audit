@@ -1,11 +1,12 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.5.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
+Patch1: audit-1.5.2-segfault.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: libtool swig python-devel pkgconfig
 BuildRequires: kernel-headers >= 2.6.18
@@ -46,7 +47,6 @@ Summary: Python bindings for libaudit
 License: LGPL
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
-Requires: kernel-headers >= 2.6.18
 
 %description libs-python
 The audit-libs-python package contains the bindings so that libaudit
@@ -62,6 +62,7 @@ The audispd-plugins package contains plugins for the audit dispatcher.
 
 %prep
 %setup -q
+%patch1 -p1
 
 %build
 autoreconf -fv --install
@@ -191,6 +192,10 @@ fi
 %doc %attr(640,root,root) /etc/audispd/policies.d/README-CONF_POLICIES_D
 
 %changelog
+* Thu Mar 29 2007 Steve Grubb <sgrubb@redhat.com> 1.5.1-2
+- Remove requires kernel-headers for python-libs
+- Apply patch to prevent segfaults on auditd reload
+
 * Tue Mar 20 2007 Steve Grubb <sgrubb@redhat.com> 1.5.1-1
 - Updated autrace to monitor *at syscalls
 - Add support in libaudit for AUDIT_BIT_TEST(^) and AUDIT_MASK_TEST (&)
