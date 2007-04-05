@@ -1,12 +1,11 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.5.1
-Release: 2%{?dist}
+Version: 1.5.2
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
-Patch1: audit-1.5.2-segfault.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: libtool swig python-devel pkgconfig
 BuildRequires: kernel-headers >= 2.6.18
@@ -62,16 +61,15 @@ The audispd-plugins package contains plugins for the audit dispatcher.
 
 %prep
 %setup -q
-%patch1 -p1
 
 %build
-autoreconf -fv --install
+autoreconf -iv --install
 %configure --sbindir=/sbin --libdir=/%{_lib}
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{sbin,etc/{sysconfig,audisp.d,rc.d/init.d}}
+mkdir -p $RPM_BUILD_ROOT/{sbin,etc/{sysconfig,audispd/plugins.d,rc.d/init.d}}
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man8
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
@@ -118,7 +116,7 @@ fi
 if [ -f /etc/audit/auditd.conf ]; then
    tmp=`mktemp /etc/audit/auditd-post.XXXXXX`
    if [ -n $tmp ]; then
-      sed 's|#dispatcher|dispatcher|g' /etc/audit/auditd.conf > $tmp && \
+      sed 's|^#dispatcher|dispatcher|g' /etc/audit/auditd.conf > $tmp && \
       cat $tmp > /etc/audit/auditd.conf
       rm -f $tmp
    fi
@@ -163,10 +161,6 @@ fi
 /usr/lib/python?.?/site-packages/audit.py*
 /usr/lib/python?.?/site-packages/auparse.py*
 
-%files audispd-plugins
-%defattr(-,root,root)
-%{_libexecdir}/*
-
 %files
 %defattr(-,root,root,-)
 %doc  README COPYING ChangeLog sample.rules contrib/capp.rules contrib/nispom.rules contrib/lspp.rules contrib/skeleton.c init.d/auditd.cron
@@ -182,16 +176,20 @@ fi
 %attr(750,root,root) %dir /etc/audit
 %attr(750,root,root) %dir /etc/audispd
 %attr(750,root,root) %dir /etc/audispd/plugins.d
-%attr(750,root,root) %dir /etc/audispd/policies.d
 %attr(750,root,root) %dir %{_libdir}/audit
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
-%config(noreplace) %attr(640,root,root) /etc/audispd/audispd.conf
-%doc %attr(640,root,root) /etc/audispd/plugins.d/README-CONF_PLUGINS_D
-%doc %attr(640,root,root) /etc/audispd/policies.d/README-CONF_POLICIES_D
 
 %changelog
+* Thu Apr 04 2007 Steve Grubb <sgrubb@redhat.com> 1.5.2-1
+- New event dispatcher (James Antill)
+- Apply patches fixing man pages and Makefile.am (Philipp Hahn)
+- Apply patch correcting python libs permissions (Philipp Hahn)
+- Fix auditd segfault on reload
+- Fix bug in auparse library for file pointers and descriptors
+- Extract subject information out of daemon events for ausearch
+
 * Thu Mar 29 2007 Steve Grubb <sgrubb@redhat.com> 1.5.1-2
 - Remove requires kernel-headers for python-libs
 - Apply patch to prevent segfaults on auditd reload
