@@ -1,6 +1,6 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.5.2
+Version: 1.5.3
 Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
@@ -155,11 +155,9 @@ fi
 
 %files libs-python
 %defattr(-,root,root)
-%attr(750,root,root) /sbin/audispd
 %{_libdir}/python?.?/site-packages/_audit.so
-%{_libdir}/python?.?/site-packages/_auparse.so
+%{_libdir}/python?.?/site-packages/auparse.so
 /usr/lib/python?.?/site-packages/audit.py*
-/usr/lib/python?.?/site-packages/auparse.py*
 
 %files
 %defattr(-,root,root,-)
@@ -171,6 +169,7 @@ fi
 %attr(755,root,root) /sbin/ausearch
 %attr(755,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
+%attr(750,root,root) /sbin/audispd
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
@@ -182,6 +181,13 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
 %changelog
+* Tue May 01 2007 Steve Grubb <sgrubb@redhat.com> 1.5.3-1
+- Change buffer size to prevent truncation of DAEMON events with large labels
+- Fix memory leaks in auparse (John Dennis)
+- Update syscall tables for 2.6.21 kernel
+- Update capp & lspp rules
+- New python bindings for libauparse (John Dennis)
+
 * Thu Apr 04 2007 Steve Grubb <sgrubb@redhat.com> 1.5.2-1
 - New event dispatcher (James Antill)
 - Apply patches fixing man pages and Makefile.am (Philipp Hahn)
