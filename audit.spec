@@ -1,17 +1,21 @@
+%define sca_version 0.4.2
+
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.5.3
+Version: 1.5.5
 Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: libtool swig python-devel pkgconfig
+BuildRequires: libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
+BuildRequires: gettext-devel intltool
 Requires: %{name}-libs = %{version}-%{release}
+Requires: %{name}-libs-python = %{version}-%{release}
 Requires: chkconfig
 Prereq: coreutils
 
@@ -59,11 +63,21 @@ Group: System Environment/Daemons
 %description audispd-plugins
 The audispd-plugins package contains plugins for the audit dispatcher.
 
+%package -n system-config-audit
+Summary: Utility for editing audit configuration
+Version: %{sca_version}
+License: GPL
+Group: Applications/System
+Requires: pygtk2-libglade usermode usermode-gtk
+
+%description -n system-config-audit
+An utility for editing audit configuration.
+
 %prep
 %setup -q
 
 %build
-autoreconf -iv --install
+aclocal && autoconf && autoheader && automake
 %configure --sbindir=/sbin --libdir=/%{_lib}
 make
 
@@ -75,6 +89,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/log/audit
 make DESTDIR=$RPM_BUILD_ROOT install
+make -C system-config-audit DESTDIR=$RPM_BUILD_ROOT install-fedora
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}
 # This winds up in the wrong place when libtool is involved
@@ -99,6 +114,8 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_auparse.la
 
 # On platforms with 32 & 64 bit libs, we need to coordinate the timestamp
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
+
+%find_lang system-config-audit
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -180,7 +197,35 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 
+%files -n system-config-audit -f system-config-audit.lang
+%defattr(-,root,root,-)
+%doc system-config-audit/AUTHORS
+%doc system-config-audit/COPYING
+%doc system-config-audit/ChangeLog
+%doc system-config-audit/NEWS
+%doc system-config-audit/README
+%{_bindir}/system-config-audit
+%{_datadir}/applications/system-config-audit.desktop
+%{_datadir}/system-config-audit
+%{_libexecdir}/system-config-audit-server-real
+%{_libexecdir}/system-config-audit-server
+%config(noreplace) %{_sysconfdir}/pam.d/system-config-audit-server
+%config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
+
 %changelog
+* Tue Jul 10 2007 Steve Grubb <sgrubb@redhat.com> 1.5.5-1
+- Add system-config-audit (Miloslav Trmac)
+- Correct bug in audit_make_equivalent function (Al Viro)
+
+* Tue Jun 26 2007 Steve Grubb <sgrubb@redhat.com> 1.5.4-1
+- Add feed interface to auparse library (John Dennis)
+- Apply patch to libauparse for unresolved symbols (#241178)
+- Apply patch to add line numbers for file events in libauparse (John Dennis)
+- Change seresults to seresult in libauparse (John Dennis)
+- Add unit32_t definition to swig (#244210)
+- Add support for directory auditing
+- Update acct field to be escaped
+
 * Tue May 01 2007 Steve Grubb <sgrubb@redhat.com> 1.5.3-1
 - Change buffer size to prevent truncation of DAEMON events with large labels
 - Fix memory leaks in auparse (John Dennis)
