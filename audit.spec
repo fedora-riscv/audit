@@ -2,20 +2,17 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.5.5
-Release: 5%{?dist}
+Version: 1.5.6
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
-Patch0: audit-1.5.5-reconfig.patch
-Patch1: audit-1.5.5-sca-categories.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: libtool swig python-devel
+BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
-BuildRequires: gettext-devel intltool
 Requires: %{name}-libs = %{version}-%{release}
 Requires: %{name}-libs-python = %{version}-%{release}
 Requires: chkconfig
@@ -77,8 +74,6 @@ An utility for editing audit configuration.
 
 %prep
 %setup -q
-%patch0 -p1 -b .reconfig
-%patch1 -p1 -b .sca-categories
 
 %build
 aclocal && autoconf && autoheader && automake
@@ -217,6 +212,12 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Wed Jul 25 2007 Steve Grubb <sgrubb@redhat.com> 1.5.6-1
+- Fix potential buffer overflow in print clone flags of auparse
+- Fix python traceback parsing watches without perm statement (Miloslav Trmac)
+- Update auditctl to handle legacy kernels when putting a watch on a dir
+- Fix acct interpretation in auparse
+
 * Tue Jul 17 2007 Miloslav Trmač <mitr@redhat.com> - 1.5.5-5
 - Fix a double free when auditd receives SIGHUP
 - Move the system-config-audit menu entry to the Administration menu
