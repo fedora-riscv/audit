@@ -1,9 +1,10 @@
 %define sca_version 0.4.2
+%define sca_release 6
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.5.6
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -65,7 +66,7 @@ The audispd-plugins package contains plugins for the audit dispatcher.
 %package -n system-config-audit
 Summary: Utility for editing audit configuration
 Version: %{sca_version}
-Release: 2%{?dist}
+Release: %{sca_release}%{?dist}
 License: GPL
 Group: Applications/System
 Requires: pygtk2-libglade usermode usermode-gtk
