@@ -65,6 +65,7 @@ The audispd-plugins package contains plugins for the audit dispatcher.
 %package -n system-config-audit
 Summary: Utility for editing audit configuration
 Version: %{sca_version}
+Release: 2%{?dist}
 License: GPL
 Group: Applications/System
 Requires: pygtk2-libglade usermode usermode-gtk
