@@ -1,11 +1,11 @@
 %define sca_version 0.4.2
-%define sca_release 6
+%define sca_release 7
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.5.6
-Release: 2%{?dist}
-License: GPL
+Version: 1.6
+Release: 1%{?dist}
+License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
@@ -26,7 +26,7 @@ the audit subsystem in the Linux 2.6 kernel.
 
 %package libs
 Summary: Dynamic library for libaudit
-License: LGPL
+License: LGPLv2+
 Group: Development/Libraries
 
 %description libs
@@ -35,7 +35,7 @@ applications to use the audit framework.
 
 %package libs-devel
 Summary: Header files and static library for libaudit
-License: LGPL
+License: LGPLv2+
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
 Requires: kernel-headers >= 2.6.18
@@ -47,7 +47,7 @@ framework libraries.
 
 %package libs-python
 Summary: Python bindings for libaudit
-License: LGPL
+License: LGPLv2+
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}-%{release}
 
@@ -57,7 +57,7 @@ and libauparse can be used by python.
 
 %package audispd-plugins
 Summary: Default plugins for the audit dispatcher
-License: LGPL
+License: LGPLv2+
 Group: System Environment/Daemons
 
 %description audispd-plugins
@@ -67,7 +67,7 @@ The audispd-plugins package contains plugins for the audit dispatcher.
 Summary: Utility for editing audit configuration
 Version: %{sca_version}
 Release: %{sca_release}%{?dist}
-License: GPL
+License: GPLv2+
 Group: Applications/System
 Requires: pygtk2-libglade usermode usermode-gtk
 
@@ -197,6 +197,8 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
+%config(noreplace) %attr(640,root,root) /etc/audisp/audispd.conf
+%config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/*
 
 %files -n system-config-audit -f system-config-audit.lang
 %defattr(-,root,root,-)
@@ -214,6 +216,17 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Mon Aug 27 2007 Steve Grubb <sgrubb@redhat.com> 1.6-1
+- Update Licence tags
+- Adding perm field should not set syscall added flag in auditctl
+- Fix segfault when aureport -if option is used
+- Fix auditctl to better check keys on rule lines
+- Add support for audit by TTY and other new event types
+- Auditd config option for group permission of audit logs
+- Swig messed up a variable in ppc's python bindings causing crashes. (#251327)
+- New audit event dispatcher
+- Update syscall tables for 2.6.23 kernel
+
 * Wed Jul 25 2007 Steve Grubb <sgrubb@redhat.com> 1.5.6-1
 - Fix potential buffer overflow in print clone flags of auparse
 - Fix python traceback parsing watches without perm statement (Miloslav Trmac)
