@@ -1,21 +1,21 @@
-%define sca_version 0.4.2
-%define sca_release 7
+%define sca_version 0.4.3
+%define sca_release 1
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.6
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
+Patch1: s-c-audit-0.4.3.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
-Requires: %{name}-libs-python = %{version}-%{release}
 Requires: chkconfig
 Prereq: coreutils
 
@@ -55,14 +55,6 @@ Requires: %{name}-libs = %{version}-%{release}
 The audit-libs-python package contains the bindings so that libaudit
 and libauparse can be used by python.
 
-%package audispd-plugins
-Summary: Default plugins for the audit dispatcher
-License: LGPLv2+
-Group: System Environment/Daemons
-
-%description audispd-plugins
-The audispd-plugins package contains plugins for the audit dispatcher.
-
 %package -n system-config-audit
 Summary: Utility for editing audit configuration
 Version: %{sca_version}
@@ -76,6 +68,7 @@ An utility for editing audit configuration.
 
 %prep
 %setup -q
+%patch1 -p1
 
 %build
 aclocal && autoconf && autoheader && automake
@@ -191,8 +184,8 @@ fi
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
-%attr(750,root,root) %dir /etc/audispd
-%attr(750,root,root) %dir /etc/audispd/plugins.d
+%attr(750,root,root) %dir /etc/audisp
+%attr(750,root,root) %dir /etc/audisp/plugins.d
 %attr(750,root,root) %dir %{_libdir}/audit
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
@@ -216,6 +209,10 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Tue Aug 28 2007 Steve Grubb <sgrubb@redhat.com> 1.6-2
+- spec file cleanups
+- Update to s-c-audit 0.4.3
+
 * Mon Aug 27 2007 Steve Grubb <sgrubb@redhat.com> 1.6-1
 - Update Licence tags
 - Adding perm field should not set syscall added flag in auditctl
