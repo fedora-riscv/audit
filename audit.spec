@@ -70,6 +70,8 @@ An utility for editing audit configuration.
 %setup -q
 %patch1 -p1
 
+(cd system-config-audit; ./autogen.sh)
+
 %build
 aclocal && autoconf && autoheader && automake
 %configure --sbindir=/sbin --libdir=/%{_lib}
