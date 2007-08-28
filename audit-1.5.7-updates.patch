@@ -1,0 +1,704 @@
+diff -urp audit-1.5.6/auparse/auparse.h audit-1.5.7/auparse/auparse.h
+--- audit-1.5.6/auparse/auparse.h	2007-05-30 16:37:40.000000000 -0400
++++ audit-1.5.7/auparse/auparse.h	2007-08-25 14:49:21.000000000 -0400
+@@ -38,19 +38,21 @@ typedef struct opaque auparse_state_t;
+ #endif
+ 
+ typedef void (*user_destroy)(void *user_data);
+-typedef void (*auparse_callback_ptr)(auparse_state_t *au, auparse_cb_event_t cb_event_type, void *user_data);
++typedef void (*auparse_callback_ptr)(auparse_state_t *au,
++			auparse_cb_event_t cb_event_type, void *user_data);
+ 
+ /* General functions that affect operation of the library */
+ auparse_state_t *auparse_init(ausource_t source, const void *b);
+ int auparse_feed(auparse_state_t *au, const char *data, size_t data_len);
+ int auparse_flush_feed(auparse_state_t *au);
+-void auparse_add_callback(auparse_state_t *au, auparse_callback_ptr callback, void *user_data, user_destroy user_destroy_func);
++void auparse_add_callback(auparse_state_t *au, auparse_callback_ptr callback,
++			void *user_data, user_destroy user_destroy_func);
+ int auparse_reset(auparse_state_t *au);
+ void auparse_destroy(auparse_state_t *au);
+ 
+ /* Functions that are part of the search interface */
+ int ausearch_add_item(auparse_state_t *au, const char *field, const char *op,
+-	const char *value, ausearch_rule_t how);
++			const char *value, ausearch_rule_t how);
+ int ausearch_add_regex(auparse_state_t *au, const char *expr);
+ int ausearch_set_stop(auparse_state_t *au, austop_t where);
+ void ausearch_clear(auparse_state_t *au);
+diff -urp audit-1.5.6/auparse/test/Makefile.am audit-1.5.7/auparse/test/Makefile.am
+--- audit-1.5.6/auparse/test/Makefile.am	2007-05-17 15:26:49.000000000 -0400
++++ audit-1.5.7/auparse/test/Makefile.am	2007-08-27 16:03:43.000000000 -0400
+@@ -22,6 +22,7 @@
+ 
+ check_PROGRAMS = auparse_test
+ check_SCRIPTS = auparse_test.py
++EXTRA_DIST = auparse_test.ref
+ 
+ INCLUDES = -I..
+ 
+@@ -50,6 +51,3 @@ pymemcheck: auparse_test.py ../../bindin
+ ../../bindings/python/build/*/auparse.so: ../../bindings/python/auparse_python.c
+ 	cd ../../bindings/python && make
+ 
+-
+-
+-
+diff -urp audit-1.5.6/contrib/nispom.rules audit-1.5.7/contrib/nispom.rules
+--- audit-1.5.6/contrib/nispom.rules	2007-04-18 17:50:20.000000000 -0400
++++ audit-1.5.7/contrib/nispom.rules	2007-08-21 17:29:30.000000000 -0400
+@@ -18,10 +18,12 @@
+ ## Audit 1, 1(a) Enough information to determine the date and time of
+ ## action (e.g., common network time), the system locale of the action,
+ ## the system entity that initiated or completed the action, the resources
+-## involved, and the action involved.
++## involved, and the action involved. NOTE: If you are on a x86_64 machine,
++## they have a clock_settime syscall that should be enabled.
+ 
+ ## Things that could affect time
+ -a entry,always -S adjtimex -S settimeofday -k time-change
++#-a entry,always -S clock_settime -k time-change
+ -w /etc/localtime -p wa -k time-change
+ 
+ ## Things that could affect system locale
+diff -urp audit-1.5.6/docs/auditd.conf.5 audit-1.5.7/docs/auditd.conf.5
+--- audit-1.5.6/docs/auditd.conf.5	2007-04-09 17:50:01.000000000 -0400
++++ audit-1.5.7/docs/auditd.conf.5	2007-08-24 11:16:25.000000000 -0400
+@@ -1,4 +1,4 @@
+-.TH AUDITD.CONF: "5" "Jan 2007" "Red Hat" "System Administration Utilities"
++.TH AUDITD.CONF: "5" "Aug 2007" "Red Hat" "System Administration Utilities"
+ .SH NAME
+ auditd.conf \- audit daemon configuration file
+ .SH DESCRIPTION
+@@ -8,8 +8,8 @@ contains configuration information speci
+ It should contain one configuration keyword per line, an equal sign,
+ and then followed by appropriate configuration information. The
+ keywords recognized are:
+-.IR  log_file ", " log_format ", " flush ", " freq ", " num_logs ",
+-.IR  max_log_file ", " max_log_file_action ", " space_left ",
++.IR  log_file ", " log_format ", " log_group ", " flush ", " freq ", 
++.IR  num_logs ", " max_log_file ", " max_log_file_action ", " space_left ",
+ .IR  action_mail_acct ", " space_left_action ", " admin_space_left ",
+ .IR  admin_space_left_action ",
+ .IR  disk_full_action ", and " disk_error_action ".
+@@ -28,6 +28,9 @@ the audit records will be stored in a fo
+ .I NOLOG
+ then all audit information is discarded instead of writing to disk. This mode does not affect data sent to the audit event dispatcher.
+ .TP
++.I log_group
++This keyword specifies the group that is applied to the log file's permissions. The default is root. The group name can be either numeric or spelled out.
++.TP
+ .I priority_boost
+ This is a non-negative number that tells the audit damon how much of a priority boost it should take. The default is 3. No change is 0.
+ .TP
+diff -urp audit-1.5.6/docs/autrace.8 audit-1.5.7/docs/autrace.8
+--- audit-1.5.6/docs/autrace.8	2007-04-09 17:50:01.000000000 -0400
++++ audit-1.5.7/docs/autrace.8	2007-08-27 15:16:53.000000000 -0400
+@@ -8,7 +8,7 @@ autrace \- a program similar to strace
+ .RI [ program-args ]...
+ .SH DESCRIPTION
+ \fBautrace\fP is a program that will add the audit rules to trace a process similar to strace. It will then execute the \fIprogram\fP passing \fIarguments\fP to it. The resulting audit information will be in the audit logs if the audit daemon is running or syslog. This command deletes all audit rules prior to executing the target program and after executing it. As a safety precaution, it will not run unless all rules are deleted with
+-.B audtictl
++.B auditctl
+ prior to use.
+ .SH OPTIONS
+ .TP
+diff -urp audit-1.5.6/init.d/auditd.conf audit-1.5.7/init.d/auditd.conf
+--- audit-1.5.6/init.d/auditd.conf	2007-04-09 17:50:01.000000000 -0400
++++ audit-1.5.7/init.d/auditd.conf	2007-08-24 11:11:52.000000000 -0400
+@@ -4,6 +4,7 @@
+ 
+ log_file = /var/log/audit/audit.log
+ log_format = RAW
++log_group = root
+ priority_boost = 3
+ flush = INCREMENTAL
+ freq = 20
+diff -urp audit-1.5.6/lib/alpha_table.h audit-1.5.7/lib/alpha_table.h
+--- audit-1.5.6/lib/alpha_table.h	2007-04-09 17:50:01.000000000 -0400
++++ audit-1.5.7/lib/alpha_table.h	2007-08-26 17:32:50.000000000 -0400
+@@ -1,5 +1,5 @@
+ /* alpha_table.h --
+- * Copyright 2005,2006 Red Hat Inc., Durham, North Carolina.
++ * Copyright 2005-07 Red Hat Inc., Durham, North Carolina.
+  * All Rights Reserved.
+  *
+  * This library is free software; you can redistribute it and/or
+@@ -387,3 +387,36 @@ _S(443, "ioprio_get")
+ _S(444, "inotify_init")
+ _S(445, "inotify_add_watch")
+ _S(446, "inotify_rm_watch")
++_S(447, "fdatasync")
++_S(448, "kexec_load")
++_S(449, "migrate_pages")
++_S(450, "openat")
++_S(451, "mkdirat")
++_S(452, "mknodat")
++_S(453, "fchownat")
++_S(454, "futimesat")
++_S(455, "fstatat64")
++_S(456, "unlinkat")
++_S(457, "renameat")
++_S(458, "linkat")
++_S(459, "symlinkat")
++_S(460, "readlinkat")
++_S(461, "fchmodat")
++_S(462, "faccessat")
++_S(463, "pselect6")
++_S(464, "ppoll")
++_S(465, "unshare")
++_S(466, "set_robust_list")
++_S(467, "get_robust_list")
++_S(468, "splice")
++_S(469, "sync_file_range")
++_S(470, "tee")
++_S(471, "vmsplice")
++_S(472, "move_pages")
++_S(473, "getcpu")
++_S(474, "epoll_pwait")
++_S(475, "utimensat")
++_S(476, "signalfd")
++_S(477, "timerfd")
++_S(478, "eventfd")
++
+diff -urp audit-1.5.6/lib/i386_table.h audit-1.5.7/lib/i386_table.h
+--- audit-1.5.6/lib/i386_table.h	2007-04-09 17:50:01.000000000 -0400
++++ audit-1.5.7/lib/i386_table.h	2007-08-26 17:24:53.000000000 -0400
+@@ -1,5 +1,5 @@
+ /* i386_table.h --
+- * Copyright 2005,2006 Red Hat Inc., Durham, North Carolina.
++ * Copyright 2005-07 Red Hat Inc., Durham, North Carolina.
+  * All Rights Reserved.
+  *
+  * This library is free software; you can redistribute it and/or
+@@ -338,4 +338,9 @@ _S(316, "vmsplice")
+ _S(317, "move_pages")
+ _S(318, "getcpu")
+ _S(319, "epoll_pwait")
++_S(320, "utimensat")
++_S(321, "signalfd")
++_S(322, "timerfd")
++_S(323, "eventfd")
++_S(324, "fallocate")
+ 
+diff -urp audit-1.5.6/lib/ia64_table.h audit-1.5.7/lib/ia64_table.h
+--- audit-1.5.6/lib/ia64_table.h	2007-04-29 15:48:05.000000000 -0400
++++ audit-1.5.7/lib/ia64_table.h	2007-08-26 17:22:48.000000000 -0400
+@@ -1,5 +1,5 @@
+ /* ia64_table.h --
+- * Copyright 2005,2006 Red Hat Inc., Durham, North Carolina.
++ * Copyright 2005-07 Red Hat Inc., Durham, North Carolina.
+  * All Rights Reserved.
+  *
+  * This library is free software; you can redistribute it and/or
+@@ -284,8 +284,8 @@ _S(1290, "symlinkat")
+ _S(1291, "readlinkat")
+ _S(1292, "fchmodat")
+ _S(1293, "faccessat")
+-//_S(1294, "")
+-//_S(1295, "")
++_S(1294, "pselect")
++_S(1295, "ppoll")
+ _S(1296, "unshare")
+ _S(1297, "splice")
+ _S(1298, "set_robust_list")
+@@ -293,6 +293,11 @@ _S(1299, "get_robust_list")
+ _S(1300, "sync_file_range")
+ _S(1301, "tee")
+ _S(1302, "vmsplice")
+-//_S(1303, "")
++_S(1303, "fallocate")
+ _S(1304, "getcpu")
++_S(1305, "epoll_pwait")
++_S(1306, "utimensat")
++_S(1307, "signalfd")
++_S(1308, "timerfd")
++_S(1309, "eventfd")
+ 
+diff -urp audit-1.5.6/lib/libaudit.c audit-1.5.7/lib/libaudit.c
+--- audit-1.5.6/lib/libaudit.c	2007-06-27 10:20:02.000000000 -0400
++++ audit-1.5.7/lib/libaudit.c	2007-07-26 13:01:14.000000000 -0400
+@@ -1039,7 +1039,6 @@ int audit_rule_fieldpair_data(struct aud
+ 					}
+ 				}
+ 				rule->values[rule->field_count] = val;
+-				audit_syscalladded = 1;// perm selects syscalls
+ 			}
+ 			break;
+ 		case AUDIT_DEVMAJOR...AUDIT_SUCCESS:
+diff -urp audit-1.5.6/lib/libaudit.h audit-1.5.7/lib/libaudit.h
+--- audit-1.5.6/lib/libaudit.h	2007-07-23 17:27:09.000000000 -0400
++++ audit-1.5.7/lib/libaudit.h	2007-08-23 10:22:40.000000000 -0400
+@@ -81,6 +81,8 @@ extern "C" {
+ #define AUDIT_TRUSTED_APP	1121	/* Trusted app msg - freestyle text */
+ #define AUDIT_USER_SELINUX_ERR	1122	/* SE Linux user space error */
+ #define AUDIT_USER_CMD		1123	/* User shell command and args */
++#define AUDIT_USER_TTY		1124	/* Non-ICANON TTY input meaning */
++#define AUDIT_CHUSER_ID		1125	/* Changed user ID supplemental data */
+ 
+ #define AUDIT_FIRST_DAEMON	1200
+ #define AUDIT_LAST_DAEMON	1299
+@@ -105,6 +107,9 @@ extern "C" {
+ #ifndef AUDIT_OBJ_PID
+ #define AUDIT_OBJ_PID		1318	/* Ptrace target */
+ #endif
++#ifndef AUDIT_TTY
++#define AUDIT_TTY		1319	/* Input on an administrative TTY */
++#endif
+ #define AUDIT_LAST_EVENT	1399
+ 
+ #define AUDIT_FIRST_SELINUX	1400
+@@ -216,6 +221,12 @@ extern "C" {
+ #define AUDIT_MAKE_EQUIV        1015    /* Append to watched tree */
+ #endif
+ 
++/* These are from the audit by tty patch */
++#ifndef AUDIT_TTY_GET
++#define AUDIT_TTY_GET		1016	/* Get TTY auditing status */
++#define AUDIT_TTY_SET		1017	/* Set TTY audit status */
++#endif
++
+ /* This is for the new operator patch */
+ #ifndef AUDIT_BIT_MASK
+ #define AUDIT_BIT_MASK			0x08000000
+diff -urp audit-1.5.6/lib/msg_typetab.h audit-1.5.7/lib/msg_typetab.h
+--- audit-1.5.6/lib/msg_typetab.h	2007-07-23 17:27:09.000000000 -0400
++++ audit-1.5.7/lib/msg_typetab.h	2007-08-23 10:24:15.000000000 -0400
+@@ -39,6 +39,8 @@ _S(AUDIT_LOGIN,                      "LO
+ _S(AUDIT_LIST_RULES,                 "LIST_RULES"                    )
+ //_S(AUDIT_TRIM,                     "TRIM"                          )
+ //_S(AUDIT_MAKE_EQUIV,               "MAKE_EQUIV"                    )
++_S(AUDIT_TTY_GET,                    "TTY_GET"                       )
++_S(AUDIT_TTY_SET,                    "TTY_SET"                       )
+ _S(AUDIT_USER_AUTH,                  "USER_AUTH"                     )
+ _S(AUDIT_USER_ACCT,                  "USER_ACCT"                     )
+ _S(AUDIT_USER_MGMT,                  "USER_MGMT"                     )
+@@ -63,6 +65,8 @@ _S(AUDIT_TEST,                       "TE
+ _S(AUDIT_TRUSTED_APP,                "TRUSTED_APP"                   )
+ _S(AUDIT_USER_SELINUX_ERR,           "USER_SELINUX_ERR"              )
+ _S(AUDIT_USER_CMD,                   "USER_CMD"                      )
++_S(AUDIT_USER_TTY,                   "USER_TTY"                      )
++_S(AUDIT_CHUSER_ID,                  "CHUSER_ID"                     )
+ _S(AUDIT_DAEMON_START,               "DAEMON_START"                  )
+ _S(AUDIT_DAEMON_END,                 "DAEMON_END"                    )
+ _S(AUDIT_DAEMON_ABORT,               "DAEMON_ABORT"                  )
+@@ -87,6 +91,7 @@ _S(AUDIT_MQ_GETSETATTR,              "MQ
+ _S(AUDIT_KERNEL_OTHER,               "KERNEL_OTHER"                  )
+ _S(AUDIT_FD_PAIR,                    "FD_PAIR"                       )
+ _S(AUDIT_OBJ_PID,                    "OBJ_PID"                       )
++_S(AUDIT_TTY,                        "TTY"                           )
+ _S(AUDIT_AVC,                        "AVC"                           )
+ _S(AUDIT_SELINUX_ERR,                "SELINUX_ERR"                   )
+ _S(AUDIT_AVC_PATH,                   "AVC_PATH"                      )
+diff -urp audit-1.5.6/lib/ppc_table.h audit-1.5.7/lib/ppc_table.h
+--- audit-1.5.6/lib/ppc_table.h	2007-04-29 15:49:59.000000000 -0400
++++ audit-1.5.7/lib/ppc_table.h	2007-08-26 17:18:59.000000000 -0400
+@@ -1,5 +1,5 @@
+ /* ppc_table.h --
+- * Copyright 2005,2006 Red Hat Inc., Durham, North Carolina.
++ * Copyright 2005-07 Red Hat Inc., Durham, North Carolina.
+  * All Rights Reserved.
+  *
+  * This library is free software; you can redistribute it and/or
+@@ -317,4 +317,10 @@ _S(300, "set_robust_list")
+ _S(301, "move_pages")
+ _S(302, "getcpu")
+ _S(303, "epoll_pwait")
++_S(304, "utimensat")
++_S(305, "signalfd")
++_S(306, "timerfd")
++_S(307, "eventfd")
++_S(308, "sync_file_range2")
++_S(309, "fallocate")
+ 
+diff -urp audit-1.5.6/lib/s390_table.h audit-1.5.7/lib/s390_table.h
+--- audit-1.5.6/lib/s390_table.h	2007-04-29 15:50:47.000000000 -0400
++++ audit-1.5.7/lib/s390_table.h	2007-08-26 17:15:35.000000000 -0400
+@@ -1,5 +1,5 @@
+ /* s390_table.h --
+- * Copyright 2005,2006 Red Hat Inc., Durham, North Carolina.
++ * Copyright 2005-07 Red Hat Inc., Durham, North Carolina.
+  * All Rights Reserved.
+  *
+  * This library is free software; you can redistribute it and/or
+@@ -305,4 +305,9 @@ _S(309, "vmsplice")
+ _S(311, "getcpu")
+ _S(312, "epoll_pwait")
+ _S(313, "utimes")
++_S(314, "fallocate")
++_S(315, "utimensat")
++_S(316, "signalfd")
++_S(317, "timerfd")
++_S(318, "eventfd")
+ 
+diff -urp audit-1.5.6/lib/s390x_table.h audit-1.5.7/lib/s390x_table.h
+--- audit-1.5.6/lib/s390x_table.h	2007-04-29 15:52:21.000000000 -0400
++++ audit-1.5.7/lib/s390x_table.h	2007-08-26 17:15:47.000000000 -0400
+@@ -269,4 +269,9 @@ _S(309, "vmsplice")
+ _S(311, "getcpu")
+ _S(312, "epoll_pwait")
+ _S(313, "utimes")
++_S(314, "fallocate")
++_S(315, "utimensat")
++_S(316, "signalfd")
++_S(317, "timerfd")
++_S(318, "eventfd")
+ 
+diff -urp audit-1.5.6/lib/x86_64_table.h audit-1.5.7/lib/x86_64_table.h
+--- audit-1.5.6/lib/x86_64_table.h	2007-04-09 17:50:01.000000000 -0400
++++ audit-1.5.7/lib/x86_64_table.h	2007-08-26 17:16:39.000000000 -0400
+@@ -1,5 +1,5 @@
+ /* x86_64_table.h --
+- * Copyright 2005,2006 Red Hat Inc., Durham, North Carolina.
++ * Copyright 2005-07 Red Hat Inc., Durham, North Carolina.
+  * All Rights Reserved.
+  *
+  * This library is free software; you can redistribute it and/or
+@@ -300,4 +300,10 @@ _S(276, "tee")
+ _S(277, "sync_file_range")
+ _S(278, "vmsplice")
+ _S(279, "move_pages")
++_S(280, "utimensat")
++_S(281, "epoll_pwait")
++_S(282, "signalfd")
++_S(283, "timerfd")
++_S(284, "eventfd")
++_S(285, "fallocate")
+ 
+diff -urp audit-1.5.6/src/auditctl.c audit-1.5.7/src/auditctl.c
+--- audit-1.5.6/src/auditctl.c	2007-07-24 16:33:35.000000000 -0400
++++ audit-1.5.7/src/auditctl.c	2007-08-22 16:29:20.000000000 -0400
+@@ -70,6 +70,7 @@ static struct audit_rule_data *rule_new 
+ extern int audit_archadded;
+ extern int audit_syscalladded;
+ extern unsigned int audit_elf;
++int audit_permadded;
+ 
+ /*
+  * This function will reset everything used for each loop when loading 
+@@ -79,6 +80,7 @@ static int reset_vars(void)
+ {
+ 	list_requested = 0;
+ 	audit_syscalladded = 0;
++	audit_permadded = 0;
+ 	audit_archadded = 0;
+ 	audit_elf = 0;
+ 	add = AUDIT_FILTER_UNSET;
+@@ -289,8 +291,10 @@ static int audit_setup_perms(struct audi
+ 		}
+ 	}
+ 
+-	if (audit_update_watch_perms(rule, val) == 0)
++	if (audit_update_watch_perms(rule, val) == 0) {
++		audit_permadded = 1;
+ 		return 1;
++	}
+ 	return -1;
+ }
+ 
+@@ -327,7 +331,7 @@ void audit_request_rule_list(int fd)
+ }
+ // FIXME: Change these to enums
+ /*
+- * returns: -3 depreacted, -2 success - no reply, -1 error - noreply,
++ * returns: -3 deprecated, -2 success - no reply, -1 error - noreply,
+  * 0 success - reply, > 0 success - rule
+  */
+ static int setopt(int count, char *vars[])
+@@ -584,6 +588,14 @@ static int setopt(int count, char *vars[
+ 		switch (rc)
+ 		{
+ 			case 0:
++				if (which == OLD && 
++				    	rule.fields[rule.field_count-1] ==
++						AUDIT_PERM)
++					audit_permadded = 1;
++				else if (which == NEW &&
++				    rule_new->fields[rule_new->field_count-1] ==
++						AUDIT_PERM)
++					audit_permadded = 1;
+ 				break;
+ 			case -1:
+ 				fprintf(stderr, "-F missing = for %s\n", 
+@@ -715,7 +727,8 @@ static int setopt(int count, char *vars[
+ 		}
+ 		break;
+ 	case 'k':
+-		if (audit_syscalladded != 1 ||
++		// FIXME: nispom fails here
++		if (!(audit_syscalladded || audit_permadded ) ||
+ 				(add==AUDIT_FILTER_UNSET &&
+ 					del==AUDIT_FILTER_UNSET)) {
+ 			fprintf(stderr,
+@@ -765,7 +778,7 @@ static int setopt(int count, char *vars[
+ 				fprintf(stderr,
+ 				"You must give a watch prior to perms\n");
+ 				retval = -1;
+-			} else
++			} else 
+ 				retval = audit_setup_perms(rule_new, optarg);
+ 		}
+ 		break;
+diff -urp audit-1.5.6/src/auditd-config.c audit-1.5.7/src/auditd-config.c
+--- audit-1.5.6/src/auditd-config.c	2007-06-19 11:15:07.000000000 -0400
++++ audit-1.5.7/src/auditd-config.c	2007-08-24 11:36:02.000000000 -0400
+@@ -65,6 +65,8 @@ static int log_file_parser(struct nv_pai
+ 		struct daemon_conf *config);
+ static int num_logs_parser(struct nv_pair *nv, int line, 
+ 		struct daemon_conf *config);
++static int log_group_parser(struct nv_pair *nv, int line, 
++		struct daemon_conf *config);
+ static int qos_parser(struct nv_pair *nv, int line, 
+ 		struct daemon_conf *config);
+ static int dispatch_parser(struct nv_pair *nv, int line,
+@@ -101,6 +103,7 @@ static const struct kw_pair keywords[] =
+ {
+   {"log_file",                 log_file_parser,			0 },
+   {"log_format",               log_format_parser,		0 },
++  {"log_group",                log_group_parser,		0 },
+   {"flush",                    flush_parser,			0 },
+   {"freq",                     freq_parser,			0 },
+   {"num_logs",                 num_logs_parser,			0 },
+@@ -185,6 +188,7 @@ static void clear_config(struct daemon_c
+ 	config->sender_ctx = NULL;
+ 	config->log_file = strdup("/var/log/audit/audit.log");
+ 	config->log_format = LF_RAW;
++	config->log_group = 0;
+ 	config->priority_boost = 3;
+ 	config->flush =  FT_NONE;
+ 	config->freq = 0;
+@@ -677,6 +681,38 @@ static int log_format_parser(struct nv_p
+ 	return 1;
+ }
+ 
++static int log_group_parser(struct nv_pair *nv, int line, 
++		struct daemon_conf *config)
++{
++	gid_t gid = 0;
++	
++	audit_msg(LOG_DEBUG, "log_group_parser called with: %s",
++							nv->value);
++	if (isdigit(nv->value[0])) {
++		errno = 0;
++		gid = strtoul(nv->value,NULL,10);
++		if (errno) {
++			audit_msg(LOG_ERR,
++		    "Numeric group ID conversion error (%s) for %s - line %d\n",
++				strerror(errno), nv->value, line);
++			return 1;
++		}
++	} else {
++		struct group *gr ;
++
++		gr = getgrnam(nv->value);
++		if (gr == NULL) {
++			audit_msg(LOG_ERR,
++			 "Group ID is non-numeric and unknown (%s) - line %d\n",
++				nv->value, line);
++			return 1;
++		}
++		gid = gr->gr_gid;
++	}
++	config->log_group = gid;
++	return 0;
++}
++
+ static int flush_parser(struct nv_pair *nv, int line,
+ 		struct daemon_conf *config)
+ {
+@@ -1072,7 +1108,7 @@ static int sanity_check(struct daemon_co
+ 	/* Error checking */
+ 	if (config->space_left <= config->admin_space_left) {
+ 		audit_msg(LOG_ERR, 
+-		    "Error - space_left(%lu) must be larger than admin_space_left(%lu)",
++	    "Error - space_left(%lu) must be larger than admin_space_left(%lu)",
+ 		    config->space_left, config->admin_space_left);
+ 		return 1;
+ 	}
+@@ -1084,7 +1120,7 @@ static int sanity_check(struct daemon_co
+ 	/* Warnings */
+ 	if (config->flush > FT_INCREMENTAL && config->freq != 0) {
+ 		audit_msg(LOG_WARNING, 
+-		    "Warning - freq is non-zero and incremental flushing not selected.");
++           "Warning - freq is non-zero and incremental flushing not selected.");
+ 	}
+ 	return 0;
+ }
+diff -urp audit-1.5.6/src/auditd-config.h audit-1.5.7/src/auditd-config.h
+--- audit-1.5.6/src/auditd-config.h	2007-07-24 17:10:34.000000000 -0400
++++ audit-1.5.7/src/auditd-config.h	2007-08-24 11:09:49.000000000 -0400
+@@ -1,5 +1,5 @@
+ /* auditd-config.h -- 
+- * Copyright 2004-2006 Red Hat Inc., Durham, North Carolina.
++ * Copyright 2004-2007 Red Hat Inc., Durham, North Carolina.
+  * All Rights Reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify
+@@ -25,6 +25,7 @@
+ #define AUDITD_CONFIG_H
+ 
+ #include "libaudit.h"
++#include <grp.h>
+ #define CONFIG_FILE "/etc/audit/auditd.conf"
+ #define MEGABYTE 1048576UL
+ 
+@@ -47,6 +48,7 @@ struct daemon_conf
+ 	const char *sender_ctx;	/* the context for the sender of sighup */
+ 	const char *log_file;
+ 	logging_formats log_format;
++	gid_t log_group;
+ 	unsigned int priority_boost;
+ 	flush_technique flush;
+ 	unsigned int freq;
+diff -urp audit-1.5.6/src/auditd-event.c audit-1.5.7/src/auditd-event.c
+--- audit-1.5.6/src/auditd-event.c	2007-07-24 17:17:11.000000000 -0400
++++ audit-1.5.7/src/auditd-event.c	2007-08-24 11:34:48.000000000 -0400
+@@ -1,5 +1,5 @@
+ /* auditd-event.c -- 
+- * Copyright 2004-06 Red Hat Inc., Durham, North Carolina.
++ * Copyright 2004-07 Red Hat Inc., Durham, North Carolina.
+  * All Rights Reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify
+@@ -548,6 +548,7 @@ static void rotate_logs(struct auditd_co
+ 		return;
+ 
+ 	/* Close audit file */
++	fchown(data->log_fd, 0, data->config->log_group);
+ 	fchmod(data->log_fd, S_IRUSR|S_IRGRP);
+ 	fclose(data->log_file);
+ 	
+@@ -737,6 +738,7 @@ retry:
+ 			return 1;
+ 		}
+ 	}
++	fchown(lfd, 0, data->config->log_group);
+ 
+ 	data->log_fd = lfd;
+ 	data->log_file = fdopen(lfd, "a");
+diff -urp audit-1.5.6/src/aureport.c audit-1.5.7/src/aureport.c
+--- audit-1.5.6/src/aureport.c	2007-04-09 17:50:01.000000000 -0400
++++ audit-1.5.7/src/aureport.c	2007-08-13 16:09:39.000000000 -0400
+@@ -1,6 +1,6 @@
+ /*
+  * aureport.c - main file for aureport utility 
+- * Copyright 2005-06 Red Hat Inc., Durham, North Carolina.
++ * Copyright 2005-07 Red Hat Inc., Durham, North Carolina.
+  * All Rights Reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify
+@@ -97,7 +97,11 @@ int main(int argc, char *argv[])
+ 		config.sender_ctx = NULL;
+ 		config.log_file = NULL;
+ 		config.dispatcher = NULL;
++		config.space_left_exe = NULL;
+ 		config.action_mail_acct = NULL;
++		config.admin_space_left_exe = NULL;
++		config.disk_full_exe = NULL;
++		config.disk_error_exe = NULL;
+ 	}
+ 		
+ 	print_title();
+@@ -115,6 +119,8 @@ int main(int argc, char *argv[])
+ 	if (!found && report_detail == D_DETAILED && report_type != RPT_TIME) {
+ 		printf("<no events of interest were found>\n\n");
+ 		destroy_counters();
++		aulookup_destroy_uid_list();
++		aulookup_destroy_gid_list();
+ 		free_config(&config); 
+ 		return 1;
+ 	} else 
+@@ -304,6 +310,7 @@ static int get_record(llist *l)
+ 			} else {
+ 				saved_buff = buff;
+ 				free(n.message);
++				buff = NULL;
+ 				break;
+ 			}
+ 		} else {
+diff -urp audit-1.5.6/src/ausearch.c audit-1.5.7/src/ausearch.c
+--- audit-1.5.6/src/ausearch.c	2007-04-09 17:50:01.000000000 -0400
++++ audit-1.5.7/src/ausearch.c	2007-08-13 15:27:35.000000000 -0400
+@@ -101,6 +101,8 @@ int main(int argc, char *argv[])
+ 	ilist_clear(event_type);
+ 	free(event_type);
+ 	free(user_file);
++	aulookup_destroy_uid_list();
++	aulookup_destroy_gid_list();
+ 	if (rc)
+ 		return rc;
+ 	if (!found) {
+@@ -164,8 +166,6 @@ static int process_logs(void)
+ 		else
+ 			break;
+ 	} while (1);
+-	aulookup_destroy_uid_list();
+-	aulookup_destroy_gid_list();
+ 	free(filename);
+ 	free_config(&config);
+ 	return 0;
+@@ -267,6 +267,7 @@ static int get_record(llist *l)
+ 			} else {
+ 				saved_buff = buff;
+ 				free(n.message);
++				buff = NULL;
+ 				break;
+ 			}
+ 		} else {
+diff -urp audit-1.5.6/swig/auditswig.i audit-1.5.7/swig/auditswig.i
+--- audit-1.5.6/swig/auditswig.i	2007-06-27 06:59:12.000000000 -0400
++++ audit-1.5.7/swig/auditswig.i	2007-08-24 12:40:20.000000000 -0400
+@@ -27,7 +27,7 @@
+ signed
+ %enddef
+ #define __attribute(X) /*nothing*/
+-%include "/usr/include/asm/types.h"
++typedef unsigned __u32;
+ %include "/usr/include/linux/audit.h"
+ #define __extension__ /*nothing*/
+ %include "/usr/include/stdint.h"
+diff -urp audit-1.5.6/system-config-audit/Makefile.am audit-1.5.7/system-config-audit/Makefile.am
+--- audit-1.5.6/system-config-audit/Makefile.am	2007-07-25 14:25:05.000000000 -0400
++++ audit-1.5.7/system-config-audit/Makefile.am	2007-08-26 17:41:20.000000000 -0400
+@@ -98,3 +98,8 @@ src/system-config-audit: src/system-conf
+ 		< $(srcdir)/src/system-config-audit.in > $@
+ 
+ @INTLTOOL_DESKTOP_RULE@
++
++clean-generic:
++	rm -rf autom4te*.cache
++	rm -f *.rej *.orig
++
+diff -urp audit-1.5.6/system-config-audit/Makefile.in audit-1.5.7/system-config-audit/Makefile.in
+--- audit-1.5.6/system-config-audit/Makefile.in	2007-07-25 14:23:56.000000000 -0400
++++ audit-1.5.7/system-config-audit/Makefile.in	2007-08-26 17:44:02.000000000 -0400
+@@ -314,7 +314,7 @@ nodist_pkgdata_PYTHON = src/settings.py 
+ CLEANFILES = $(applications_DATA) $(bin_SCRIPTS) $(nodist_pkgdata_PYTHON) \
+ 	admin/system-config-audit-server.console
+ 
+-DISTCLEANFILES = intltool-extract intltool-merge intltool-update src/.libs
++DISTCLEANFILES = intltool-extract intltool-merge intltool-update 
+ EXTRA_DIST = admin/intltool-extract.in admin/intltool-merge.in \
+ 	admin/intltool-update.in admin/system-config-audit-server.console.in \
+ 	admin/system-config-audit-server.pam \
+@@ -883,9 +883,6 @@ install-strip:
+ 	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
+ mostlyclean-generic:
+ 
+-clean-generic:
+-	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+-
+ distclean-generic:
+ 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+ 	-rm -f src/$(DEPDIR)/$(am__dirstamp)
+@@ -1027,6 +1024,10 @@ src/system-config-audit: src/system-conf
+ 		< $(srcdir)/src/system-config-audit.in > $@
+ 
+ @INTLTOOL_DESKTOP_RULE@
++
++clean-generic:
++	rm -rf autom4te*.cache
++	rm -f *.rej *.orig
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+ # Otherwise a system limit (for SysV at least) may be exceeded.
+ .NOEXPORT:
