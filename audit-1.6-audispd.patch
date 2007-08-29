@@ -1,0 +1,16 @@
+diff -urp audit-1.6.orig/audisp/audispd.c audit-1.6/audisp/audispd.c
+--- audit-1.6.orig/audisp/audispd.c	2007-08-29 12:57:42.000000000 -0400
++++ audit-1.6/audisp/audispd.c	2007-08-29 12:58:19.000000000 -0400
+@@ -306,10 +306,10 @@ static void event_loop(void)
+ 		}
+ 
+ 		if (daemon_config.node_name_format != N_NONE) {
+-			asprintf(&v, "node=%s type=%s msg=%.*s", 
++			asprintf(&v, "node=%s type=%s msg=%.*s\n", 
+ 				name, type, e->hdr.size, e->data);
+ 		} else
+-			asprintf(&v, "type=%s msg=%.*s", 
++			asprintf(&v, "type=%s msg=%.*s\n", 
+ 				type, e->hdr.size, e->data);
+ 
+ 		// Got event, now distribute it to the plugins - builtins first

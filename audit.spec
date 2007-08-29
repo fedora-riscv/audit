@@ -1,15 +1,16 @@
 %define sca_version 0.4.3
-%define sca_release 1
+%define sca_release 2
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.6
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 Patch1: s-c-audit-0.4.3.patch
+Patch2: audit-1.6-audispd.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -69,10 +70,10 @@ An utility for editing audit configuration.
 %prep
 %setup -q
 %patch1 -p1
-
-(cd system-config-audit; ./autogen.sh)
+%patch2 -p1
 
 %build
+(cd system-config-audit; ./autogen.sh)
 aclocal && autoconf && autoheader && automake
 %configure --sbindir=/sbin --libdir=/%{_lib}
 make
@@ -211,6 +212,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Wed Aug 29 2007 Steve Grubb <sgrubb@redhat.com> 1.6-3
+- Add newline to audispd string formatted events
+
 * Tue Aug 28 2007 Steve Grubb <sgrubb@redhat.com> 1.6-2
 - spec file cleanups
 - Update to s-c-audit 0.4.3
