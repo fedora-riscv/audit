@@ -1,16 +1,14 @@
 %define sca_version 0.4.3
-%define sca_release 2
+%define sca_release 3
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.6
-Release: 3%{?dist}
+Version: 1.6.1
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
-Patch1: s-c-audit-0.4.3.patch
-Patch2: audit-1.6-audispd.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -69,8 +67,6 @@ An utility for editing audit configuration.
 
 %prep
 %setup -q
-%patch1 -p1
-%patch2 -p1
 
 %build
 (cd system-config-audit; ./autogen.sh)
@@ -158,6 +154,7 @@ fi
 
 %files libs-devel
 %defattr(-,root,root)
+%doc contrib/skeleton.c contrib/plugin
 %{_libdir}/libaudit.a
 %{_libdir}/libauparse.a
 %{_libdir}/libaudit.so
@@ -175,7 +172,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc  README COPYING ChangeLog sample.rules contrib/capp.rules contrib/nispom.rules contrib/lspp.rules contrib/skeleton.c init.d/auditd.cron
+%doc  README COPYING ChangeLog sample.rules contrib/capp.rules contrib/nispom.rules contrib/lspp.rules init.d/auditd.cron
 %attr(0644,root,root) %{_mandir}/man8/*
 %attr(0644,root,root) %{_mandir}/man5/*
 %attr(750,root,root) /sbin/auditctl
@@ -194,7 +191,7 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 %config(noreplace) %attr(640,root,root) /etc/audisp/audispd.conf
-%config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/*
+%attr(640,root,root) /etc/audisp/plugins.d/*
 
 %files -n system-config-audit -f system-config-audit.lang
 %defattr(-,root,root,-)
@@ -212,6 +209,11 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Sun Sep 2 2007 Steve Grubb <sgrubb@redhat.com> 1.6.1-1
+- External plugin support in place
+- Fix reference counting in auparse python bindings (#263961)
+- Moved default af_unix plugin socket to /var/run/audispd_events
+
 * Wed Aug 29 2007 Steve Grubb <sgrubb@redhat.com> 1.6-3
 - Add newline to audispd string formatted events
 
