@@ -1,0 +1,44 @@
+diff -ur /home/mitr/a/audit-1.6/bindings/python/auparse_python.c audit-1.6/bindings/python/auparse_python.c
+--- /home/mitr/a/audit-1.6/bindings/python/auparse_python.c	2007-05-30 22:37:40.000000000 +0200
++++ audit-1.6/bindings/python/auparse_python.c	2007-08-29 18:03:35.000000000 +0200
+@@ -57,8 +57,8 @@
+ {
+     if (self->sec == NULL) {
+         if ((self->sec = PyInt_FromLong(self->event.sec)) == NULL) return NULL;
+-        Py_INCREF(self->sec);
+     }
++    Py_INCREF(self->sec);
+     return self->sec;
+ }
+ 
+@@ -67,8 +67,8 @@
+ {
+     if (self->milli == NULL) {
+         if ((self->milli = PyInt_FromLong(self->event.milli)) == NULL) return NULL;
+-        Py_INCREF(self->milli);
+     }
++    Py_INCREF(self->milli);
+     return self->milli;
+ }
+ 
+@@ -77,8 +77,8 @@
+ {
+     if (self->serial == NULL) {
+         if ((self->serial = PyInt_FromLong(self->event.serial)) == NULL) return NULL;
+-        Py_INCREF(self->serial);
+     }
++    Py_INCREF(self->serial);
+     return self->serial;
+ }
+ 
+@@ -88,7 +88,9 @@
+     if (self->event.host == NULL) {
+         Py_RETURN_NONE;
+     } else {
+-        if ((self->host = PyString_FromString(self->event.host)) == NULL) return NULL;
++	if (self->host == NULL) {
++	    if ((self->host = PyString_FromString(self->event.host)) == NULL) return NULL;
++	}
+         Py_INCREF(self->host);
+         return self->host;
+     }

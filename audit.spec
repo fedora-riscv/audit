@@ -1,14 +1,17 @@
-%define sca_version 0.4.2
+%define sca_version 0.4.3
+%define sca_release 1
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.5.6
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
 Patch1: audit-1.5.7-updates.patch
+Patch2: s-c-audit-0.4.3.patch
+Patch3: audit-1.6-python.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -55,17 +58,10 @@ Requires: %{name}-libs = %{version}-%{release}
 The audit-libs-python package contains the bindings so that libaudit
 and libauparse can be used by python.
 
-%package audispd-plugins
-Summary: Default plugins for the audit dispatcher
-License: LGPL
-Group: System Environment/Daemons
-
-%description audispd-plugins
-The audispd-plugins package contains plugins for the audit dispatcher.
-
 %package -n system-config-audit
 Summary: Utility for editing audit configuration
 Version: %{sca_version}
+Release: %{sca_release}%{?dist}
 License: GPL
 Group: Applications/System
 Requires: pygtk2-libglade usermode usermode-gtk
@@ -76,8 +72,11 @@ An utility for editing audit configuration.
 %prep
 %setup -q
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
+(cd system-config-audit; ./autogen.sh)
 aclocal && autoconf && autoheader && automake
 %configure --sbindir=/sbin --libdir=/%{_lib}
 make
@@ -162,6 +161,7 @@ fi
 
 %files libs-devel
 %defattr(-,root,root)
+%doc contrib/skeleton.c
 %{_libdir}/libaudit.a
 %{_libdir}/libauparse.a
 %{_libdir}/libaudit.so
@@ -179,7 +179,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc  README COPYING ChangeLog sample.rules contrib/capp.rules contrib/nispom.rules contrib/lspp.rules contrib/skeleton.c init.d/auditd.cron
+%doc  README COPYING ChangeLog sample.rules contrib/capp.rules contrib/nispom.rules contrib/lspp.rules init.d/auditd.cron
 %attr(0644,root,root) %{_mandir}/man8/*
 %attr(0644,root,root) %{_mandir}/man5/*
 %attr(750,root,root) /sbin/auditctl
@@ -214,6 +214,10 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Mon Sep 03 2007 Steve Grubb <sgrubb@redhat.com> 1.5.6-2
+- Update s-c-audit to version 0.4.3
+- Fix reference counting in auparse python bindings (#263961) 
+
 * Tue Aug 28 2007 Steve Grubb <sgrubb@redhat.com> 1.5.6-1
 - New upstream version
 
