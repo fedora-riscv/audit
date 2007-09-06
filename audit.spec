@@ -1,14 +1,15 @@
 %define sca_version 0.4.3
-%define sca_release 3
+%define sca_release 4
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.6.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
+Patch1: audit-1.6.1-event-host.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -67,6 +68,7 @@ An utility for editing audit configuration.
 
 %prep
 %setup -q
+%patch1 -p1
 
 %build
 (cd system-config-audit; ./autogen.sh)
@@ -209,6 +211,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Thu Sep 6 2007 Steve Grubb <sgrubb@redhat.com> 1.6.1-2
+- Fix uninitialized variable in auparse (John Dennis)
+
 * Sun Sep 2 2007 Steve Grubb <sgrubb@redhat.com> 1.6.1-1
 - External plugin support in place
 - Fix reference counting in auparse python bindings (#263961)
