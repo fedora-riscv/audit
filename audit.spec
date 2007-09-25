@@ -1,15 +1,14 @@
 %define sca_version 0.4.3
-%define sca_release 4
+%define sca_release 5
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.6.1
-Release: 2%{?dist}
+Version: 1.6.2
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
-Patch1: audit-1.6.1-event-host.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -68,7 +67,6 @@ An utility for editing audit configuration.
 
 %prep
 %setup -q
-%patch1 -p1
 
 %build
 (cd system-config-audit; ./autogen.sh)
@@ -111,6 +109,11 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_auparse.la
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 
 %find_lang system-config-audit
+
+# Remove the plugin stuff for now
+rm -f $RPM_BUILD_ROOT/etc/audisp/plugins.d/au-ids.conf
+rm -f $RPM_BUILD_ROOT/etc/audisp/plugins.d/remote.conf
+rm -f $RPM_BUILD_ROOT/sbin/audisp-ids
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -174,7 +177,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc  README COPYING ChangeLog sample.rules contrib/capp.rules contrib/nispom.rules contrib/lspp.rules init.d/auditd.cron
+%doc  README COPYING ChangeLog contrib/capp.rules contrib/nispom.rules contrib/lspp.rules init.d/auditd.cron
 %attr(0644,root,root) %{_mandir}/man8/*
 %attr(0644,root,root) %{_mandir}/man5/*
 %attr(750,root,root) /sbin/auditctl
@@ -193,7 +196,8 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 %config(noreplace) %attr(640,root,root) /etc/audisp/audispd.conf
-%attr(640,root,root) /etc/audisp/plugins.d/*
+%attr(640,root,root) /etc/audisp/plugins.d/af_unix.conf
+%attr(640,root,root) /etc/audisp/plugins.d/syslog.conf
 
 %files -n system-config-audit -f system-config-audit.lang
 %defattr(-,root,root,-)
@@ -211,6 +215,14 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Tue Sep 25 2007 Steve Grubb <sgrubb@redhat.com> 1.6.2-1
+- Add support for searching by posix regular expressions in auparse
+- Route DEAMON events into rt interface
+- If event pipe is full, try again after doing local logging
+- Optionally add node/machine name to records in audit daemon
+- Update ausearch/aureport to specify nodes to search on
+- Fix segfault interpretting saddr fields in avcs
+
 * Thu Sep 6 2007 Steve Grubb <sgrubb@redhat.com> 1.6.1-2
 - Fix uninitialized variable in auparse (John Dennis)
 
@@ -376,170 +388,3 @@ fi
 - Remove watches from aureport since FS_WATCH is deprecated
 - Add audit_log_avc back temporarily (#208152)
  
-* Mon Sep 18 2006 Steve Grubb <sgrubb@redhat.com> 1.2.7-2
-- Fix logging messages to use addr if passed.
-- Apply patches from Tony Jones correcting no kernel support messages
-- Updated syscall tables for 2.6.18 kernel
-- Remove deprecated functions: audit_log, audit_log_avc, audit_log_if_enabled
-- Disallow syscall auditing on exclude list
-- Improve time handling in ausearch and aureport (#191394)
-- Attempt to reconstruct full path from relative for searching
-
-* Wed Aug 30 2006 Steve Grubb <sgrubb@redhat.com> 1.2.6-3
-- Rename audit event socket
-
-* Mon Aug 28 2006 Steve Grubb <sgrubb@redhat.com> 1.2.6-2
-- Another minor update to auditctl -p option
-
-* Sat Aug 26 2006 Steve Grubb <sgrubb@redhat.com> 1.2.6-1
-- Apply updates to dispatcher
-- Fix a couple bugs regarding MLS labels
-- Resurrect -p option
-- Tighten rules with exclude filter
-- Fix parsing issue which lead to segfault in some cases
-- Fix option parsing to ignore malformed lines
-
-* Fri Aug 18 2006 Jesse Keating <jkeating@redhat.com> - 1.2.5-8
-- rebuilt with latest binutils to pick up 64K -z commonpagesize on ppc*
-  (#203001)
-
-* Wed Aug 8 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-7
-- Remove debug lines from dispatcher
-
-* Wed Aug 2 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-6
-- Change audisp to use a named pipe
-
-* Fri Jul 21 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-5
-- Fix dispatcher to handle sigchld
-- Fix library location for 64 bit
-- Add Prereq
-
-* Fri Jul 21 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-4
-- Eliminate avc package from audisp
-
-* Wed Jul 19 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-3
-- More fixes for setroubleshoot to handle failing plugin
-
-* Fri Jul 14 2006 Dan Walsh <dwalsh@redhat.com> 1.2.5-2
-- Fixes for setroubleshoot
-
-* Thu Jul 13 2006 Steve Grubb <sgrubb@redhat.com> 1.2.5-1
-- Switch out dispatcher
-- Fix bug upgrading rule types
-
-* Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - 1.2.4-1.1
-- rebuild
-
-* Fri Jun 30 2006 Steve Grubb <sgrubb@redhat.com> 1.2.4-1
-- Add support for the new filter key
-- Update syscall tables for 2.6.17
-- Add audit failure query function
-- Switch out gethostbyname call with getaddrinfo
-- Add audit by obj capability for 2.6.18 kernel
-- Ausearch & aureport now fail if no args to -te
-- New auditd.conf option to choose blocking/non-blocking dispatcher comm
-- Ausearch improved search by label
-
-* Fri May 25 2006 Steve Grubb <sgrubb@redhat.com> 1.2.3-1
-- Apply patch to ensure watches only associate with exit filter
-- Apply patch to correctly show new operators when new listing format is used
-- Apply patch to pull kernel's audit.h into python bindings
-- Collect signal sender's context
-
-* Tue May 16 2006 David Woodhouse <dwmw2@redhat.com> 1.2.2-2
-- Require kernel-headers, not glibc-kernheaders. Again.
-
-* Fri May 12 2006 Steve Grubb <sgrubb@redhat.com> 1.2.2-1
-- Updates for new glibc-kernheaders
-- Change auditctl to collect list of rules then delete them on -D
-- Update capp.rules and lspp.rules to comment out rules for the possible list
-- Add new message types
-- Support sigusr1 sender identity of newer kernels
-- Add support for ppid in auditctl and ausearch
-- fix auditctl to trim the '/' from watches
-- Move audit daemon config files to /etc/audit for better SE Linux protection
-
-* Wed Apr 25 2006 David Woodhouse <dwmw2@redhat.com> 1.2.1-2
-- Require kernel-headers, not glibc-kernheaders
-- Fix redefinition of audit_rule_data with new kernel headers
-- Remove abuse of __KERNEL__ in lookup_table.c
-
-* Sun Apr 16 2006 Steve Grubb <sgrubb@redhat.com> 1.2.1-1
-- New message type for trusted apps
-- Add new keywords today, yesterday, now for ausearch and aureport
-- Make audit_log_user_avc_message really send to syslog on error
-- Updated syscall tables in auditctl
-- Deprecated the 'possible' action for syscall rules in auditctl
-- Update watch code to use file syscalls instead of 'all' in auditctl
-
-* Fri Apr 7 2006 Steve Grubb <sgrubb@redhat.com> 1.2-1
-- Add support for new file system auditing kernel subsystem
-
-* Thu Apr 6 2006 Steve Grubb <sgrubb@redhat.com> 1.1.6-1
-- New message types
-- Support new rule format found in 2.6.17 and later kernels
-- Add support for audit by role, clearance, type, sensitivity
-
-* Wed Mar 6 2006 Steve Grubb <sgrubb@redhat.com> 1.1.5-1
-- Changed audit_log_semanage_message to take new params
-- In aureport, add class between syscall and permission in avc report
-- Fix bug where fsync is called in debug mode
-- Add optional support for tty in SYSCALL records for ausearch/aureport
-- Reinstate legacy rule operator support
-- Add man pages
-- Auditd ignore most signals
-
-* Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 1.1.4-5.1
-- bump again for double-long bug on ppc(64)
-
-* Fri Feb 10 2006 Steve Grubb <sgrubb@redhat.com> 1.1.4-5
-- Change audit_log_semanage_message to check strlen as well as NULL.
-
-* Thu Feb 9 2006 Steve Grubb <sgrubb@redhat.com> 1.1.4-3
-- Change audit_log_semanage_message to take new params.
-
-* Wed Feb 8 2006 Steve Grubb <sgrubb@redhat.com> 1.1.4-1
-- Fix bug in autrace where it didn't run on kernels without file watch support
-- Add syslog message to auditd saying what program was started for dispatcher
-- Remove audit_send_user from public api
-- Fix bug in USER_LOGIN messages where ausearch does not translate
-  msg='uid=500: into acct name (#178102).
-- Change comm with dispatcher to socketpair from pipe
-- Change auditd to use custom daemonize to avoid race in init scripts
-- Update error message when deleting a rule that doesn't exist (#176239)
-- Call shutdown_dispatcher when auditd stops
-- Add new logging function audit_log_semanage_message
-
-* Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> - 1.1.3-1.1
-- rebuilt for new gcc4.1 snapshot and glibc changes
-
-* Thu Jan 5 2006 Steve Grubb <sgrubb@redhat.com> 1.1.3-1
-- Add timestamp to daemon_config messages (#174865)
-- Add error checking of year for aureport & ausearch
-- Treat af_unix sockets as files for searching and reporting
-- Update capp & lspp rules to combine syscalls for higher performance
-- Adjusted the chkconfig line for auditd to start a little earlier
-- Added skeleton program to docs for people to write their own dispatcher with
-- Apply patch from Ulrich Drepper that optimizes resource utilization
-- Change ausearch and aureport to unlocked IO
-
-* Thu Dec 5 2005 Steve Grubb <sgrubb@redhat.com> 1.1.2-1
-- Add more message types
-
-* Wed Nov 30 2005 Steve Grubb <sgrubb@redhat.com> 1.1.1-1
-- Add support for alpha processors
-- Update the audisp code
-- Add locale code in ausearch and aureport
-- Add new rule operator patch
-- Add exclude filter patch
-- Cleanup make files
-- Add python bindings
-
-* Wed Nov 9 2005 Steve Grubb <sgrubb@redhat.com> 1.1-1
-- Add initial version of audisp. Just a placeholder at this point
-- Remove -t from auditctl
-
-* Mon Nov 7 2005 Steve Grubb <sgrubb@redhat.com> 1.0.12-1
-- Add 2 more summary reports
-- Add 2 more message types
-
