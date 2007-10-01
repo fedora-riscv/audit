@@ -1,14 +1,15 @@
 %define sca_version 0.4.3
-%define sca_release 5
+%define sca_release 6
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.6.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
+Patch1: audit-1.6.3-noretry.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -67,6 +68,7 @@ An utility for editing audit configuration.
 
 %prep
 %setup -q
+%patch1 -p1
 
 %build
 (cd system-config-audit; ./autogen.sh)
@@ -215,6 +217,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Mon Oct 1 2007 Steve Grubb <sgrubb@redhat.com> 1.6.2-2
+- Don't retry if the rt queue is full.
+
 * Tue Sep 25 2007 Steve Grubb <sgrubb@redhat.com> 1.6.2-1
 - Add support for searching by posix regular expressions in auparse
 - Route DEAMON events into rt interface

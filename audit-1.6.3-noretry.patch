@@ -1,0 +1,14 @@
+diff -urp audit-1.6.3.orig/src/auditd.c audit-1.6.3/src/auditd.c
+--- audit-1.6.3.orig/src/auditd.c	2007-10-01 13:56:21.000000000 -0400
++++ audit-1.6.3/src/auditd.c	2007-10-01 13:59:28.000000000 -0400
+@@ -136,8 +136,8 @@ static void distribute_event(struct audi
+ 	}
+ 
+ 	/* Last chance to send...maybe the pipe is empty now. */
+-	if (attempt)
+-		dispatch_event(&rep->reply, attempt);
++//	if (attempt) 
++//		dispatch_event(&rep->reply, attempt);
+ }
+ 
+ /*
