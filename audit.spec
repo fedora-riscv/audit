@@ -1,10 +1,10 @@
 %define sca_version 0.4.3
-%define sca_release 6
+%define sca_release 7
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.6.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -217,6 +217,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Fri Oct 5 2007 Steve Grubb <sgrubb@redhat.com> 1.6.2-3
+- Fix syscall name to number conversion in libaudit.
+
 * Mon Oct 1 2007 Steve Grubb <sgrubb@redhat.com> 1.6.2-2
 - Don't retry if the rt queue is full.
 
