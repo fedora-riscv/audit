@@ -1,6 +1,17 @@
+diff -urp audit-1.6.2.orig/audisp/audispd.c audit-1.6.2/audisp/audispd.c
+--- audit-1.6.2.orig/audisp/audispd.c	2007-10-17 13:56:22.000000000 -0400
++++ audit-1.6.2/audisp/audispd.c	2007-10-17 14:13:49.000000000 -0400
+@@ -369,7 +369,6 @@ int main(int argc, char *argv[])
+ 	conf = plist_get_cur(&plugin_conf);
+ 	while (conf) {
+ 		free_pconfig(conf->p);
+-		free(conf->p);
+ 		conf = plist_next(&plugin_conf);
+ 	}
+ 	plist_clear(&plugin_conf);
 diff -urp audit-1.6.2.orig/lib/lookup_table.c audit-1.6.2/lib/lookup_table.c
---- audit-1.6.2.orig/lib/lookup_table.c	2007-10-05 10:30:25.000000000 -0400
-+++ audit-1.6.2/lib/lookup_table.c	2007-10-05 10:32:01.000000000 -0400
+--- audit-1.6.2.orig/lib/lookup_table.c	2007-10-17 13:56:22.000000000 -0400
++++ audit-1.6.2/lib/lookup_table.c	2007-10-17 13:56:49.000000000 -0400
 @@ -483,7 +483,7 @@ int audit_name_to_msg_type(const char *m
  		strncpy(buf, msg_type + 8, len);
  		errno = 0;
@@ -10,10 +21,34 @@ diff -urp audit-1.6.2.orig/lib/lookup_table.c audit-1.6.2/lib/lookup_table.c
  		errno = 0;
  		return strtol(msg_type, NULL, 10);
  	}
+diff -urp audit-1.6.2.orig/lib/msg_typetab.h audit-1.6.2/lib/msg_typetab.h
+--- audit-1.6.2.orig/lib/msg_typetab.h	2007-10-17 13:56:22.000000000 -0400
++++ audit-1.6.2/lib/msg_typetab.h	2007-10-17 13:57:27.000000000 -0400
+@@ -92,7 +92,7 @@ _S(AUDIT_KERNEL_OTHER,               "KE
+ _S(AUDIT_FD_PAIR,                    "FD_PAIR"                       )
+ _S(AUDIT_OBJ_PID,                    "OBJ_PID"                       )
+ _S(AUDIT_TTY,                        "TTY"                           )
+-//_S(AUDIT_EOE,                        "EOE"                           )
++_S(AUDIT_EOE,                        "EOE"                           )
+ _S(AUDIT_AVC,                        "AVC"                           )
+ _S(AUDIT_SELINUX_ERR,                "SELINUX_ERR"                   )
+ _S(AUDIT_AVC_PATH,                   "AVC_PATH"                      )
 diff -urp audit-1.6.2.orig/src/auditd.c audit-1.6.2/src/auditd.c
---- audit-1.6.2.orig/src/auditd.c	2007-10-05 10:31:35.000000000 -0400
-+++ audit-1.6.2/src/auditd.c	2007-10-05 10:30:04.000000000 -0400
-@@ -135,8 +135,8 @@ static void distribute_event(struct audi
+--- audit-1.6.2.orig/src/auditd.c	2007-10-17 13:56:22.000000000 -0400
++++ audit-1.6.2/src/auditd.c	2007-10-17 13:59:32.000000000 -0400
+@@ -127,16 +127,18 @@ static void distribute_event(struct audi
+ 
+ 	/* End of Event is for realtime interface - skip local logging of it */
+ 	if (rep->reply.type != AUDIT_EOE) {
++		int yield = rep->reply.type <= AUDIT_LAST_DAEMON &&
++				rep->reply.type >= AUDIT_FIRST_DAEMON ? 1 : 0;
++
+ 		/* Write to local disk */
+ 		enqueue_event(rep);
+-		if (rep->reply.type <= AUDIT_LAST_DAEMON &&
+-					 rep->reply.type >= AUDIT_FIRST_DAEMON)
++		if (yield)
+ 			pthread_yield(); /* Let other thread try to log it. */
  	}
  
  	/* Last chance to send...maybe the pipe is empty now. */
