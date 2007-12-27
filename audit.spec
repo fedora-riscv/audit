@@ -1,15 +1,16 @@
-%define sca_version 0.4.3
-%define sca_release 8
+%define sca_version 0.4.5
+%define sca_release 1
+%define selinux_variants mls strict targeted
+%define selinux_policyver %(rpm -q selinux-policy | sed -e 's,^selinux-policy-\\([^/]*\\)$,\\1,')
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.6.2
-Release: 4%{?dist}
+Version: 1.6.3
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
-Patch1: audit-1.6.3-noretry.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -55,6 +56,27 @@ Requires: %{name}-libs = %{version}-%{release}
 The audit-libs-python package contains the bindings so that libaudit
 and libauparse can be used by python.
 
+%package -n audispd-plugins
+Summary: Plugins for the audit event dispatcher
+License: GPLv2+
+Group: System Environment/Daemons
+BuildRequires: openldap-devel
+BuildRequires: checkpolicy selinux-policy-devel
+Requires: %{name} = %{version}-%{release}
+Requires: %{name}-libs = %{version}-%{release}
+Requires: openldap
+%if "%{selinux_policyver}" != ""
+Requires: selinux-policy >= %{selinux_policyver}
+%endif
+Requires(post): /usr/sbin/semodule /sbin/restorecon
+Requires(postun): /usr/sbin/semodule
+
+%description -n audispd-plugins
+The audispd-plugins package provides plugins for the real-time
+interface to the audit system, audispd. These plugins can do things
+like relay events to remote machines or analyze events for suspicious
+behavior.
+
 %package -n system-config-audit
 Summary: Utility for editing audit configuration
 Version: %{sca_version}
@@ -64,27 +86,42 @@ Group: Applications/System
 Requires: pygtk2-libglade usermode usermode-gtk
 
 %description -n system-config-audit
-An utility for editing audit configuration.
+A graphical utility for editing audit configuration.
 
 %prep
 %setup -q
-%patch1 -p1
+mkdir zos-remote-policy
+cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 
 %build
 (cd system-config-audit; ./autogen.sh)
 aclocal && autoconf && autoheader && automake
 %configure --sbindir=/sbin --libdir=/%{_lib}
 make
+cd zos-remote-policy
+for selinuxvariant in %{selinux_variants}
+do
+  make NAME=${selinuxvariant} -f /usr/share/selinux/devel/Makefile
+  mv audispd-zos-remote.pp audispd-zos-remote.pp.${selinuxvariant}
+  make NAME=${selinuxvariant} -f /usr/share/selinux/devel/Makefile clean
+done
+cd -
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{sbin,etc/{sysconfig,audispd/plugins.d,rc.d/init.d}}
-mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man8
+mkdir -p $RPM_BUILD_ROOT/%{_mandir}/{man5,man8}
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/log/audit
 make DESTDIR=$RPM_BUILD_ROOT install
 make -C system-config-audit DESTDIR=$RPM_BUILD_ROOT install-fedora
+for selinuxvariant in %{selinux_variants}
+do
+  install -d $RPM_BUILD_ROOT/%{_datadir}/selinux/${selinuxvariant}
+  install -p -m 644 zos-remote-policy/audispd-zos-remote.pp.${selinuxvariant} \
+    $RPM_BUILD_ROOT/%{_datadir}/selinux/${selinuxvariant}/audispd-zos-remote.pp
+done
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}
 # This winds up in the wrong place when libtool is involved
@@ -112,15 +149,22 @@ touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 
 %find_lang system-config-audit
 
-# Remove the plugin stuff for now
-rm -f $RPM_BUILD_ROOT/etc/audisp/plugins.d/au-ids.conf
-rm -f $RPM_BUILD_ROOT/etc/audisp/plugins.d/remote.conf
-rm -f $RPM_BUILD_ROOT/sbin/audisp-ids
+#% check
+#make check
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post libs -p /sbin/ldconfig
+
+%post -n audispd-plugins
+for selinuxvariant in %{selinux_variants}
+do
+  /usr/sbin/semodule -s $selinuxvariant \
+    -i %{_datadir}/selinux/$selinuxvariant/audispd-zos-remote.pp \
+    &> /dev/null || :
+done
+/sbin/restorecon -F /sbin/audispd-zos-remote /etc/audisp/zos-remote.conf
 
 %post
 /sbin/chkconfig --add auditd
@@ -147,6 +191,14 @@ fi
 
 %postun libs
 /sbin/ldconfig 2>/dev/null
+
+%postun -n audispd-plugins
+if [ $1 -eq 0 ]; then
+ for selinuxvariant in %{selinux_variants}
+ do
+   /usr/sbin/semodule -s $selinuxvariant -r audispd-zos-remote &>/dev/null || :
+ done
+fi
 
 %postun
 if [ $1 -ge 1 ]; then
@@ -175,13 +227,20 @@ fi
 %defattr(-,root,root)
 %{_libdir}/python?.?/site-packages/_audit.so
 %{_libdir}/python?.?/site-packages/auparse.so
+%{_libdir}/python?.?/site-packages/auparse-*.egg-info
 /usr/lib/python?.?/site-packages/audit.py*
 
 %files
 %defattr(-,root,root,-)
 %doc  README COPYING ChangeLog contrib/capp.rules contrib/nispom.rules contrib/lspp.rules init.d/auditd.cron
-%attr(0644,root,root) %{_mandir}/man8/*
-%attr(0644,root,root) %{_mandir}/man5/*
+%attr(644,root,root) %{_mandir}/man8/audispd.8.gz
+%attr(644,root,root) %{_mandir}/man8/auditctl.8.gz
+%attr(644,root,root) %{_mandir}/man8/auditd.8.gz
+%attr(644,root,root) %{_mandir}/man8/aureport.8.gz
+%attr(644,root,root) %{_mandir}/man8/ausearch.8.gz
+%attr(644,root,root) %{_mandir}/man8/autrace.8.gz
+%attr(644,root,root) %{_mandir}/man5/auditd.conf.5.gz
+%attr(644,root,root) %{_mandir}/man5/audispd.conf.5.gz
 %attr(750,root,root) /sbin/auditctl
 %attr(750,root,root) /sbin/auditd
 %attr(755,root,root) /sbin/ausearch
@@ -199,7 +258,19 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 %config(noreplace) %attr(640,root,root) /etc/audisp/audispd.conf
 %attr(640,root,root) /etc/audisp/plugins.d/af_unix.conf
+
+%files -n audispd-plugins
+%defattr(-,root,root,-)
 %attr(640,root,root) /etc/audisp/plugins.d/syslog.conf
+%attr(640,root,root) /etc/audisp/plugins.d/au-ids.conf
+%attr(640,root,root) /etc/audisp/plugins.d/remote.conf
+%attr(750,root,root) /sbin/audisp-ids
+%attr(644,root,root) %{_mandir}/man8/audispd-zos-remote.8.gz
+%attr(644,root,root) %{_mandir}/man5/zos-remote.conf.5.gz
+%config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/audispd-zos-remote.conf
+%config(noreplace) %attr(640,root,root) /etc/audisp/zos-remote.conf
+%attr(750,root,root) /sbin/audispd-zos-remote
+%attr(755,root,root) %{_datadir}/selinux/*/audispd-zos-remote.pp
 
 %files -n system-config-audit -f system-config-audit.lang
 %defattr(-,root,root,-)
@@ -217,12 +288,15 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
-* Wed Oct 17 2007 Steve Grubb <sgrubb@redhat.com> 1.6.2-4
-- Fix race between threads accessing common data in auditd
-- Fix double free in event dispatcher.
-
-* Fri Oct 5 2007 Steve Grubb <sgrubb@redhat.com> 1.6.2-3
-- Fix syscall name to number conversion in libaudit.
+* Thu Dec 27 2007 Steve Grubb <sgrubb@redhat.com> 1.6.3-1
+- Add kernel release string to DEAMON_START events
+- Fix keep_logs when num_logs option disabled (#325561)
+- Fix auparse to handle node fields for syscall records
+- Update system-config-audit to version 0.4.5 (Miloslav Trmac)
+- Add keyword week-ago to aureport & ausearch start/end times
+- Fix audit log permissions on rotate. If group is root 0400, otherwise 0440
+- Add RACF zos remote audispd plugin (Klaus Kiwi)
+- Add event queue overflow action to audispd
 
 * Mon Oct 1 2007 Steve Grubb <sgrubb@redhat.com> 1.6.2-2
 - Don't retry if the rt queue is full.
