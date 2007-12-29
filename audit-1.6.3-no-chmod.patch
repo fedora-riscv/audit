@@ -1,0 +1,12 @@
+diff -urN audit/src/auditd-event.c audit-1.6.3/src/auditd-event.c
+--- audit/src/auditd-event.c	2007-12-26 21:13:24.000000000 +0100
++++ audit-1.6.3/src/auditd-event.c	2007-12-29 01:13:31.000000000 +0100
+@@ -742,8 +742,6 @@
+ 			return 1;
+ 		}
+ 	}
+-	fchmod(data->log_fd, 
+-			data->config->log_group ? S_IRUSR|S_IRGRP : S_IRUSR);
+ 	fchown(lfd, 0, data->config->log_group);
+ 
+ 	data->log_fd = lfd;

@@ -1,16 +1,17 @@
 %define sca_version 0.4.5
-%define sca_release 1
+%define sca_release 2
 %define selinux_variants mls strict targeted
 %define selinux_policyver %(rpm -q selinux-policy | sed -e 's,^selinux-policy-\\([^/]*\\)$,\\1,')
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.6.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
+Patch0: audit-1.6.3-no-chmod.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -90,6 +91,7 @@ A graphical utility for editing audit configuration.
 
 %prep
 %setup -q
+%patch0 -p1 -b .no-chmod
 mkdir zos-remote-policy
 cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 
@@ -288,6 +290,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Sat Dec 29 2007 Miloslav Trmač <mitr@redhat.com> - 1.6.3-2
+- Don't fchmod() /dev/null to mode 0400 (#426934)
+
 * Thu Dec 27 2007 Steve Grubb <sgrubb@redhat.com> 1.6.3-1
 - Add kernel release string to DEAMON_START events
 - Fix keep_logs when num_logs option disabled (#325561)
