@@ -6,11 +6,12 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.6.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
+Patch1: audit-1.6.5-perm.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -90,6 +91,7 @@ A graphical utility for editing audit configuration.
 
 %prep
 %setup -q
+%patch1 -p1
 mkdir zos-remote-policy
 cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 
@@ -288,6 +290,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Sun Dec 30 2007 Steve Grubb <sgrubb@redhat.com> 1.6.4-2
+- Allow 0600 file perms for audit logs
+
 * Sat Dec 29 2007 Steve Grubb <sgrubb@redhat.com> 1.6.4-1
 - fchmod of log file was on wrong variable (#426934)
 - Allow use of errno strings for exit codes in audit rules
