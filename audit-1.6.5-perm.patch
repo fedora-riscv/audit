@@ -1,0 +1,16 @@
+diff -urp audit-1.6.5.orig/src/auditd-config.c audit-1.6.5/src/auditd-config.c
+--- audit-1.6.5.orig/src/auditd-config.c	2007-12-30 17:01:29.000000000 -0500
++++ audit-1.6.5/src/auditd-config.c	2007-12-30 17:07:45.000000000 -0500
+@@ -505,9 +505,9 @@ static int log_file_parser(struct nv_pai
+ 		audit_msg(LOG_ERR, "%s is not owned by root", nv->value);
+ 		return 1;
+ 	}
+-	if ((buf.st_mode & (S_IRWXU|S_IRWXG|S_IRWXO)) != 
+-			  (S_IRUSR|S_IWUSR|S_IRGRP)) {
+-		audit_msg(LOG_ERR, "%s permissions should be 0640", nv->value);
++	if ( (buf.st_mode & (S_IXUSR|S_IWGRP|S_IXGRP|S_IRWXO)) ) {
++		audit_msg(LOG_ERR, "%s permissions should be 0600 or 0640",
++				nv->value);
+ 		return 1;
+ 	}
+ 	free((void *)config->log_file);

@@ -1,12 +1,12 @@
 %define sca_version 0.4.5
-%define sca_release 3
+%define sca_release 4
 %define selinux_variants mls strict targeted
 %define selinux_policyver %(rpm -q selinux-policy | sed -e 's,^selinux-policy-\\([^/]*\\)$,\\1,')
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.6.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -290,7 +290,7 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
-* Sun Dec 30 2007 Steve Grubb <sgrubb@redhat.com> 1.6.4-2
+* Sun Dec 30 2007 Steve Grubb <sgrubb@redhat.com> 1.6.4-3
 - Allow 0600 file perms for audit logs
 
 * Sat Dec 29 2007 Steve Grubb <sgrubb@redhat.com> 1.6.4-1
