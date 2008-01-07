@@ -1,17 +1,16 @@
 %define sca_version 0.4.5
-%define sca_release 4
+%define sca_release 5
 %define selinux_variants mls strict targeted
 %define selinux_policyver %(rpm -q selinux-policy | sed -e 's,^selinux-policy-\\([^/]*\\)$,\\1,')
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.6.4
-Release: 3%{?dist}
+Version: 1.6.5
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: %{name}-%{version}.tar.gz
-Patch1: audit-1.6.5-perm.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -91,7 +90,6 @@ A graphical utility for editing audit configuration.
 
 %prep
 %setup -q
-%patch1 -p1
 mkdir zos-remote-policy
 cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 
@@ -156,6 +154,7 @@ touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+rm -rf zos-remote-policy
 
 %post libs -p /sbin/ldconfig
 
@@ -241,6 +240,7 @@ fi
 %attr(644,root,root) %{_mandir}/man8/aureport.8.gz
 %attr(644,root,root) %{_mandir}/man8/ausearch.8.gz
 %attr(644,root,root) %{_mandir}/man8/autrace.8.gz
+%attr(644,root,root) %{_mandir}/man8/aulastlog.8.gz
 %attr(644,root,root) %{_mandir}/man5/auditd.conf.5.gz
 %attr(644,root,root) %{_mandir}/man5/audispd.conf.5.gz
 %attr(750,root,root) /sbin/auditctl
@@ -249,6 +249,7 @@ fi
 %attr(755,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
 %attr(750,root,root) /sbin/audispd
+%attr(750,root,root) /sbin/aulastlog
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
@@ -264,9 +265,6 @@ fi
 %files -n audispd-plugins
 %defattr(-,root,root,-)
 %attr(640,root,root) /etc/audisp/plugins.d/syslog.conf
-%attr(640,root,root) /etc/audisp/plugins.d/au-ids.conf
-%attr(640,root,root) /etc/audisp/plugins.d/remote.conf
-%attr(750,root,root) /sbin/audisp-ids
 %attr(644,root,root) %{_mandir}/man8/audispd-zos-remote.8.gz
 %attr(644,root,root) %{_mandir}/man5/zos-remote.conf.5.gz
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/audispd-zos-remote.conf
@@ -290,6 +288,13 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Mon Jan 07 2008 Steve Grubb <sgrubb@redhat.com> 1.6.5-1
+- Fix config parser to allow either 0640 or 0600 for audit logs (#427062)
+- Check for audit log being writable by owner in auditd
+- If auditd logging was suspended, it can be resumed with SIGUSR2 (#251639)
+- Updated CAPP, LSPP, and NISPOM rules for new capabilities
+- Added aulastlog utility
+
 * Sun Dec 30 2007 Steve Grubb <sgrubb@redhat.com> 1.6.4-3
 - Allow 0600 file perms for audit logs
 
