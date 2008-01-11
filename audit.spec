@@ -1,16 +1,16 @@
 %define sca_version 0.4.5
-%define sca_release 6
+%define sca_release 7
 %define selinux_variants mls strict targeted
-%define selinux_policyver %(rpm -q selinux-policy | sed -e 's,^selinux-policy-\\([^/]*\\)$,\\1,')
+%define selinux_policyver 3.2.5 
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.6.5
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
-Source0: %{name}-%{version}.tar.gz
+Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -149,6 +149,8 @@ touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 
 %find_lang system-config-audit
 
+# This is a reminder to enable it when tests
+# aren't based on postfix uids
 #% check
 #make check
 
@@ -288,7 +290,8 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
-* Fri Jan 11 2008 Steve Grubb <sgrubb@redhat.com> 1.6.5-2
+* Fri Jan 11 2008 Steve Grubb <sgrubb@redhat.com> 1.6.5-3
+- Updates for spec file review
 - Adjust permission on selinux policy file
 
 * Mon Jan 07 2008 Steve Grubb <sgrubb@redhat.com> 1.6.5-1
