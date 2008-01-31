@@ -6,7 +6,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.6.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -306,7 +306,7 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
-* Thu Jan 31 2008 Steve Grubb <sgrubb@redhat.com> 1.6.7-1
+* Thu Jan 31 2008 Steve Grubb <sgrubb@redhat.com> 1.6.7-2
 - In ausearch/report, prefer -if to stdin
 - In ausearch/report, add new command line option --input-logs (#428860)
 - Updated audisp-prelude based on feedback from prelude-devel
