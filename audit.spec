@@ -5,7 +5,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.6.6
+Version: 1.6.7
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -18,7 +18,7 @@ BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
 Requires: chkconfig
-Prereq: coreutils
+Requires(pre): coreutils
 
 %description
 The audit package contains the user space utilities for
@@ -306,6 +306,16 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Thu Jan 31 2008 Steve Grubb <sgrubb@redhat.com> 1.6.7-1
+- In ausearch/report, prefer -if to stdin
+- In ausearch/report, add new command line option --input-logs (#428860)
+- Updated audisp-prelude based on feedback from prelude-devel
+- Added prelude alert for promiscuous socket being opened
+- Added prelude alert for SE Linux policy enforcement changes
+- Added prelude alerts for Forbidden Login Locations and Time
+- Applied patch to auparse fixing error handling of searching by
+  interpreted value (Miloslav Trmac)
+
 * Sat Jan 19 2008 Steve Grubb <sgrubb@redhat.com> 1.6.6-1
 - Add prelude IDS plugin for IDMEF alerts
 - Add --user option to aulastlog command
