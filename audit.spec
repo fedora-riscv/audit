@@ -1,12 +1,12 @@
 %define sca_version 0.4.5
-%define sca_release 2
+%define sca_release 3
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.0.8 
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.6.5
-Release: 2%{?dist}
+Version: 1.6.7
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -18,7 +18,7 @@ BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
 Requires: %{name}-libs = %{version}-%{release}
 Requires: chkconfig
-Prereq: coreutils
+Requires(pre): coreutils
 
 %description
 The audit package contains the user space utilities for
@@ -61,7 +61,10 @@ Summary: Plugins for the audit event dispatcher
 License: GPLv2+
 Group: System Environment/Daemons
 BuildRequires: openldap-devel
-BuildRequires: checkpolicy selinux-policy-devel
+%if "%{selinux_policyver}" != ""
+BuildRequires: checkpolicy selinux-policy-devel >= %{selinux_policyver}
+%endif
+BuildRequires: libprelude-devel >= 0.9.16
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-libs = %{version}-%{release}
 Requires: openldap
@@ -83,6 +86,7 @@ Version: %{sca_version}
 Release: %{sca_release}%{?dist}
 License: GPLv2+
 Group: Applications/System
+BuildRequires: desktop-file-utils
 Requires: pygtk2-libglade usermode usermode-gtk
 
 %description -n system-config-audit
@@ -96,7 +100,7 @@ cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 %build
 (cd system-config-audit; ./autogen.sh)
 aclocal && autoconf && autoheader && automake
-%configure --sbindir=/sbin --libdir=/%{_lib}
+%configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude
 make
 cd zos-remote-policy
 for selinuxvariant in %{selinux_variants}
@@ -149,8 +153,13 @@ touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 
 %find_lang system-config-audit
 
+desktop-file-install					\
+	--dir $RPM_BUILD_ROOT/%{_datadir}/applications	\
+	--delete-original				\
+	system-config-audit/system-config-audit.desktop
+
 # This is a reminder to enable it when tests
-# aren't based off of postfix uids
+# aren't based on postfix uids
 #% check
 #make check
 
@@ -177,12 +186,16 @@ fi
 if [ -f /etc/audit.rules ]; then
    mv /etc/audit.rules /etc/audit/audit.rules
 fi
+# This is to enable the dispatcher option which was commented out
 if [ -f /etc/audit/auditd.conf ]; then
-   tmp=`mktemp /etc/audit/auditd-post.XXXXXX`
-   if [ -n $tmp ]; then
-      sed 's|^#dispatcher|dispatcher|g' /etc/audit/auditd.conf > $tmp && \
-      cat $tmp > /etc/audit/auditd.conf
-      rm -f $tmp
+   grep '^dispatcher' /etc/audit/auditd.conf >/dev/null
+   if [ $? -eq 1 ] ; then
+      tmp=`mktemp /etc/audit/auditd-post.XXXXXX`
+      if [ -n $tmp ]; then
+         sed 's|^#dispatcher|dispatcher|g' /etc/audit/auditd.conf > $tmp && \
+         cat $tmp > /etc/audit/auditd.conf
+         rm -f $tmp
+      fi
    fi
 fi
 
@@ -192,8 +205,7 @@ if [ $1 -eq 0 ]; then
    /sbin/chkconfig --del auditd
 fi
 
-%postun libs
-/sbin/ldconfig 2>/dev/null
+%postun libs -p /sbin/ldconfig
 
 %postun -n audispd-plugins
 if [ $1 -eq 0 ]; then
@@ -272,6 +284,9 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/audisp/zos-remote.conf
 %attr(750,root,root) /sbin/audispd-zos-remote
 %attr(644,root,root) %{_datadir}/selinux/*/audispd-zos-remote.pp
+%config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/au-prelude.conf
+%attr(750,root,root) /sbin/audisp-prelude
+%attr(644,root,root) %{_mandir}/man8/audisp-prelude.8.gz
 
 %files -n system-config-audit -f system-config-audit.lang
 %defattr(-,root,root,-)
@@ -289,6 +304,12 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Thu Jan 31 2008 Steve Grubb <sgrubb@redhat.com> 1.6.7-1
+- New upstream version
+- Adds prelude IDS plugin for IDMEF alerts
+- In ausearch/report, add new command line option --input-logs (#428860)
+- Avoid touching auditd.conf most of the time (#408501)
+
 * Fri Jan 11 2008 Steve Grubb <sgrubb@redhat.com> 1.6.5-2
 Updates from spec file review
 
