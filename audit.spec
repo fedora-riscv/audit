@@ -1,5 +1,5 @@
 %define sca_version 0.4.5
-%define sca_release 8
+%define sca_release 9
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.2.5 
 
