@@ -1,12 +1,12 @@
 %define sca_version 0.4.5
-%define sca_release 9
+%define sca_release 10
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.2.5 
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.6.7
-Release: 2%{?dist}
+Version: 1.6.8
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -306,6 +306,15 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Thu Feb 14 2008 Steve Grubb <sgrubb@redhat.com> 1.6.8-1
+- Update for gcc 4.3
+- Cleanup descriptors in audispd before running plugin
+- Fix 'recent' keyword for aureport/search
+- Fix SE Linux policy for zos_remote plugin
+- Add event type for group password authentication attempts
+- Couple of updates to the translation tables
+- Add detection of failed group authentication to audisp-prelude
+
 * Thu Jan 31 2008 Steve Grubb <sgrubb@redhat.com> 1.6.7-2
 - In ausearch/report, prefer -if to stdin
 - In ausearch/report, add new command line option --input-logs (#428860)
