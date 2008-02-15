@@ -1,0 +1,12 @@
+diff -ur audit-1.6.8.orig/audisp/plugins/zos-remote/policy/audispd-zos-remote.te audit-1.6.8/audisp/plugins/zos-remote/policy/audispd-zos-remote.te
+--- audit-1.6.8.orig/audisp/plugins/zos-remote/policy/audispd-zos-remote.te	2008-02-14 11:52:34.000000000 -0500
++++ audit-1.6.8/audisp/plugins/zos-remote/policy/audispd-zos-remote.te	2008-02-14 11:58:01.000000000 -0500
+@@ -9,8 +9,8 @@
+ 
+ ## use below if selinux-policy_devel > 3:
+ ## zos_remote_application_domain(zos_remote_t, zos_remote_exec_t)
+-logging_audisp_system_domain(zos_remote_t, zos_remote_exec_t)
++##logging_audisp_system_domain(zos_remote_t, zos_remote_exec_t)
+ 
+ ## use below for RHEL5 series:
+ init_system_domain(zos_remote_t, zos_remote_exec_t)
