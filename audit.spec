@@ -2,6 +2,7 @@
 %define sca_release 10
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.2.5 
+%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
@@ -244,7 +245,7 @@ fi
 %{_libdir}/python?.?/site-packages/_audit.so
 %{_libdir}/python?.?/site-packages/auparse.so
 %{_libdir}/python?.?/site-packages/auparse-*.egg-info
-/usr/lib/python?.?/site-packages/audit.py*
+%{python_sitelib}/audit.py*
 
 %files
 %defattr(-,root,root,-)
