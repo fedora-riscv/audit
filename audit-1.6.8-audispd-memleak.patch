@@ -1,0 +1,21 @@
+diff -urp audit-1.6.8.orig/audisp/queue.c audit-1.6.8/audisp/queue.c
+--- audit-1.6.8.orig/audisp/queue.c	2008-02-14 11:52:34.000000000 -0500
++++ audit-1.6.8/audisp/queue.c	2008-03-02 08:52:50.000000000 -0500
+@@ -117,13 +117,16 @@ void enqueue(event_t *e, struct daemon_c
+ {
+ 	unsigned int n, retry_cnt = 0;
+ 
+-	if (processing_suspended)
++	if (processing_suspended) {
++		free(e);
+ 		return;
++	}
+ 
+ retry:
+ 	// We allow 3 retries and then its over
+ 	if (retry_cnt > 3) {
+ 		do_overflow_action(config);
++		free(e);
+ 		return;
+ 	}
+ 	pthread_mutex_lock(&queue_lock);

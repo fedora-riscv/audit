@@ -1,17 +1,18 @@
 %define sca_version 0.4.5
-%define sca_release 4
+%define sca_release 5
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.0.8 
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.6.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Patch0: audit-1.6.8-zos.patch
+Patch1: audit-1.6.8-audispd-memleak.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -96,6 +97,7 @@ A graphical utility for editing audit configuration.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 mkdir zos-remote-policy
 cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 
@@ -306,6 +308,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Sun Mar 02 2008 Steve Grubb <sgrubb@redhat.com> 1.6.8-2
+- Fix memleak in audit event dispatcher
+
 * Fri Feb 15 2008 Steve Grubb <sgrubb@redhat.com> 1.6.8-1
 - New upstream version
 - Cleanup descriptors in audispd before running plugin
