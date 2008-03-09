@@ -1,12 +1,12 @@
-%define sca_version 0.4.5
-%define sca_release 10
+%define sca_version 0.4.6
+%define sca_release 1
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.2.5 
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.6.8
+Version: 1.6.9
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -239,11 +239,12 @@ fi
 %{_includedir}/auparse.h
 %{_includedir}/auparse-defs.h
 %{_mandir}/man3/*
+%{_mandir}/man5/ausearch-expression.5.gz
 
 %files libs-python
 %defattr(-,root,root)
-%{_libdir}/python?.?/site-packages/_audit.so
-%{_libdir}/python?.?/site-packages/auparse.so
+%attr(755,root,root) %{_libdir}/python?.?/site-packages/_audit.so
+%attr(755,root,root) %{_libdir}/python?.?/site-packages/auparse.so
 %{_libdir}/python?.?/site-packages/auparse-*.egg-info
 %{python_sitelib}/audit.py*
 
@@ -288,7 +289,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 %attr(644,root,root) %{_datadir}/selinux/*/audispd-zos-remote.pp
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/au-prelude.conf
+%config(noreplace) %attr(640,root,root) /etc/audisp/audisp-prelude.conf
 %attr(750,root,root) /sbin/audisp-prelude
+%attr(644,root,root) %{_mandir}/man5/audisp-prelude.conf.5.gz
 %attr(644,root,root) %{_mandir}/man8/audisp-prelude.8.gz
 
 %files -n system-config-audit -f system-config-audit.lang
@@ -307,6 +310,16 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Sun Mar 09 2008 Steve Grubb <sgrubb@redhat.com> 1.6.9-1
+- Apply hidden attribute cleanup patch (Miloslav Trmac)
+- Apply auparse expression interface patch (Miloslav Trmac)
+- Fix potential memleak in audit event dispatcher
+- Update system-config-audit to version 0.4.6 (Miloslav Trmac)
+- audisp-prelude alerts now controlled by config file
+- Updated syscall table for 2.6.25 kernel
+- Apply patch correcting acct field being misencoded (Miloslav Trmac)
+- Added watched account login detection for prelude plugin
+
 * Thu Feb 14 2008 Steve Grubb <sgrubb@redhat.com> 1.6.8-1
 - Update for gcc 4.3
 - Cleanup descriptors in audispd before running plugin
