@@ -1,12 +1,12 @@
 %define sca_version 0.4.5
-%define sca_release 5
+%define sca_release 6
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.0.8 
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.6.8
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -308,6 +308,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Fri Mar 14 2008 Steve Grubb <sgrubb@redhat.com> 1.6.8-3
+- Better fix for memleak in audit event dispatcher
+
 * Sun Mar 02 2008 Steve Grubb <sgrubb@redhat.com> 1.6.8-2
 - Fix memleak in audit event dispatcher
 
