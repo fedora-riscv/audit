@@ -6,7 +6,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.6.9
+Version: 1.7
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -293,6 +293,11 @@ fi
 %attr(750,root,root) /sbin/audisp-prelude
 %attr(644,root,root) %{_mandir}/man5/audisp-prelude.conf.5.gz
 %attr(644,root,root) %{_mandir}/man8/audisp-prelude.8.gz
+%config(noreplace) %attr(640,root,root) /etc/audisp/audisp-remote.conf
+%config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/au-remote.conf
+%attr(750,root,root) /sbin/audisp-remote
+%attr(644,root,root) %{_mandir}/man5/audisp-remote.conf.5.gz
+%attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %files -n system-config-audit -f system-config-audit.lang
 %defattr(-,root,root,-)
@@ -310,6 +315,17 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Sun Mar 30 2008 Steve Grubb <sgrubb@redhat.com> 1.7-1
+- Handle user space avcs in prelude plugin
+- Fix watched account login detection for some failed login attempts
+- Couple fixups in audit logging functions (Miloslav Trmac)
+- Add support in auditctl for virtual keys
+- auparse_find_field_next was not iterating correctly, fixed it
+- Add idmef alerts for access or execution of watched file
+- Fix buffer overflow in audit_log_user_command
+- Add basic remote logging plugin - only sends & no flow control
+- Update ausearch with interpret fixes from auparse
+
 * Sun Mar 09 2008 Steve Grubb <sgrubb@redhat.com> 1.6.9-1
 - Apply hidden attribute cleanup patch (Miloslav Trmac)
 - Apply auparse expression interface patch (Miloslav Trmac)
