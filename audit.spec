@@ -1,5 +1,5 @@
 %define sca_version 0.4.6
-%define sca_release 1
+%define sca_release 2
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.2.5 
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
