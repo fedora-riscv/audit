@@ -1,0 +1,16 @@
+diff -urp audit-1.7/lib/audit_logging.c audit-1.7.1/lib/audit_logging.c
+--- audit-1.7/lib/audit_logging.c	2008-03-27 11:11:34.000000000 -0400
++++ audit-1.7.1/lib/audit_logging.c	2008-04-01 11:55:41.000000000 -0400
+@@ -653,8 +653,10 @@ int audit_log_user_command(int audit_fd,
+ 	}
+ 
+ 	p = cmd;
+-	strncpy(commname, cmd, PATH_MAX);
+-	commname[PATH_MAX] = 0;
++	if (len >= PATH_MAX) {
++		cmd[PATH_MAX] = 0;
++		len = PATH_MAX-1;
++	}
+ 	while (*p) {
+ 		if (*p == '"' || *p < 0x21 || (unsigned)*p > 0x7f) {
+ 			_audit_c2x(commname, cmd, len);

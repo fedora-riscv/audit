@@ -1,5 +1,5 @@
 %define sca_version 0.4.6
-%define sca_release 2
+%define sca_release 3
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.2.5 
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
@@ -7,11 +7,13 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
+Patch1: audit-1.7.1-overflow.patch
+Patch2: audit-1.7.1-lsb-headers.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -95,6 +97,8 @@ A graphical utility for editing audit configuration.
 
 %prep
 %setup -q
+%patch1 -p1
+%patch2 -p1
 mkdir zos-remote-policy
 cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 
@@ -315,6 +319,10 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Tue Apr 01 2008 Steve Grubb <sgrubb@redhat.com> 1.7-2
+- Remove LSB headers from init scripts
+- Fix buffer overflow in audit_log_user_command again
+
 * Sun Mar 30 2008 Steve Grubb <sgrubb@redhat.com> 1.7-1
 - Handle user space avcs in prelude plugin
 - Fix watched account login detection for some failed login attempts
