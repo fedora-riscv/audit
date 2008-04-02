@@ -1,18 +1,21 @@
 %define sca_version 0.4.5
-%define sca_release 6
+%define sca_release 7
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.0.8 
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.6.8
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Patch0: audit-1.6.8-zos.patch
 Patch1: audit-1.6.8-audispd-memleak.patch
+Patch2: audit-1.7.1-lsb-headers.patch
+Patch3: audit-1.7.1-log-cmd-overflow.patch
+Patch4: audit-1.7-ausearch.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -98,6 +101,9 @@ A graphical utility for editing audit configuration.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
 mkdir zos-remote-policy
 cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 
@@ -105,7 +111,7 @@ cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 (cd system-config-audit; ./autogen.sh)
 aclocal && autoconf && autoheader && automake
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude
-make
+make %{?_smp_mflags}
 cd zos-remote-policy
 for selinuxvariant in %{selinux_variants}
 do
@@ -122,7 +128,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_mandir}/{man5,man8}
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/log/audit
-make DESTDIR=$RPM_BUILD_ROOT install
+make DESTDIR=$RPM_BUILD_ROOT %{?_smp_mflags} install
 make -C system-config-audit DESTDIR=$RPM_BUILD_ROOT install-fedora
 for selinuxvariant in %{selinux_variants}
 do
@@ -308,6 +314,11 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Wed Apr 02 2008 Steve Grubb <sgrubb@redhat.com> 1.6.8-4
+- Fix overflow in audit_log_user_command bz 438840
+- Remove LSB headers from init scripts
+- Fix ausearch to not escape saddr in avcs
+
 * Fri Mar 14 2008 Steve Grubb <sgrubb@redhat.com> 1.6.8-3
 - Better fix for memleak in audit event dispatcher
 
