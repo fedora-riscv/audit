@@ -108,7 +108,7 @@ cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 (cd system-config-audit; ./autogen.sh)
 aclocal && autoconf && autoheader && automake
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude
-make
+make %{?_smp_mflags}
 cd zos-remote-policy
 for selinuxvariant in %{selinux_variants}
 do
@@ -125,7 +125,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_mandir}/{man5,man8}
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/log/audit
-make DESTDIR=$RPM_BUILD_ROOT install
+make DESTDIR=$RPM_BUILD_ROOT %{?_smp_mflags} install
 make -C system-config-audit DESTDIR=$RPM_BUILD_ROOT install-fedora
 for selinuxvariant in %{selinux_variants}
 do
