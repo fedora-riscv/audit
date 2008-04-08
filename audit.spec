@@ -12,9 +12,6 @@ License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
-Patch1: audit-1.7.1-overflow.patch
-Patch2: audit-1.7.1-lsb-headers.patch
-Patch3: audit-1.7.1-eoe-memleak.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -98,9 +95,6 @@ A graphical utility for editing audit configuration.
 
 %prep
 %setup -q
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 mkdir zos-remote-policy
 cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 
