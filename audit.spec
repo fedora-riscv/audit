@@ -1,21 +1,21 @@
-%define sca_version 0.4.5
-%define sca_release 7
+%define sca_version 0.4.6
+%define sca_release 1
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.0.8 
+%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.6.8
-Release: 4%{?dist}
+Version: 1.7.2
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Patch0: audit-1.6.8-zos.patch
-Patch1: audit-1.6.8-audispd-memleak.patch
-Patch2: audit-1.7.1-lsb-headers.patch
-Patch3: audit-1.7.1-log-cmd-overflow.patch
-Patch4: audit-1.7-ausearch.patch
+Patch1: audit-1.7.3-cmd.patch
+Patch2: audit-1.7.2-avc.patch
+Patch3: audit-1.7.3-prelude.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -102,8 +102,6 @@ A graphical utility for editing audit configuration.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
 mkdir zos-remote-policy
 cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 
@@ -115,9 +113,14 @@ make %{?_smp_mflags}
 cd zos-remote-policy
 for selinuxvariant in %{selinux_variants}
 do
-  make NAME=${selinuxvariant} -f /usr/share/selinux/devel/Makefile
+  if [ "${selinuxvariant}" = "mls" ]; then
+    TYPE=mls-mls
+  else
+    TYPE=${selinuxvariant}-mcs
+  fi
+  make -f /usr/share/selinux/devel/Makefile
   mv audispd-zos-remote.pp audispd-zos-remote.pp.${selinuxvariant}
-  make NAME=${selinuxvariant} -f /usr/share/selinux/devel/Makefile clean
+  make -f /usr/share/selinux/devel/Makefile clean
 done
 cd -
 
@@ -247,16 +250,17 @@ fi
 %{_includedir}/auparse.h
 %{_includedir}/auparse-defs.h
 %{_mandir}/man3/*
+%{_mandir}/man5/ausearch-expression.5.gz
 
 %files libs-python
 %defattr(-,root,root)
-%{_libdir}/python?.?/site-packages/_audit.so
-%{_libdir}/python?.?/site-packages/auparse.so
-/usr/lib/python?.?/site-packages/audit.py*
+%attr(755,root,root) %{_libdir}/python?.?/site-packages/_audit.so
+%attr(755,root,root) %{_libdir}/python?.?/site-packages/auparse.so
+%{python_sitelib}/audit.py*
 
 %files
 %defattr(-,root,root,-)
-%doc  README COPYING ChangeLog contrib/capp.rules contrib/nispom.rules contrib/lspp.rules init.d/auditd.cron
+%doc  README COPYING ChangeLog contrib/capp.rules contrib/nispom.rules contrib/lspp.rules contrib/stig.rules init.d/auditd.cron
 %attr(644,root,root) %{_mandir}/man8/audispd.8.gz
 %attr(644,root,root) %{_mandir}/man8/auditctl.8.gz
 %attr(644,root,root) %{_mandir}/man8/auditd.8.gz
@@ -264,6 +268,7 @@ fi
 %attr(644,root,root) %{_mandir}/man8/ausearch.8.gz
 %attr(644,root,root) %{_mandir}/man8/autrace.8.gz
 %attr(644,root,root) %{_mandir}/man8/aulastlog.8.gz
+%attr(644,root,root) %{_mandir}/man8/ausyscall.8.gz
 %attr(644,root,root) %{_mandir}/man5/auditd.conf.5.gz
 %attr(644,root,root) %{_mandir}/man5/audispd.conf.5.gz
 %attr(750,root,root) /sbin/auditctl
@@ -272,7 +277,8 @@ fi
 %attr(755,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
 %attr(750,root,root) /sbin/audispd
-%attr(750,root,root) /sbin/aulastlog
+%attr(750,root,root) %{_bindir}/aulastlog
+%attr(755,root,root) %{_bindir}/ausyscall
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
@@ -295,8 +301,15 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 %attr(644,root,root) %{_datadir}/selinux/*/audispd-zos-remote.pp
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/au-prelude.conf
+%config(noreplace) %attr(640,root,root) /etc/audisp/audisp-prelude.conf
 %attr(750,root,root) /sbin/audisp-prelude
+%attr(644,root,root) %{_mandir}/man5/audisp-prelude.conf.5.gz
 %attr(644,root,root) %{_mandir}/man8/audisp-prelude.8.gz
+%config(noreplace) %attr(640,root,root) /etc/audisp/audisp-remote.conf
+%config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/au-remote.conf
+%attr(750,root,root) /sbin/audisp-remote
+%attr(644,root,root) %{_mandir}/man5/audisp-remote.conf.5.gz
+%attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %files -n system-config-audit -f system-config-audit.lang
 %defattr(-,root,root,-)
@@ -314,6 +327,17 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Thu Apr 17 2008 Steve Grubb <sgrubb@redhat.com> 1.7.2-1
+- New upstream version
+- Update system-config-audit to version 0.4.6 (Miloslav Trmac)
+- audisp-prelude alerts now controlled by config file
+- Updated syscall table for 2.6.25 kernel
+- Add basic remote logging plugin - only sends & no flow control
+- Add support in auditctl for virtual keys
+- Add example STIG rules file
+- ausyscall program added for cross referencing syscall name and number info
+- Add string table lookup performance improvement patch (Miloslav Trmac)
+
 * Wed Apr 02 2008 Steve Grubb <sgrubb@redhat.com> 1.6.8-4
 - Fix overflow in audit_log_user_command bz 438840
 - Remove LSB headers from init scripts
