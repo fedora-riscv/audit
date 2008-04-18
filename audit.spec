@@ -1,5 +1,5 @@
 %define sca_version 0.4.6
-%define sca_release 1
+%define sca_release 2
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.0.8 
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
@@ -7,7 +7,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.7.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -102,6 +102,7 @@ A graphical utility for editing audit configuration.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 mkdir zos-remote-policy
 cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 
@@ -327,6 +328,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Fri Apr 18 2008 Steve Grubb <sgrubb@redhat.com> 1.7.2-2
+- Apply patch3 this time
+
 * Thu Apr 17 2008 Steve Grubb <sgrubb@redhat.com> 1.7.2-1
 - New upstream version
 - Update system-config-audit to version 0.4.6 (Miloslav Trmac)
