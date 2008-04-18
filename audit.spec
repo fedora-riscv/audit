@@ -7,7 +7,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.7.2
-Release: 2%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -326,11 +326,13 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
-* Tue Apr 08 2008 Steve Grubb <sgrubb@redhat.com> 1.7.2-2
+* Fri Apr 18 2008 Steve Grubb <sgrubb@redhat.com> 1.7.2-6
 - Fix overflow in audit_log_user_command, better (#438840)
 - ausearch was not matching path in avc records
 - audisp-prelude attempt to reposition index after examining each type
 - correct building of mls policy
+- Fix auparse iterating in auparse_find_field and next_field
+- Don't alert on USER_AVC's - they are not quite right
 
 * Tue Apr 08 2008 Steve Grubb <sgrubb@redhat.com> 1.7.1-1
 - Fix buffer overflow in audit_log_user_command, again (#438840)
