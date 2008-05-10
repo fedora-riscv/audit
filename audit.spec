@@ -1,21 +1,18 @@
 %define sca_version 0.4.6
-%define sca_release 5
+%define sca_release 6
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.0.8 
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.7.2
-Release: 5%{?dist}
+Version: 1.7.3
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Patch0: audit-1.6.8-zos.patch
-Patch1: audit-1.7.3-cmd.patch
-Patch2: audit-1.7.2-avc.patch
-Patch3: audit-1.7.3-prelude.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: kernel-headers >= 2.6.18
@@ -100,9 +97,6 @@ A graphical utility for editing audit configuration.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 mkdir zos-remote-policy
 cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 
@@ -328,6 +322,13 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Fri May 09 2008 Steve Grubb <sgrubb@redhat.com> 1.7.3-1
+- Fix output of keys in ausearch interpretted mode
+- Fix ausearch/report --start now to not be reset to midnight
+- audispd now has a priority boost config option
+- Look for laddr in avcs reported via prelude
+- Detect page 0 mmaps and alert via prelude
+
 * Fri Apr 18 2008 Steve Grubb <sgrubb@redhat.com> 1.7.2-5
 - Update auparse patch for audisp-prelude 
 
