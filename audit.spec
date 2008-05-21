@@ -1,12 +1,12 @@
-%define sca_version 0.4.6
-%define sca_release 6
+%define sca_version 0.4.7
+%define sca_release 1
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.0.8 
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.7.3
+Version: 1.7.4
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -322,6 +322,13 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Wed May 21 2008 Steve Grubb <sgrubb@redhat.com> 1.7.4-1
+- Fix interpreting of keys in syscall records
+- Don't error on name=(null) PATH records in ausearch/report
+- Add key report to aureport
+- Update system-config-audit to 0.4.7 (Miloslav Trmac)
+- Add support for the filetype field option in auditctl new to 2.6.26 kernels
+
 * Fri May 09 2008 Steve Grubb <sgrubb@redhat.com> 1.7.3-1
 - Fix output of keys in ausearch interpretted mode
 - Fix ausearch/report --start now to not be reset to midnight
