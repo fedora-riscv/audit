@@ -1,4 +1,4 @@
-%define sca_version 0.4.7
+%define sca_version 0.4.8
 %define sca_release 1
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.2.5 
@@ -6,7 +6,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.7.4
+Version: 1.7.5
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -100,7 +100,6 @@ cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 
 %build
 (cd system-config-audit; ./autogen.sh)
-aclocal && autoconf && autoheader && automake
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude
 make %{?_smp_mflags}
 cd zos-remote-policy
@@ -153,6 +152,8 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_audit.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_audit.la
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_auparse.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_auparse.la
+rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/auparse.a
+rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/auparse.la
 
 # On platforms with 32 & 64 bit libs, we need to coordinate the timestamp
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
@@ -249,7 +250,7 @@ fi
 %defattr(-,root,root)
 %attr(755,root,root) %{_libdir}/python?.?/site-packages/_audit.so
 %attr(755,root,root) %{_libdir}/python?.?/site-packages/auparse.so
-%{_libdir}/python?.?/site-packages/auparse-*.egg-info
+#%{_libdir}/python?.?/site-packages/auparse-*.egg-info
 %{python_sitelib}/audit.py*
 
 %files
@@ -322,6 +323,12 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Mon Aug 25 2008 Steve Grubb <sgrubb@redhat.com> 1.7.5-1
+- Update system-config-audit to 0.4.8
+- Whole lot of bug fixes - see ChangeLog for details
+- Reimplement auditd main loop using libev
+- Add TCP listener to auditd to receive remote events
+
 * Wed May 21 2008 Steve Grubb <sgrubb@redhat.com> 1.7.4-1
 - Fix interpreting of keys in syscall records
 - Don't error on name=(null) PATH records in ausearch/report
