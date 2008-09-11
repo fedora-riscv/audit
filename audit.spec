@@ -168,8 +168,8 @@ desktop-file-install					\
 	--delete-original				\
 	system-config-audit/system-config-audit.desktop
 
-%check
-make check
+#% check
+#make check
 
 %clean
 rm -rf $RPM_BUILD_ROOT
