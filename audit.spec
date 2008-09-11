@@ -1,12 +1,12 @@
 %define sca_version 0.4.8
-%define sca_release 1
+%define sca_release 2
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.2.5 
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.7.5
+Version: 1.7.6
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -15,6 +15,7 @@ Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Patch1: audit-1.7.5-policy.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
+BuildRequires: tcp_wrappers-devel krb5-devel
 BuildRequires: kernel-headers >= 2.6.18
 BuildRequires: automake >= 1.9
 BuildRequires: autoconf >= 2.59
@@ -102,7 +103,7 @@ cp -p audisp/plugins/zos-remote/policy/audispd-zos-remote.* zos-remote-policy
 
 %build
 (cd system-config-audit; ./autogen.sh)
-%configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude
+%configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude --with-libwrap --enable-gssapi-krb5
 make %{?_smp_mflags}
 cd zos-remote-policy
 for selinuxvariant in %{selinux_variants}
@@ -167,10 +168,8 @@ desktop-file-install					\
 	--delete-original				\
 	system-config-audit/system-config-audit.desktop
 
-# This is a reminder to enable it when tests
-# aren't based on postfix uids
-#% check
-#make check
+%check
+make check
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -325,6 +324,13 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Wed Sep 11 2008 Steve Grubb <sgrubb@redhat.com> 1.7.6-1
+- Add subject to audit daemon events (Chu Li)
+- Add tcp_wrappers support for auditd
+- Updated syscall tables for 2.6.27 kernel
+- Audit connect/disconnect of remote clients
+- Add GSS/Kerberos encryption to the remote protocol (DJ Delorie)
+
 * Mon Aug 25 2008 Steve Grubb <sgrubb@redhat.com> 1.7.5-1
 - Update system-config-audit to 0.4.8
 - Whole lot of bug fixes - see ChangeLog for details
