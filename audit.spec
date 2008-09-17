@@ -1,12 +1,12 @@
 %define sca_version 0.4.8
-%define sca_release 2
+%define sca_release 3
 %define selinux_variants mls strict targeted
 %define selinux_policyver 3.2.5 
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.7.6
+Version: 1.7.7
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -168,8 +168,8 @@ desktop-file-install					\
 	--delete-original				\
 	system-config-audit/system-config-audit.desktop
 
-#% check
-#make check
+%check
+make check
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -324,6 +324,11 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Wed Sep 17 2008 Steve Grubb <sgrubb@redhat.com> 1.7.7-1
+- Bug fixes for GSSAPI code in remote logging (DJ Delorie)
+- Add watched syscall support to audisp-prelude
+- Enable tcp_wrappers support in auditd
+
 * Wed Sep 11 2008 Steve Grubb <sgrubb@redhat.com> 1.7.6-1
 - Add subject to audit daemon events (Chu Li)
 - Add tcp_wrappers support for auditd
