@@ -168,8 +168,10 @@ desktop-file-install					\
 	--delete-original				\
 	system-config-audit/system-config-audit.desktop
 
+%ifnarch ppc ppc64
 %check
 make check
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
