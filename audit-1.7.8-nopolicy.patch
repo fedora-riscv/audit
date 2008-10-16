@@ -1,17 +1,17 @@
-diff -ur audit-1.7.8.orig/audisp/plugins/zos-remote/Makefile.am audit-1.7.8/audisp/plugins/zos-remote/Makefile.am
---- audit-1.7.8.orig/audisp/plugins/zos-remote/Makefile.am	2008-09-28 13:26:34.000000000 -0400
-+++ audit-1.7.8/audisp/plugins/zos-remote/Makefile.am	2008-10-16 15:29:06.000000000 -0400
+diff -ur audit-1.7.7.orig/audisp/plugins/zos-remote/Makefile.am audit-1.7.7/audisp/plugins/zos-remote/Makefile.am
+--- audit-1.7.7.orig/audisp/plugins/zos-remote/Makefile.am	2008-09-17 15:57:13.000000000 -0400
++++ audit-1.7.7/audisp/plugins/zos-remote/Makefile.am	2008-10-16 15:59:08.000000000 -0400
 @@ -22,7 +22,6 @@
  
  INCLUDES = -I${top_srcdir} -I${top_srcdir}/lib -I${top_srcdir}/auparse
- CONFIG_CLEAN_FILES = *.rej *.orig
+ CONFIG_CLEAN_FILES = Makefile.in *.rej *.orig
 -SUBDIRS = policy
  AUTOMAKE_OPTIONS = no-dependencies
  EXTRA_DIST = zos-remote.conf audispd-zos-remote.conf
  LIBS = -L${top_builddir}/auparse -lauparse
-diff -ur audit-1.7.8.orig/audisp/plugins/zos-remote/Makefile.in audit-1.7.8/audisp/plugins/zos-remote/Makefile.in
---- audit-1.7.8.orig/audisp/plugins/zos-remote/Makefile.in	2008-09-28 13:27:01.000000000 -0400
-+++ audit-1.7.8/audisp/plugins/zos-remote/Makefile.in	2008-10-16 15:29:25.000000000 -0400
+diff -ur audit-1.7.7.orig/audisp/plugins/zos-remote/Makefile.in audit-1.7.7/audisp/plugins/zos-remote/Makefile.in
+--- audit-1.7.7.orig/audisp/plugins/zos-remote/Makefile.in	2008-09-17 15:57:39.000000000 -0400
++++ audit-1.7.7/audisp/plugins/zos-remote/Makefile.in	2008-10-16 16:01:50.000000000 -0400
 @@ -97,19 +97,9 @@
  	$(LDFLAGS) -o $@
  SOURCES = $(audispd_zos_remote_SOURCES)
@@ -35,7 +35,7 @@ diff -ur audit-1.7.8.orig/audisp/plugins/zos-remote/Makefile.in audit-1.7.8/audi
 @@ -237,7 +227,6 @@
  top_srcdir = @top_srcdir@
  INCLUDES = -I${top_srcdir} -I${top_srcdir}/lib -I${top_srcdir}/auparse
- CONFIG_CLEAN_FILES = *.rej *.orig
+ CONFIG_CLEAN_FILES = Makefile.in *.rej *.orig
 -SUBDIRS = policy
  AUTOMAKE_OPTIONS = no-dependencies
  EXTRA_DIST = zos-remote.conf audispd-zos-remote.conf
@@ -316,9 +316,9 @@ diff -ur audit-1.7.8.orig/audisp/plugins/zos-remote/Makefile.in audit-1.7.8/audi
  
  
  install-data-hook:
-diff -ur audit-1.7.8.orig/configure audit-1.7.8/configure
---- audit-1.7.8.orig/configure	2008-09-28 13:26:59.000000000 -0400
-+++ audit-1.7.8/configure	2008-10-16 15:29:23.000000000 -0400
+diff -ur audit-1.7.7.orig/configure audit-1.7.7/configure
+--- audit-1.7.7.orig/configure	2008-09-17 15:57:37.000000000 -0400
++++ audit-1.7.7/configure	2008-10-16 15:58:53.000000000 -0400
 @@ -23678,7 +23678,7 @@
  
  subdirs="$subdirs system-config-audit"
@@ -336,9 +336,9 @@ diff -ur audit-1.7.8.orig/configure audit-1.7.8/configure
      "bindings/Makefile") CONFIG_FILES="$CONFIG_FILES bindings/Makefile" ;;
      "bindings/python/Makefile") CONFIG_FILES="$CONFIG_FILES bindings/python/Makefile" ;;
      "tools/Makefile") CONFIG_FILES="$CONFIG_FILES tools/Makefile" ;;
-diff -ur audit-1.7.8.orig/configure.ac audit-1.7.8/configure.ac
---- audit-1.7.8.orig/configure.ac	2008-09-28 13:26:34.000000000 -0400
-+++ audit-1.7.8/configure.ac	2008-10-16 15:29:06.000000000 -0400
+diff -ur audit-1.7.7.orig/configure.ac audit-1.7.7/configure.ac
+--- audit-1.7.7.orig/configure.ac	2008-09-17 15:57:13.000000000 -0400
++++ audit-1.7.7/configure.ac	2008-10-16 15:58:53.000000000 -0400
 @@ -196,7 +196,7 @@
  AC_SUBST(libev_LIBS)
  
@@ -348,9 +348,9 @@ diff -ur audit-1.7.8.orig/configure.ac audit-1.7.8/configure.ac
  
  echo .
  echo "
-diff -ur audit-1.7.8.orig/lib/audit_logging.c audit-1.7.8/lib/audit_logging.c
---- audit-1.7.8.orig/lib/audit_logging.c	2008-09-28 13:26:34.000000000 -0400
-+++ audit-1.7.8/lib/audit_logging.c	2008-10-16 15:29:06.000000000 -0400
+diff -ur audit-1.7.7.orig/lib/audit_logging.c audit-1.7.7/lib/audit_logging.c
+--- audit-1.7.7.orig/lib/audit_logging.c	2008-09-17 15:57:13.000000000 -0400
++++ audit-1.7.7/lib/audit_logging.c	2008-10-16 15:58:53.000000000 -0400
 @@ -54,7 +54,8 @@
  
  	buf[0] = '?';
