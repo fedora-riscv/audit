@@ -1,16 +1,17 @@
 %define sca_version 0.4.8
-%define sca_release 6
+%define sca_release 7
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 1.7.8
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Patch1: audit-1.7.9-bugs.patch
+Patch2: audit-1.7.9-i386.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: tcp_wrappers-devel 
@@ -88,6 +89,7 @@ A graphical utility for editing audit configuration.
 %prep
 %setup -q
 %patch1 -p1
+%patch2 -p1
 
 %build
 (cd system-config-audit; ./autogen.sh)
@@ -276,6 +278,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Thu Oct 23 2008 Steve Grubb <sgrubb@redhat.com> 1.7.8-3
+- Fix ausearch interpretting i386 syscalls on x86_64 machine
+
 * Thu Oct 23 2008 Steve Grubb <sgrubb@redhat.com> 1.7.8-2
 - Fix segfault when using file input to aureport
 - Quieten down messages about missing gssapi support
