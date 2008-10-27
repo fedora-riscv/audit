@@ -1,11 +1,13 @@
+%define audit_version 1.7.8
+%define audit_release 5
 %define sca_version 0.4.8
-%define sca_release 8
+%define sca_release 9
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 1.7.8
-Release: 4%{?dist}
+Version: %{audit_version}
+Release: %{audit_release}%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -13,6 +15,7 @@ Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Patch1: audit-1.7.9-bugs.patch
 Patch2: audit-1.7.9-i386.patch
 Patch3: audit-1.7.9-startup.patch
+Patch4: audit-1.7.9-time.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: tcp_wrappers-devel 
@@ -83,7 +86,7 @@ License: GPLv2+
 Group: Applications/System
 BuildRequires: desktop-file-utils
 Requires: pygtk2-libglade usermode usermode-gtk
-Requires: %{name}-libs = %{version}-%{release}
+Requires: %{name}-libs = %{audit_version}-%{audit_release}
 
 %description -n system-config-audit
 A graphical utility for editing audit configuration.
@@ -93,6 +96,7 @@ A graphical utility for editing audit configuration.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 (cd system-config-audit; ./autogen.sh)
@@ -154,25 +158,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add auditd
-# This is to migrate users from audit-1.0.x installations
-if [ -f /etc/auditd.conf ]; then
-   mv /etc/auditd.conf /etc/audit/auditd.conf
-fi
-if [ -f /etc/audit.rules ]; then
-   mv /etc/audit.rules /etc/audit/audit.rules
-fi
-# This is to enable the dispatcher option which was commented out
-if [ -f /etc/audit/auditd.conf ]; then
-   grep '^dispatcher' /etc/audit/auditd.conf >/dev/null
-   if [ $? -eq 1 ] ; then
-      tmp=`mktemp /etc/audit/auditd-post.XXXXXX`
-      if [ -n $tmp ]; then
-         sed 's|^#dispatcher|dispatcher|g' /etc/audit/auditd.conf > $tmp && \
-         cat $tmp > /etc/audit/auditd.conf
-         rm -f $tmp
-      fi
-   fi
-fi
 
 %preun
 if [ $1 -eq 0 ]; then
@@ -281,6 +266,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Mon Oct 27 2008 Steve Grubb <sgrubb@redhat.com> 1.7.8-5
+- Fix ausearch/report recent and now time keyword lookups (#468668)
+
 * Sat Oct 25 2008 Steve Grubb <sgrubb@redhat.com> 1.7.8-4
 - If kernel is in immutable mode, auditd should not send enable command
 
