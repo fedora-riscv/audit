@@ -1,13 +1,13 @@
 %define audit_version 1.7.8
-%define audit_release 5
+%define audit_release 6%{?dist}
 %define sca_version 0.4.8
-%define sca_release 9
+%define sca_release 10
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: %{audit_version}
-Release: %{audit_release}%{?dist}
+Release: %{audit_release}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -266,6 +266,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Tue Oct 28 2008 Steve Grubb <sgrubb@redhat.com> 1.7.8-6
+- Update specfile requires to include dist
+
 * Mon Oct 27 2008 Steve Grubb <sgrubb@redhat.com> 1.7.8-5
 - Fix ausearch/report recent and now time keyword lookups (#468668)
 
