@@ -1,7 +1,7 @@
-%define audit_version 1.7.8
-%define audit_release 6%{?dist}
+%define audit_version 1.7.9
+%define audit_release 1%{?dist}
 %define sca_version 0.4.8
-%define sca_release 10
+%define sca_release 11
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
@@ -12,10 +12,6 @@ License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
-Patch1: audit-1.7.9-bugs.patch
-Patch2: audit-1.7.9-i386.patch
-Patch3: audit-1.7.9-startup.patch
-Patch4: audit-1.7.9-time.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: tcp_wrappers-devel 
@@ -93,13 +89,8 @@ A graphical utility for editing audit configuration.
 
 %prep
 %setup -q
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 %build
-(cd system-config-audit; ./autogen.sh)
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude --with-libwrap --enable-gssapi-krb5=no
 make %{?_smp_mflags}
 
@@ -206,6 +197,7 @@ fi
 %attr(644,root,root) %{_mandir}/man8/aureport.8.gz
 %attr(644,root,root) %{_mandir}/man8/ausearch.8.gz
 %attr(644,root,root) %{_mandir}/man8/autrace.8.gz
+%attr(644,root,root) %{_mandir}/man8/aulast.8.gz
 %attr(644,root,root) %{_mandir}/man8/aulastlog.8.gz
 %attr(644,root,root) %{_mandir}/man8/ausyscall.8.gz
 %attr(644,root,root) %{_mandir}/man5/auditd.conf.5.gz
@@ -217,6 +209,7 @@ fi
 %attr(755,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
 %attr(750,root,root) /sbin/audispd
+%attr(750,root,root) %{_bindir}/aulast
 %attr(750,root,root) %{_bindir}/aulastlog
 %attr(755,root,root) %{_bindir}/ausyscall
 %attr(755,root,root) /etc/rc.d/init.d/auditd
@@ -266,6 +259,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Wed Nov 05 2008 Steve Grubb <sgrubb@redhat.com> 1.7.9-1
+- New upstream release
+
 * Tue Oct 28 2008 Steve Grubb <sgrubb@redhat.com> 1.7.8-6
 - Update specfile requires to include dist
 
