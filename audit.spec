@@ -90,7 +90,7 @@ A graphical utility for editing audit configuration.
 
 %prep
 %setup -q
-%patch1 -p0
+%patch1 -p2
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude --with-libwrap --enable-gssapi-krb5=no
