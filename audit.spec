@@ -1,5 +1,5 @@
 %define audit_version 1.7.12
-%define audit_release 2%{?dist}
+%define audit_release 1%{?dist}
 %define sca_version 0.4.8
 %define sca_release 16
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
