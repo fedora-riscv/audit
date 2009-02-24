@@ -1,13 +1,13 @@
-%define audit_version 1.7.11
-%define audit_release 2%{?dist}
+%define audit_version 1.7.12
+%define audit_release 1%{?dist}
 %define sca_version 0.4.8
-%define sca_release 15
+%define sca_release 16
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: %{audit_version}
-Release: %{audit_release}.1
+Release: %{audit_release}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -261,6 +261,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Tue Feb 24 2009 Steve Grubb <sgrubb@redhat.com> 1.7.12-1
+- New upstream release
+
 * Mon Feb 23 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.11-2.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
