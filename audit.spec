@@ -1,7 +1,7 @@
 %define audit_version 1.7.12
-%define audit_release 1%{?dist}
+%define audit_release 2%{?dist}
 %define sca_version 0.4.8
-%define sca_release 16
+%define sca_release 17
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
@@ -12,6 +12,7 @@ License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
+Patch1: audit-1.8-noaudit.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: tcp_wrappers-devel 
@@ -89,6 +90,7 @@ A graphical utility for editing audit configuration.
 
 %prep
 %setup -q
+%patch1 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude --with-libwrap --enable-gssapi-krb5=no
@@ -259,6 +261,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Thu Feb 25 2009 Steve Grubb <sgrubb@redhat.com> 1.7.12-2
+- Handle audit=0 boot option for 2.6.29 kernel (#487541)
+
 * Tue Feb 24 2009 Steve Grubb <sgrubb@redhat.com> 1.7.12-1
 - New upstream release
 
