@@ -1,7 +1,7 @@
 %define audit_version 1.7.12
-%define audit_release 2%{?dist}
+%define audit_release 3%{?dist}
 %define sca_version 0.4.8
-%define sca_release 17
+%define sca_release 18
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary: User space tools for 2.6 kernel auditing
@@ -263,7 +263,7 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
-* Sat Mar 14 2009 Steve Grubb <sgrubb@redhat.com> 1.7.12-2
+* Sat Mar 14 2009 Steve Grubb <sgrubb@redhat.com> 1.7.12-3
 -Fix bz #490072 - audit fails to start if audit not compiled into kernel
 
 * Tue Feb 24 2009 Steve Grubb <sgrubb@redhat.com> 1.7.12-1
