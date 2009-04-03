@@ -1,8 +1,8 @@
 %define audit_version 1.7.12
-%define audit_release 3%{?dist}
+%define audit_release 4%{?dist}
 %define sca_version 0.4.8
-%define sca_release 18
-%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
+%define sca_release 19
+%{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
@@ -13,7 +13,8 @@ Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Patch1: audit-1.8-noaudit.patch
-Patch2: audit-swig.patch
+Patch2: audit-1.7.12-libev.patch
+Patch3: audit-swig.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gettext-devel intltool libtool swig python-devel
 BuildRequires: tcp_wrappers-devel 
@@ -93,6 +94,7 @@ A graphical utility for editing audit configuration.
 %setup -q
 %patch1 -p2
 %patch2 -p1
+%patch3 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude --with-libwrap --enable-gssapi-krb5=no
@@ -187,9 +189,9 @@ fi
 
 %files libs-python
 %defattr(-,root,root)
-%attr(755,root,root) %{python_sitelib}/_audit.so
-%attr(755,root,root) %{python_sitelib}/auparse.so
-%{python_sitelib}/audit.py*
+%attr(755,root,root) %{python_sitearch}/_audit.so
+%attr(755,root,root) %{python_sitearch}/auparse.so
+%{python_sitearch}/audit.py*
 
 %files
 %defattr(-,root,root,-)
@@ -262,6 +264,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Fri Apr 03 2009 Steve Grubb <sgrubb@redhat.com> 1.7.12-4
+- Drop some debug code in libev
+
 * Tue Mar 17 2009 Steve Grubb <sgrubb@redhat.com> 1.7.12-3
 - Apply patch from dwalsh moving audit.py file to arch specific python dir
 
