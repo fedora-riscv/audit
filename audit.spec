@@ -1,7 +1,7 @@
 %define audit_version 1.7.12
 %define audit_release 4%{?dist}
 %define sca_version 0.4.8
-%define sca_release 18
+%define sca_release 19
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Summary: User space tools for 2.6 kernel auditing
