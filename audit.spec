@@ -85,7 +85,7 @@ tar -xzf %{SOURCE1}
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude --with-libwrap --enable-gssapi-krb5=no --with-libcap-ng=yes
 make %{?_smp_mflags}
-cd ../audit-1.8
+cd audit-1.8
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude --with-libwrap --enable-gssapi-krb5=no --with-libcap-ng=yes
 make %{?_smp_mflags}
 
@@ -96,9 +96,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_mandir}/{man5,man8}
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/log/audit
-cd %_buildrootdir/audit-1.8
+cd audit-1.8
 make DESTDIR=$RPM_BUILD_ROOT install
-cd %_buildrootdir/%{name}-%{version}
+cd .. 
 make DESTDIR=$RPM_BUILD_ROOT install
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}
