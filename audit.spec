@@ -96,9 +96,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_mandir}/{man5,man8}
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/log/audit
-cd %_sourcedir/audit-1.8
+cd %_buildrootdir/audit-1.8
 make DESTDIR=$RPM_BUILD_ROOT install
-cd %_sourcedir/%{name}-%{version}
+cd %_buildrootdir/%{name}-%{version}
 make DESTDIR=$RPM_BUILD_ROOT install
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}
