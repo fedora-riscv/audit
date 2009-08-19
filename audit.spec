@@ -96,10 +96,10 @@ mkdir -p $RPM_BUILD_ROOT/%{_mandir}/{man5,man8}
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/log/audit
-cd ../audit-1.8
-make DESTDIR=$RPM_BUILD_ROOT %{?_smp_mflags} install
-cd ../%{name}-%{version}
-make DESTDIR=$RPM_BUILD_ROOT %{?_smp_mflags} install
+cd %_sourcedir/audit-1.8
+make DESTDIR=$RPM_BUILD_ROOT install
+cd %_sourcedir/%{name}-%{version}
+make DESTDIR=$RPM_BUILD_ROOT install
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}
 # This winds up in the wrong place when libtool is involved
