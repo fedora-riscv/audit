@@ -3,12 +3,11 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
-Source1: %{name}-1.8.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel libcap-ng-devel 
@@ -69,23 +68,10 @@ interface to the audit system, audispd. These plugins can do things
 like relay events to remote machines or analyze events for suspicious
 behavior.
 
-%package libs-compat
-Summary: Dynamic library for libaudit
-License: LGPLv2+
-Group: Development/Libraries
-
-%description libs-compat
-The audit-libs-compat package contains the dynamic libraries needed for 
-applications to use the audit 1.0 framework.
-
 %prep
 %setup -q
-tar -xzf %{SOURCE1}
 
 %build
-%configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude --with-libwrap --enable-gssapi-krb5=no --with-libcap-ng=yes
-make %{?_smp_mflags}
-cd audit-1.8
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude --with-libwrap --enable-gssapi-krb5=no --with-libcap-ng=yes
 make %{?_smp_mflags}
 
@@ -96,9 +82,6 @@ mkdir -p $RPM_BUILD_ROOT/%{_mandir}/{man5,man8}
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/log/audit
-cd audit-1.8
-make DESTDIR=$RPM_BUILD_ROOT install
-cd .. 
 make DESTDIR=$RPM_BUILD_ROOT install
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}
@@ -152,11 +135,6 @@ fi
 if [ $1 -ge 1 ]; then
    /sbin/service auditd condrestart > /dev/null 2>&1 || :
 fi
-
-%files libs-compat
-%defattr(-,root,root,-)
-%attr(755,root,root) /%{_lib}/libaudit.so.0*
-%config(noreplace) %attr(640,root,root) /etc/libaudit.conf
 
 %files libs
 %defattr(-,root,root,-)
@@ -238,7 +216,7 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
-* Wed Aug 19 2009 Steve Grubb <sgrubb@redhat.com> 2.0-2
+* Fri Aug 21 2009 Steve Grubb <sgrubb@redhat.com> 2.0-3
 - New upstream release
 
 * Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.13-2
