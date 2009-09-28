@@ -2,8 +2,8 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.0
-Release: 3%{?dist}
+Version: 2.0.1
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -172,6 +172,7 @@ fi
 %attr(644,root,root) %{_mandir}/man8/aulast.8.gz
 %attr(644,root,root) %{_mandir}/man8/aulastlog.8.gz
 %attr(644,root,root) %{_mandir}/man8/ausyscall.8.gz
+%attr(644,root,root) %{_mandir}/man7/audit.rules.7.gz
 %attr(644,root,root) %{_mandir}/man5/auditd.conf.5.gz
 %attr(644,root,root) %{_mandir}/man5/audispd.conf.5.gz
 %attr(644,root,root) %{_mandir}/man5/ausearch-expression.5.gz
@@ -181,8 +182,8 @@ fi
 %attr(755,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
 %attr(750,root,root) /sbin/audispd
-%attr(750,root,root) %{_bindir}/aulast
-%attr(750,root,root) %{_bindir}/aulastlog
+%attr(755,root,root) %{_bindir}/aulast
+%attr(755,root,root) %{_bindir}/aulastlog
 %attr(755,root,root) %{_bindir}/ausyscall
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %{_var}/log/audit
@@ -216,6 +217,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Mon Sep 28 2009 Steve Grubb <sgrubb@redhat.com> 2.0.1-1
+- New upstream release
+
 * Fri Aug 21 2009 Steve Grubb <sgrubb@redhat.com> 2.0-3
 - New upstream release
 
@@ -357,246 +361,3 @@ fi
 - Fix buffer overflow in audit_log_user_command
 - Add basic remote logging plugin - only sends & no flow control
 - Update ausearch with interpret fixes from auparse
-
-* Sun Mar 09 2008 Steve Grubb <sgrubb@redhat.com> 1.6.9-1
-- Apply hidden attribute cleanup patch (Miloslav Trmac)
-- Apply auparse expression interface patch (Miloslav Trmac)
-- Fix potential memleak in audit event dispatcher
-- Update system-config-audit to version 0.4.6 (Miloslav Trmac)
-- audisp-prelude alerts now controlled by config file
-- Updated syscall table for 2.6.25 kernel
-- Apply patch correcting acct field being misencoded (Miloslav Trmac)
-- Added watched account login detection for prelude plugin
-
-* Thu Feb 14 2008 Steve Grubb <sgrubb@redhat.com> 1.6.8-1
-- Update for gcc 4.3
-- Cleanup descriptors in audispd before running plugin
-- Fix 'recent' keyword for aureport/search
-- Fix SE Linux policy for zos_remote plugin
-- Add event type for group password authentication attempts
-- Couple of updates to the translation tables
-- Add detection of failed group authentication to audisp-prelude
-
-* Thu Jan 31 2008 Steve Grubb <sgrubb@redhat.com> 1.6.7-2
-- In ausearch/report, prefer -if to stdin
-- In ausearch/report, add new command line option --input-logs (#428860)
-- Updated audisp-prelude based on feedback from prelude-devel
-- Added prelude alert for promiscuous socket being opened
-- Added prelude alert for SE Linux policy enforcement changes
-- Added prelude alerts for Forbidden Login Locations and Time
-- Applied patch to auparse fixing error handling of searching by
-  interpreted value (Miloslav Trmac)
-
-* Sat Jan 19 2008 Steve Grubb <sgrubb@redhat.com> 1.6.6-1
-- Add prelude IDS plugin for IDMEF alerts
-- Add --user option to aulastlog command
-- Use desktop-file-install for system-config-audit
-- Avoid touching auditd.conf most of the time (#408501)
-
-* Fri Jan 11 2008 Steve Grubb <sgrubb@redhat.com> 1.6.5-3
-- Updates for spec file review
-- Adjust permission on selinux policy file
-
-* Mon Jan 07 2008 Steve Grubb <sgrubb@redhat.com> 1.6.5-1
-- Fix config parser to allow either 0640 or 0600 for audit logs (#427062)
-- Check for audit log being writable by owner in auditd
-- If auditd logging was suspended, it can be resumed with SIGUSR2 (#251639)
-- Updated CAPP, LSPP, and NISPOM rules for new capabilities
-- Added aulastlog utility
-
-* Sun Dec 30 2007 Steve Grubb <sgrubb@redhat.com> 1.6.4-3
-- Allow 0600 file perms for audit logs
-
-* Sat Dec 29 2007 Steve Grubb <sgrubb@redhat.com> 1.6.4-1
-- fchmod of log file was on wrong variable (#426934)
-- Allow use of errno strings for exit codes in audit rules
-
-* Sat Dec 29 2007 Miloslav Trmač <mitr@redhat.com> - 1.6.3-2
-- Don't fchmod() /dev/null to mode 0400 (#426934)
-
-* Thu Dec 27 2007 Steve Grubb <sgrubb@redhat.com> 1.6.3-1
-- Add kernel release string to DEAMON_START events
-- Fix keep_logs when num_logs option disabled (#325561)
-- Fix auparse to handle node fields for syscall records
-- Update system-config-audit to version 0.4.5 (Miloslav Trmac)
-- Add keyword week-ago to aureport & ausearch start/end times
-- Fix audit log permissions on rotate. If group is root 0400, otherwise 0440
-- Add RACF zos remote audispd plugin (Klaus Kiwi)
-- Add event queue overflow action to audispd
-
-* Mon Oct 1 2007 Steve Grubb <sgrubb@redhat.com> 1.6.2-2
-- Don't retry if the rt queue is full.
-
-* Tue Sep 25 2007 Steve Grubb <sgrubb@redhat.com> 1.6.2-1
-- Add support for searching by posix regular expressions in auparse
-- Route DEAMON events into rt interface
-- If event pipe is full, try again after doing local logging
-- Optionally add node/machine name to records in audit daemon
-- Update ausearch/aureport to specify nodes to search on
-- Fix segfault interpretting saddr fields in avcs
-
-* Thu Sep 6 2007 Steve Grubb <sgrubb@redhat.com> 1.6.1-2
-- Fix uninitialized variable in auparse (John Dennis)
-
-* Sun Sep 2 2007 Steve Grubb <sgrubb@redhat.com> 1.6.1-1
-- External plugin support in place
-- Fix reference counting in auparse python bindings (#263961)
-- Moved default af_unix plugin socket to /var/run/audispd_events
-
-* Wed Aug 29 2007 Steve Grubb <sgrubb@redhat.com> 1.6-3
-- Add newline to audispd string formatted events
-
-* Tue Aug 28 2007 Steve Grubb <sgrubb@redhat.com> 1.6-2
-- spec file cleanups
-- Update to s-c-audit 0.4.3
-
-* Mon Aug 27 2007 Steve Grubb <sgrubb@redhat.com> 1.6-1
-- Update Licence tags
-- Adding perm field should not set syscall added flag in auditctl
-- Fix segfault when aureport -if option is used
-- Fix auditctl to better check keys on rule lines
-- Add support for audit by TTY and other new event types
-- Auditd config option for group permission of audit logs
-- Swig messed up a variable in ppc's python bindings causing crashes. (#251327)
-- New audit event dispatcher
-- Update syscall tables for 2.6.23 kernel
-
-* Wed Jul 25 2007 Steve Grubb <sgrubb@redhat.com> 1.5.6-1
-- Fix potential buffer overflow in print clone flags of auparse
-- Fix python traceback parsing watches without perm statement (Miloslav Trmac)
-- Update auditctl to handle legacy kernels when putting a watch on a dir
-- Fix acct interpretation in auparse
-
-* Tue Jul 17 2007 Miloslav Trmač <mitr@redhat.com> - 1.5.5-5
-- Fix a double free when auditd receives SIGHUP
-- Move the system-config-audit menu entry to the Administration menu
-
-* Tue Jul 10 2007 Steve Grubb <sgrubb@redhat.com> 1.5.5-1
-- Add system-config-audit (Miloslav Trmac)
-- Correct bug in audit_make_equivalent function (Al Viro)
-
-* Tue Jun 26 2007 Steve Grubb <sgrubb@redhat.com> 1.5.4-1
-- Add feed interface to auparse library (John Dennis)
-- Apply patch to libauparse for unresolved symbols (#241178)
-- Apply patch to add line numbers for file events in libauparse (John Dennis)
-- Change seresults to seresult in libauparse (John Dennis)
-- Add unit32_t definition to swig (#244210)
-- Add support for directory auditing
-- Update acct field to be escaped
-
-* Tue May 01 2007 Steve Grubb <sgrubb@redhat.com> 1.5.3-1
-- Change buffer size to prevent truncation of DAEMON events with large labels
-- Fix memory leaks in auparse (John Dennis)
-- Update syscall tables for 2.6.21 kernel
-- Update capp & lspp rules
-- New python bindings for libauparse (John Dennis)
-
-* Thu Apr 04 2007 Steve Grubb <sgrubb@redhat.com> 1.5.2-1
-- New event dispatcher (James Antill)
-- Apply patches fixing man pages and Makefile.am (Philipp Hahn)
-- Apply patch correcting python libs permissions (Philipp Hahn)
-- Fix auditd segfault on reload
-- Fix bug in auparse library for file pointers and descriptors
-- Extract subject information out of daemon events for ausearch
-
-* Thu Mar 29 2007 Steve Grubb <sgrubb@redhat.com> 1.5.1-2
-- Remove requires kernel-headers for python-libs
-- Apply patch to prevent segfaults on auditd reload
-
-* Tue Mar 20 2007 Steve Grubb <sgrubb@redhat.com> 1.5.1-1
-- Updated autrace to monitor *at syscalls
-- Add support in libaudit for AUDIT_BIT_TEST(^) and AUDIT_MASK_TEST (&)
-- Finish reworking auditd config parser
-- In auparse, interpret open, fcntl, and clone flags
-- In auparse, when interpreting execve record types, run args through unencode
-- Add support for OBJ_PID message type
-- Event dispatcher updates
-
-* Fri Mar 2 2007 Steve Grubb <sgrubb@redhat.com> 1.5-2
-- rebuild
-
-* Fri Mar 2 2007 Steve Grubb <sgrubb@redhat.com> 1.5-1
-- NEW audit dispatcher program & plugin framework
-- Correct hidden variables in libauparse
-- Added NISPOM sample rules
-- Verify accessibility of files passed in auparse_init
-- Fix bug in parser library interpreting socketcalls
-- Add support for stdio FILE pointer in auparse_init
-- Adjust init script to allow anyone to status auditd (#230626)
-
-* Tue Feb 20 2007 Steve Grubb <sgrubb@redhat.com> 1.4.2-1
-- Add man pages
-- Reduce text relocations in parser library
-- Add -n option to auditd for no fork
-- Add exec option to space_left, admin_space_left, disk_full,
-  and disk_error - eg EXEC /usr/local/script
-
-* Fri Feb 16 2007 Steve Grubb <sgrubb@redhat.com> 1.4.1-1
-- updated audit_rule_fieldpair_data to handle perm correctly (#226780)
-- Finished search options for audit parsing library
-- Fix ausearch -se to work correctly
-- Fix auditd init script for /usr on netdev (#228528)
-- Parse avc seperms better when there are more than one
-
-* Sun Feb 04 2007 Steve Grubb <sgrubb@redhat.com> 1.4-1
-- New report about authentication attempts
-- Updates for python 2.5
-- update autrace to have resource usage mode
-- update auditctl to support immutable config
-- added audit_log_user_command function to libaudit api
-- interpret capabilities
-- added audit event parsing library
-- updates for 2.6.20 kernel
-
-* Sun Dec 10 2006 Steve Grubb <sgrubb@redhat.com> 1.3.1-2
-- Make more adjustments for python 2.5
-
-* Sun Dec 10 2006 Steve Grubb <sgrubb@redhat.com> 1.3.1-1
-- Fix a couple parsing problems (#217952)
-- Add tgkill to S390* syscall tables (#218484)
-- Fix error messages in ausearch/aureport
-
-* Wed Dec  6 2006 Jeremy Katz <katzj@redhat.com> - 1.3-4
-- rebuild against python 2.5
-
-* Thu Nov 30 2006 Steve Grubb <sgrubb@redhat.com> 1.3-3
-- Fix timestamp for libaudit.conf (#218053)
-
-* Thu Nov 30 2006 Steve Grubb <sgrubb@redhat.com> 1.3-2
-- Fix minor parsing problem and add new msg types
-
-* Tue Nov 28 2006 Steve Grubb <sgrubb@redhat.com> 1.3-1
-- ausearch & aureport implement uid/gid caching
-- In ausearch & aureport, extract addr when hostname is unknown
-- In ausearch & aureport, test audit log presence O_RDONLY
-- New ausearch/aureport time keywords: recent, this-week, this-month, this-year
-- Added --add & --delete option to aureport
-- Update res parsing in config change events
-- Increase the size on audit daemon buffers
-- Parse avc_path records in ausearch/aureport
-- ausearch has new output mode, raw, for extracting events
-- ausearch/aureport can now read stdin
-- Rework AVC processing in ausearch/aureport
-- Added long options to ausearch and aureport
-
-* Tue Oct 24 2006 Steve Grubb <sgrubb@redhat.com> 1.2.9-1
-- In auditd if num_logs is zero, don't rotate on SIGUSR1 (#208834)
-- Fix some defines in libaudit.h
-- Some auditd config strings were not initialized in aureport (#211443)
-- Updated man pages
-- Add Netlabel event types to libaudit
-- Update aureports to current audit event types
-- Update autrace a little
-- Deprecated all the old audit_rule functions from public API
-- Drop auparse library for the moment
-
-* Fri Sep 29 2006 Steve Grubb <sgrubb@redhat.com> 1.2.8-1
-- Add dist tag and bump version (#208532)
-- Make internal auditd buffers bigger for context info
-- Correct address resolving of hostname in logging functions
-- Do not allow multiple msgtypes in same audit rule in auditctl (#207666)
-- Only =, != operators for arch & inode fields in auditctl (#206427)
-- Updated audit message type table
-- Remove watches from aureport since FS_WATCH is deprecated
-- Add audit_log_avc back temporarily (#208152)
- 
