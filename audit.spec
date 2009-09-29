@@ -1,7 +1,7 @@
 %define audit_version 1.7.14
 %define audit_release 1%{?dist}
-%define sca_version 0.4.8
-%define sca_release 21
+%define sca_version 0.4.10
+%define sca_release 1
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Summary: User space tools for 2.6 kernel auditing
@@ -199,6 +199,7 @@ fi
 %attr(644,root,root) %{_mandir}/man8/aulast.8.gz
 %attr(644,root,root) %{_mandir}/man8/aulastlog.8.gz
 %attr(644,root,root) %{_mandir}/man8/ausyscall.8.gz
+%attr(644,root,root) %{_mandir}/man7/audit.rules.7.gz
 %attr(644,root,root) %{_mandir}/man5/auditd.conf.5.gz
 %attr(644,root,root) %{_mandir}/man5/audispd.conf.5.gz
 %attr(644,root,root) %{_mandir}/man5/ausearch-expression.5.gz
