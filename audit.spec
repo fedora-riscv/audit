@@ -1,7 +1,7 @@
-%define audit_version 1.7.13
+%define audit_version 1.7.14
 %define audit_release 1%{?dist}
 %define sca_version 0.4.8
-%define sca_release 20
+%define sca_release 21
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Summary: User space tools for 2.6 kernel auditing
@@ -258,6 +258,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Tue Sep 29 2009 Steve Grubb <sgrubb@redhat.com> 1.7.14-1
+- New upstream release
+
 * Mon Jun 08 2009 Steve Grubb <sgrubb@redhat.com> 1.7.13-1
 - New upstream release
 - Fix problem with negative uids in audit rules on 32 bit systems
