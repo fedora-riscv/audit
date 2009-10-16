@@ -2,7 +2,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.0.1
+Version: 2.0.2
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -109,6 +109,7 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/auparse.la
 
 # On platforms with 32 & 64 bit libs, we need to coordinate the timestamp
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
+touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
 
 %ifnarch ppc ppc64
 %check
@@ -217,6 +218,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri Oct 16 2009 Steve Grubb <sgrubb@redhat.com> 2.0.2-1
+- New upstream release
+
 * Mon Sep 28 2009 Steve Grubb <sgrubb@redhat.com> 2.0.1-1
 - New upstream release
 
