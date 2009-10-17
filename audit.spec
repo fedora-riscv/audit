@@ -1,7 +1,7 @@
-%define audit_version 1.7.14
+%define audit_version 1.7.16
 %define audit_release 1%{?dist}
 %define sca_version 0.4.10
-%define sca_release 1
+%define sca_release 2
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Summary: User space tools for 2.6 kernel auditing
@@ -259,6 +259,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.apps/system-config-audit-server
 
 %changelog
+* Sat Oct 17 2009 Steve Grubb <sgrubb@redhat.com> 1.7.16-1
+- New upstream release
+
 * Tue Sep 29 2009 Steve Grubb <sgrubb@redhat.com> 1.7.14-1
 - New upstream release
 
