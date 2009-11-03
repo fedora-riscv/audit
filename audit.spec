@@ -219,10 +219,7 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
-* Sat Oct 17 2009 Steve Grubb <sgrubb@redhat.com> 2.0.3-1
-- New upstream release
-
-* Fri Oct 16 2009 Steve Grubb <sgrubb@redhat.com> 2.0.2-1
+* Tue Nov 03 2009 Steve Grubb <sgrubb@redhat.com> 2.0.3-1
 - New upstream release
 
 * Mon Sep 28 2009 Steve Grubb <sgrubb@redhat.com> 2.0.1-1
