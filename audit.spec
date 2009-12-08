@@ -2,7 +2,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.0.3
+Version: 2.0.4
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -34,7 +34,7 @@ applications to use the audit framework.
 Summary: Header files and static library for libaudit
 License: LGPLv2+
 Group: Development/Libraries
-Requires: %{name}-libs = %{version}-%{release}
+Requires: %{name}-libs = %{version}
 Requires: kernel-headers >= 2.6.29
 
 %description libs-devel
@@ -219,7 +219,13 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
-* Tue Nov 03 2009 Steve Grubb <sgrubb@redhat.com> 2.0.3-1
+* Tue Dec 08 2009 Steve Grubb <sgrubb@redhat.com> 2.0.4-1
+- New upstream release
+
+* Sat Oct 17 2009 Steve Grubb <sgrubb@redhat.com> 2.0.3-1
+- New upstream release
+
+* Fri Oct 16 2009 Steve Grubb <sgrubb@redhat.com> 2.0.2-1
 - New upstream release
 
 * Mon Sep 28 2009 Steve Grubb <sgrubb@redhat.com> 2.0.1-1
