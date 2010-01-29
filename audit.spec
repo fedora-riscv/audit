@@ -8,6 +8,9 @@ License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
+Patch1: audit-2.0.5-auparse-empty-FILE_ARRAY.patch
+Patch2: audit-2.0.5-i386-inode.patch
+Patch3: audit-2.0.5-glibc.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel libcap-ng-devel 
@@ -80,6 +83,9 @@ behavior.
 
 %prep
 %setup -q
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude --with-libwrap --enable-gssapi-krb5=no --with-libcap-ng=yes
