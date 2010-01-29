@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.0.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -31,16 +31,26 @@ The audit-libs package contains the dynamic libraries needed for
 applications to use the audit framework.
 
 %package libs-devel
-Summary: Header files and static library for libaudit
+Summary: Header files for libaudit
 License: LGPLv2+
 Group: Development/Libraries
 Requires: %{name}-libs = %{version}
 Requires: kernel-headers >= 2.6.29
 
 %description libs-devel
-The audit-libs-devel package contains the static libraries and header 
-files needed for developing applications that need to use the audit 
-framework libraries.
+The audit-libs-devel package contains the header files needed for
+developing applications that need to use the audit framework libraries.
+
+%package libs-static
+Summary: Static version of libaudit library
+License: LGPLv2+
+Group: Development/Libraries
+Requires: kernel-headers >= 2.6.29
+
+%description libs-static
+The audit-libs-static package contains the static libraries
+needed for developing applications that need to use static audit
+framework libraries
 
 %package libs-python
 Summary: Python bindings for libaudit
@@ -147,14 +157,17 @@ fi
 %files libs-devel
 %defattr(-,root,root,-)
 %doc contrib/skeleton.c contrib/plugin
-%{_libdir}/libaudit.a
-%{_libdir}/libauparse.a
 %{_libdir}/libaudit.so
 %{_libdir}/libauparse.so
 %{_includedir}/libaudit.h
 %{_includedir}/auparse.h
 %{_includedir}/auparse-defs.h
 %{_mandir}/man3/*
+
+%files libs-static
+%defattr(-,root,root,-)
+%{_libdir}/libaudit.a
+%{_libdir}/libauparse.a
 
 %files libs-python
 %defattr(-,root,root,-)
@@ -219,6 +232,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri Jan 29 2010 Steve Grubb <sgrubb@redhat.com> 2.0.4-2
+- Split out static libs (#556039)
+
 * Tue Dec 08 2009 Steve Grubb <sgrubb@redhat.com> 2.0.4-1
 - New upstream release
 
