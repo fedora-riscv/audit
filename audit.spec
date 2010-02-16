@@ -16,6 +16,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel libcap-ng-devel 
 BuildRequires: kernel-headers >= 2.6.29
+BuildRequires: autoconf automake libtool
 Requires: %{name}-libs = %{version}-%{release}
 Requires: chkconfig
 Requires(pre): coreutils
@@ -90,6 +91,7 @@ behavior.
 %patch4 -p1
 
 %build
+autoreconf -v --install
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude --with-libwrap --enable-gssapi-krb5=no --with-libcap-ng=yes
 make %{?_smp_mflags}
 
