@@ -2,16 +2,12 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.0.4
-Release: 4%{?dist}
+Version: 2.0.6
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
-Patch1: audit-2.0.5-auparse-empty-FILE_ARRAY.patch
-Patch2: audit-2.0.5-i386-inode.patch
-Patch3: audit-2.0.5-glibc.patch
-Patch4: audit-2.0.4-add-needed.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel libcap-ng-devel 
@@ -85,10 +81,6 @@ behavior.
 
 %prep
 %setup -q
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
 
 %build
 autoreconf -v --install
@@ -242,6 +234,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri Feb 04 2011 Steve Grubb <sgrubb@redhat.com> 2.0.6-1
+- New upstream release
+
 * Wed Jul 21 2010 David Malcolm <dmalcolm@redhat.com> - 2.0.4-4
 - Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
 
