@@ -2,8 +2,8 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.0.5
-Release: 2%{?dist}
+Version: 2.0.6
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -234,6 +234,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri Feb 04 2011 Steve Grubb <sgrubb@redhat.com> 2.0.6-1
+- New upstream release
+
 * Thu Jan 20 2011 Karsten Hopp <karsten@redhat.com> 2.0.5-2
 - bump and rebuild as 2.0.5-1 was erroneously linked with python-2.6 on ppc
 
