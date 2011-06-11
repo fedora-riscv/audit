@@ -2,7 +2,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.1.1
+Version: 2.1.2
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -12,7 +12,6 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel libcap-ng-devel 
 BuildRequires: kernel-headers >= 2.6.29
-BuildRequires: autoconf automake libtool
 Requires: %{name}-libs = %{version}-%{release}
 Requires: chkconfig
 Requires(pre): coreutils
@@ -236,6 +235,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Sat Jun 11 2011 Steve Grubb <sgrubb@redhat.com> 2.1.2-1
+- New upstream release
+
 * Wed Apr 20 2011 Steve Grubb <sgrubb@redhat.com> 2.1.1-1
 - New upstream release
 
