@@ -162,11 +162,11 @@ if [ $1 = 0 ]; then
   /bin/systemctl stop auditd.service > /dev/null 2>&1 || :
 fi
 
-%files libs
 %triggerun -- audit  < 2.1.2-2
 /sbin/chkconfig --del auditd >/dev/null 2>&1 || :
 /bin/systemctl try-restart auditd.service >/dev/null 2>&1 || :
 
+%files libs
 %defattr(-,root,root,-)
 %attr(755,root,root) /%{_lib}/libaudit.so.1*
 %attr(755,root,root) /%{_lib}/libauparse.*
@@ -219,7 +219,7 @@ fi
 %attr(755,root,root) %{_bindir}/aulast
 %attr(755,root,root) %{_bindir}/aulastlog
 %attr(755,root,root) %{_bindir}/ausyscall
-%{_unitdir}/auditd.service
+%attr(755,root,root) %{_unitdir}/auditd.service
 %attr(750,root,root) %dir %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
 %attr(750,root,root) %dir /etc/audisp
