@@ -2,20 +2,24 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.1.2
+Version: 2.1.3
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Source1: auditd.service
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel libcap-ng-devel 
 BuildRequires: autoconf automake libtool
+BuildRequires: systemd-units
 BuildRequires: kernel-headers >= 2.6.29
 Requires: %{name}-libs = %{version}-%{release}
-Requires: chkconfig
-Requires(pre): coreutils
+Requires(post): systemd-units systemd-sysv chkconfig coreutils
+Requires(preun): systemd-units
+Requires(postun): systemd-units coreutils
+
 
 %description
 The audit package contains the user space utilities for
@@ -89,7 +93,7 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{sbin,etc/{sysconfig,audispd/plugins.d,rc.d/init.d}}
+mkdir -p $RPM_BUILD_ROOT/{sbin,etc/{sysconfig,audispd/plugins.d}}
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/{man5,man8}
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
@@ -125,6 +129,11 @@ touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
 
 %ifnarch ppc ppc64
+# Systemd 
+mkdir -p %{buildroot}%{_unitdir}
+install -m644 %{SOURCE1} %{buildroot}%{_unitdir}
+rm -rf %{buildroot}%{_initrddir}
+
 %check
 make check
 %endif
@@ -135,20 +144,27 @@ rm -rf $RPM_BUILD_ROOT
 %post libs -p /sbin/ldconfig
 
 %post
-/sbin/chkconfig --add auditd
+if [ $1 -eq 1 ] ; then
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
 
 %preun
-if [ $1 -eq 0 ]; then
-   /sbin/service auditd stop > /dev/null 2>&1
-   /sbin/chkconfig --del auditd
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    /bin/systemctl try-restart auditd.service >/dev/null 2>&1 || :
 fi
 
 %postun libs -p /sbin/ldconfig
 
 %postun
-if [ $1 -ge 1 ]; then
-   /sbin/service auditd condrestart > /dev/null 2>&1 || :
+if [ $1 = 0 ]; then
+  /bin/systemctl --no-reload auditd.service > /dev/null 2>&1 || :
+  /bin/systemctl stop auditd.service > /dev/null 2>&1 || :
 fi
+
+%triggerun -- audit  < 2.1.2-2
+/sbin/chkconfig --del auditd >/dev/null 2>&1 || :
+/bin/systemctl try-restart auditd.service >/dev/null 2>&1 || :
 
 %files libs
 %defattr(-,root,root,-)
@@ -203,7 +219,7 @@ fi
 %attr(755,root,root) %{_bindir}/aulast
 %attr(755,root,root) %{_bindir}/aulastlog
 %attr(755,root,root) %{_bindir}/ausyscall
-%attr(755,root,root) /etc/rc.d/init.d/auditd
+%attr(755,root,root) %{_unitdir}/auditd.service
 %attr(750,root,root) %dir %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
 %attr(750,root,root) %dir /etc/audisp
@@ -236,6 +252,12 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Mon Aug 15 2011 Steve Grubb <sgrubb@redhat.com> 2.1.3-1
+- New upstream release
+
+* Thu Jul 26 2011 Jóhann B. Guðmundsson <johannbg@gmail.com> - 2.1.2-2
+- Introduce systemd unit file, drop SysV support
+
 * Sat Jun 11 2011 Steve Grubb <sgrubb@redhat.com> 2.1.2-1
 - New upstream release
 
