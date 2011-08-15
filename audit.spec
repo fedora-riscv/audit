@@ -2,8 +2,8 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.1.2
-Release: 2%{?dist}
+Version: 2.1.3
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -252,6 +252,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Mon Aug 15 2011 Steve Grubb <sgrubb@redhat.com> 2.1.3-1
+- New upstream release
+
 * Thu Jul 26 2011 Jóhann B. Guðmundsson <johannbg@gmail.com> - 2.1.2-2
 - Introduce systemd unit file, drop SysV support
 
