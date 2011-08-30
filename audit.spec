@@ -128,12 +128,12 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/auparse.la
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
 
-%ifnarch ppc ppc64
 # Systemd 
 mkdir -p %{buildroot}%{_unitdir}
 install -m644 %{SOURCE1} %{buildroot}%{_unitdir}
 rm -rf %{buildroot}%{_initrddir}
 
+%ifnarch ppc ppc64
 %check
 make check
 %endif
@@ -252,6 +252,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Tue Aug 30 2011 Steve Grubb <sgrubb@redhat.com> 2.1.3-2
+- Correct misplaced %ifnarch (#734359)
+
 * Mon Aug 15 2011 Steve Grubb <sgrubb@redhat.com> 2.1.3-1
 - New upstream release
 
