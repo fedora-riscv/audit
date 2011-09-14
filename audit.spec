@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.1.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -144,22 +144,25 @@ rm -rf $RPM_BUILD_ROOT
 %post libs -p /sbin/ldconfig
 
 %post
-if [ $1 -eq 1 ] ; then
-    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -eq 1 ] ; then 
+    # Initial installation
+    /bin/systemctl enable auditd.service >/dev/null 2>&1 || :
 fi
 
 %preun
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
-if [ $1 -ge 1 ] ; then
-    /bin/systemctl try-restart auditd.service >/dev/null 2>&1 || :
+if [ $1 -eq 0 ] ; then
+    # Package removal, not upgrade
+    /bin/systemctl --no-reload disable auditd.service > /dev/null 2>&1 || :
+    /bin/systemctl stop auditd.service > /dev/null 2>&1 || :
 fi
 
 %postun libs -p /sbin/ldconfig
 
 %postun
-if [ $1 = 0 ]; then
-  /bin/systemctl --no-reload auditd.service > /dev/null 2>&1 || :
-  /bin/systemctl stop auditd.service > /dev/null 2>&1 || :
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    /bin/systemctl try-restart auditd.service >/dev/null 2>&1 || :
 fi
 
 %triggerun -- audit  < 2.1.2-2
@@ -252,6 +255,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Wed Sep 14 2011 Steve Grubb <sgrubb@redhat.com> 2.1.3-3
+- Enable by default (#737060)
+
 * Tue Aug 30 2011 Steve Grubb <sgrubb@redhat.com> 2.1.3-2
 - Correct misplaced %ifnarch (#734359)
 
