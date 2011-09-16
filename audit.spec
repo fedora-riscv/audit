@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.1.3
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -166,6 +166,15 @@ if [ $1 -ge 1 ] ; then
 fi
 
 %triggerun -- audit  < 2.1.2-2
+# Save the current service runlevel info
+# User must manually run systemd-sysv-convert --apply auditd
+# to migrate them to systemd targets
+/usr/bin/systemd-sysv-convert --save auditd >/dev/null 2>&1 ||:
+
+# The package is allowed to autostart (and was autostarted before):
+/bin/systemctl --no-reload enable auditd.service >/dev/null 2>&1 ||:
+
+# Run these because the SysV package being removed won't do them
 /sbin/chkconfig --del auditd >/dev/null 2>&1 || :
 /bin/systemctl try-restart auditd.service >/dev/null 2>&1 || :
 
@@ -255,6 +264,10 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Thu Sep 15 2011 Adam Williamson <awilliam@redhat.com> 2.1.3-4
+- add in some systemd scriptlets that were missed, including one which
+  will cause auditd to be enabled on upgrade from pre-systemd builds
+
 * Wed Sep 14 2011 Steve Grubb <sgrubb@redhat.com> 2.1.3-3
 - Enable by default (#737060)
 
