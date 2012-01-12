@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.1.3
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -264,6 +264,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Thu Jan 12 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.1.3-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
 * Thu Sep 15 2011 Adam Williamson <awilliam@redhat.com> 2.1.3-4
 - add in some systemd scriptlets that were missed, including one which
   will cause auditd to be enabled on upgrade from pre-systemd builds
