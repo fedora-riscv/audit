@@ -2,7 +2,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.1.3
+Version: 2.2
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -189,6 +189,7 @@ fi
 %attr(644,root,root) %{_mandir}/man8/autrace.8.gz
 %attr(644,root,root) %{_mandir}/man8/aulast.8.gz
 %attr(644,root,root) %{_mandir}/man8/aulastlog.8.gz
+%attr(644,root,root) %{_mandir}/man8/auvirt.8.gz
 %attr(644,root,root) %{_mandir}/man8/ausyscall.8.gz
 %attr(644,root,root) %{_mandir}/man7/audit.rules.7.gz
 %attr(644,root,root) %{_mandir}/man5/auditd.conf.5.gz
@@ -203,6 +204,7 @@ fi
 %attr(755,root,root) %{_bindir}/aulast
 %attr(755,root,root) %{_bindir}/aulastlog
 %attr(755,root,root) %{_bindir}/ausyscall
+%attr(755,root,root) %{_bindir}/auvirt
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %attr(750,root,root) %dir %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
@@ -236,6 +238,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Thu Mar 1 2012 Steve Grubb <sgrubb@redhat.com> 2.2-1
+- New upstream release
+
 * Mon Aug 15 2011 Steve Grubb <sgrubb@redhat.com> 2.1.3-1
 - New upstream release
 
