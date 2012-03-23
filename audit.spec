@@ -2,7 +2,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.2
+Version: 2.2.1
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -238,6 +238,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri Mar 23 2012 Steve Grubb <sgrubb@redhat.com> 2.2.1-1
+- New upstream release
+
 * Thu Mar 1 2012 Steve Grubb <sgrubb@redhat.com> 2.2-1
 - New upstream release
 
