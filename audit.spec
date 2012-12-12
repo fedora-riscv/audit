@@ -1,25 +1,30 @@
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
+# Do we want systemd?
+%define WITH_SYSTEMD 1
+
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.2.1
+Version: 2.2.2
 Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
+Patch1: fix-srand.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Source1: auditd.service
 BuildRequires: swig python-devel
-BuildRequires: tcp_wrappers-devel libcap-ng-devel 
-BuildRequires: autoconf automake libtool
-BuildRequires: systemd-units
+BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
 Requires: %{name}-libs = %{version}-%{release}
+%if %{WITH_SYSTEMD}
+BuildRequires: systemd-units
 Requires(post): systemd-units systemd-sysv chkconfig coreutils
 Requires(preun): systemd-units
 Requires(postun): systemd-units coreutils
-
+%else
+Requires: chkconfig
+%endif
 
 %description
 The audit package contains the user space utilities for
@@ -85,15 +90,22 @@ behavior.
 
 %prep
 %setup -q
+%patch1 -p1
 
 %build
-autoreconf -v --install
-%configure --sbindir=/sbin --libdir=/%{_lib} --with-prelude --with-libwrap --enable-gssapi-krb5=no --with-libcap-ng=yes
+%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-prelude --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-armeb \
+%if %{WITH_SYSTEMD}
+	--enable-systemd
+%endif
+
 make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/{sbin,etc/{sysconfig,audispd/plugins.d}}
+mkdir -p $RPM_BUILD_ROOT/{sbin,etc/audispd/plugins.d}
+%if !%{WITH_SYSTEMD}
+mkdir -p $RPM_BUILD_ROOT/{etc/{sysconfig,rc.d/init.d}}
+%endif
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/{man5,man8}
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
@@ -128,11 +140,6 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/auparse.la
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
 
-# Systemd 
-mkdir -p %{buildroot}%{_unitdir}
-install -m644 %{SOURCE1} %{buildroot}%{_unitdir}
-rm -rf %{buildroot}%{_initrddir}
-
 %ifnarch ppc ppc64
 %check
 make check
@@ -144,39 +151,32 @@ rm -rf $RPM_BUILD_ROOT
 %post libs -p /sbin/ldconfig
 
 %post
-if [ $1 -eq 1 ] ; then 
-    # Initial installation
-    /bin/systemctl enable auditd.service >/dev/null 2>&1 || :
-fi
+%if %{WITH_SYSTEMD}
+%systemd_post auditd.service
+%else
+/sbin/chkconfig --add auditd
+%endif
 
 %preun
-if [ $1 -eq 0 ] ; then
-    # Package removal, not upgrade
-    /bin/systemctl --no-reload disable auditd.service > /dev/null 2>&1 || :
-    /bin/systemctl stop auditd.service > /dev/null 2>&1 || :
+%if %{WITH_SYSTEMD}
+%systemd_preun auditd.service
+%else
+if [ $1 -eq 0 ]; then
+   /sbin/service auditd stop > /dev/null 2>&1
+   /sbin/chkconfig --del auditd
 fi
+%endif
 
 %postun libs -p /sbin/ldconfig
 
 %postun
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
-if [ $1 -ge 1 ] ; then
-    # Package upgrade, not uninstall
-    /bin/systemctl try-restart auditd.service >/dev/null 2>&1 || :
+%if %{WITH_SYSTEMD}
+%systemd_postun_with_restart auditd.service
+%else
+if [ $1 -ge 1 ]; then
+   /sbin/service auditd condrestart > /dev/null 2>&1 || :
 fi
-
-%triggerun -- audit  < 2.1.2-2
-# Save the current service runlevel info
-# User must manually run systemd-sysv-convert --apply auditd
-# to migrate them to systemd targets
-/usr/bin/systemd-sysv-convert --save auditd >/dev/null 2>&1 ||:
-
-# The package is allowed to autostart (and was autostarted before):
-/bin/systemctl --no-reload enable auditd.service >/dev/null 2>&1 ||:
-
-# Run these because the SysV package being removed won't do them
-/sbin/chkconfig --del auditd >/dev/null 2>&1 || :
-/bin/systemctl try-restart auditd.service >/dev/null 2>&1 || :
+%endif
 
 %files libs
 %defattr(-,root,root,-)
@@ -233,7 +233,12 @@ fi
 %attr(755,root,root) %{_bindir}/aulastlog
 %attr(755,root,root) %{_bindir}/ausyscall
 %attr(755,root,root) %{_bindir}/auvirt
+%if %{WITH_SYSTEMD}
 %attr(755,root,root) %{_unitdir}/auditd.service
+%else
+%attr(755,root,root) /etc/rc.d/init.d/auditd
+%config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
+%endif
 %attr(750,root,root) %dir %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
 %attr(750,root,root) %dir /etc/audisp
@@ -241,7 +246,6 @@ fi
 %attr(750,root,root) %dir %{_libdir}/audit
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
-%config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 %config(noreplace) %attr(640,root,root) /etc/audisp/audispd.conf
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/af_unix.conf
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/syslog.conf
@@ -266,6 +270,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Wed Dec 12 2012 Steve Grubb <sgrubb@redhat.com> 2.2.2-2
+- New upstream release
+
 * Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
