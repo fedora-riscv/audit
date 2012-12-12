@@ -11,6 +11,7 @@ License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
+Patch1: fix-srand.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
@@ -89,6 +90,7 @@ behavior.
 
 %prep
 %setup -q
+%patch1 -p0
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-prelude --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-armeb \
