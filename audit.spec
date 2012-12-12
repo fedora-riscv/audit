@@ -90,7 +90,7 @@ behavior.
 
 %prep
 %setup -q
-%patch1 -p0
+%patch1 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-prelude --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-armeb \
