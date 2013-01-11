@@ -6,7 +6,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.2.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -243,7 +243,6 @@ fi
 %attr(750,root,root) %dir /etc/audit
 %attr(750,root,root) %dir /etc/audisp
 %attr(750,root,root) %dir /etc/audisp/plugins.d
-%attr(750,root,root) %dir %{_libdir}/audit
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/audisp/audispd.conf
@@ -270,6 +269,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri Jan 11 2013 Steve Grubb <sgrubb@redhat.com> 2.2.2-3
+- Do not own /usr/lib64/audit
+
 * Wed Dec 12 2012 Steve Grubb <sgrubb@redhat.com> 2.2.2-2
 - New upstream release
 
