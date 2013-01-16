@@ -6,7 +6,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.2.2
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
