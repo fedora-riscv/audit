@@ -234,7 +234,7 @@ fi
 %attr(755,root,root) %{_bindir}/ausyscall
 %attr(755,root,root) %{_bindir}/auvirt
 %if %{WITH_SYSTEMD}
-%attr(755,root,root) %{_unitdir}/auditd.service
+%attr(640,root,root) %{_unitdir}/auditd.service
 %else
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
@@ -269,6 +269,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Wed Jan 16 2013 Steve Grubb <sgrubb@redhat.com> 2.2.2-4
+- Don't make auditd.service file executable (#896113)
+
 * Fri Jan 11 2013 Steve Grubb <sgrubb@redhat.com> 2.2.2-3
 - Do not own /usr/lib64/audit
 
