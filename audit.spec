@@ -5,13 +5,12 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.2.2
-Release: 3%{?dist}
+Version: 2.2.3
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
-Patch1: fix-srand.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
@@ -90,7 +89,6 @@ behavior.
 
 %prep
 %setup -q
-%patch1 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-prelude --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-armeb \
@@ -234,7 +232,7 @@ fi
 %attr(755,root,root) %{_bindir}/ausyscall
 %attr(755,root,root) %{_bindir}/auvirt
 %if %{WITH_SYSTEMD}
-%attr(755,root,root) %{_unitdir}/auditd.service
+%attr(640,root,root) %{_unitdir}/auditd.service
 %else
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
@@ -269,6 +267,10 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Tue Mar 19 2013 Steve Grubb <sgrubb@redhat.com> 2.2.3-1
+- New upstream bugfix release
+- Don't make auditd.service file executable (#896113)
+
 * Fri Jan 11 2013 Steve Grubb <sgrubb@redhat.com> 2.2.2-3
 - Do not own /usr/lib64/audit
 
