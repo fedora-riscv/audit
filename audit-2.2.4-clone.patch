@@ -1,0 +1,69 @@
+diff -urp audit-2.2.3/auparse/interpret.c audit-2.2.4/auparse/interpret.c
+--- audit-2.2.3/auparse/interpret.c	2013-03-19 16:28:53.000000000 -0400
++++ audit-2.2.4/auparse/interpret.c	2013-03-20 17:09:31.000000000 -0400
+@@ -1339,6 +1339,8 @@ static const char *print_a0(const char *
+ 			return print_dirfd(val);
+ 		else if (strcmp(sys, "futimensat") == 0)
+ 			return print_dirfd(val);
++		else if (strcmp(sys, "clone") == 0)
++			return print_clone_flags(val);
+ 		else if (strcmp(sys, "unshare") == 0)
+ 			return print_clone_flags(val);
+ 	}
+@@ -1441,8 +1443,6 @@ static const char *print_a2(const char *
+ 			return print_prot(val, 0);
+                 else if (strcmp(sys, "socket") == 0)
+ 			return print_socket_proto(val);
+-		else if (strcmp(sys, "clone") == 0)
+-			return print_clone_flags(val);
+                 else if (strcmp(sys, "recvmsg") == 0)
+ 			return print_recv(val);
+ 		else if (strcmp(sys, "linkat") == 0)
+diff -urp audit-2.2.3/contrib/stig.rules audit-2.2.4/contrib/stig.rules
+--- audit-2.2.3/contrib/stig.rules	2013-03-19 16:28:53.000000000 -0400
++++ audit-2.2.4/contrib/stig.rules	2013-03-20 17:09:31.000000000 -0400
+@@ -177,8 +177,8 @@
+ #-a always,exit -F dir=/home -F uid=0 -F auid>=500 -F auid!=4294967295 -C auid!=obj_uid -F key=power-abuse
+ 
+ ## Optional - log container creation  
+-#-a always,exit -F arch=b32 -S clone -F a2&2080505856 -k container-create
+-#-a always,exit -F arch=b64 -S clone -F a2&2080505856 -k container-create
++#-a always,exit -F arch=b32 -S clone -F a0&2080505856 -k container-create
++#-a always,exit -F arch=b64 -S clone -F a0&2080505856 -k container-create
+ 
+ ## Optional - watch for containers that may change their configuration 
+ #-a always,exit -F arch=b32 -S setns -S unshare -k container-config
+diff -urp audit-2.2.3/docs/auditctl.8 audit-2.2.4/docs/auditctl.8
+--- audit-2.2.3/docs/auditctl.8	2013-03-19 16:28:53.000000000 -0400
++++ audit-2.2.4/docs/auditctl.8	2013-03-20 17:09:31.000000000 -0400
+@@ -63,6 +63,9 @@ Report the kernel's audit subsystem stat
+ .BI \-t
+ Trim the subtrees after a mount command.
+ .TP
++.BI \-v
++Print the version of auditctl.
++.TP
+ .BI \-a\  [ list,action | action,list ]
+ Append rule to the end of \fIlist\fP with \fIaction\fP. Please note the comma separating the two values. Omitting it will cause errors. The fields may be in either order. It could be list,action or action,list. The following describes the valid \fIlist\fP names:
+ .RS
+diff -urp audit-2.2.3/src/ausearch-report.c audit-2.2.4/src/ausearch-report.c
+--- audit-2.2.3/src/ausearch-report.c	2013-03-19 16:28:53.000000000 -0400
++++ audit-2.2.4/src/ausearch-report.c	2013-03-20 17:09:31.000000000 -0400
+@@ -1723,6 +1723,8 @@ static void print_a0(const char *val)
+ 			return print_dirfd(val);
+ 		else if (strcmp(sys, "futimensat") == 0)
+ 			return print_dirfd(val);
++		else if (strcmp(sys, "clone") == 0)
++			return print_clone(val);
+ 		else if (strcmp(sys, "unshare") == 0)
+ 			return print_clone(val);
+ 		else goto normal;
+@@ -1799,8 +1801,6 @@ static void print_a2(const char *val)
+ 			return print_prot(val, 0);
+ 		else if (strcmp(sys, "socket") == 0)
+ 			return print_socket_proto(val);
+-		else if (strcmp(sys, "clone") == 0)
+-			return print_clone(val);
+ 		else if (strcmp(sys, "recvmsg") == 0)
+ 			print_recv(val);
+ 		else if (strcmp(sys, "linkat") == 0)
