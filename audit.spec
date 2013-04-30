@@ -5,13 +5,12 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.2.3
-Release: 2%{?dist}
+Version: 2.3
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
-Patch1: audit-2.2.4-clone.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
@@ -90,7 +89,6 @@ behavior.
 
 %prep
 %setup -q
-%patch1 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-prelude --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-armeb \
@@ -218,6 +216,7 @@ fi
 %attr(644,root,root) %{_mandir}/man8/aulast.8.gz
 %attr(644,root,root) %{_mandir}/man8/aulastlog.8.gz
 %attr(644,root,root) %{_mandir}/man8/auvirt.8.gz
+%attr(644,root,root) %{_mandir}/man8/augenrules.8.gz
 %attr(644,root,root) %{_mandir}/man8/ausyscall.8.gz
 %attr(644,root,root) %{_mandir}/man7/audit.rules.7.gz
 %attr(644,root,root) %{_mandir}/man5/auditd.conf.5.gz
@@ -229,22 +228,27 @@ fi
 %attr(755,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
 %attr(750,root,root) /sbin/audispd
+%attr(750,root,root) /sbin/augenrules
 %attr(755,root,root) %{_bindir}/aulast
 %attr(755,root,root) %{_bindir}/aulastlog
 %attr(755,root,root) %{_bindir}/ausyscall
 %attr(755,root,root) %{_bindir}/auvirt
 %if %{WITH_SYSTEMD}
 %attr(640,root,root) %{_unitdir}/auditd.service
+%attr(750,root,root) %dir %{_libexecdir}/initscripts/legacy-actions/auditd
+%attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/resume
+%attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/rotate
 %else
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
 %endif
 %attr(750,root,root) %dir %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
+%attr(750,root,root) %dir /etc/audit/rules.d
 %attr(750,root,root) %dir /etc/audisp
 %attr(750,root,root) %dir /etc/audisp/plugins.d
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
-%config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
+%config(noreplace) %attr(640,root,root) /etc/audit/rules.d/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/audisp/audispd.conf
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/af_unix.conf
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/syslog.conf
@@ -269,11 +273,17 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Tue Apr 30 2013 Steve Grubb <sgrubb@redhat.com> 2.3-1
+- New upstream bugfix release
+
 * Thu Mar 21 2013 Steve Grubb <sgrubb@redhat.com> 2.2.3-2
 - Fix clone syscall interpretation
 
 * Tue Mar 19 2013 Steve Grubb <sgrubb@redhat.com> 2.2.3-1
 - New upstream bugfix release
+
+* Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2.2-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
 * Wed Jan 16 2013 Steve Grubb <sgrubb@redhat.com> 2.2.2-4
 - Don't make auditd.service file executable (#896113)
@@ -356,142 +366,3 @@ fi
 
 * Fri Aug 21 2009 Steve Grubb <sgrubb@redhat.com> 2.0-3
 - New upstream release
-
-* Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.13-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
-
-* Tue Apr 21 2009 Steve Grubb <sgrubb@redhat.com> 1.7.13-1
-- New upstream release
-- Fix problem with negative uids in audit rules on 32 bit systems
-- Update tty keystroke interpretations (Miloslav Trmač)
-
-* Fri Apr 03 2009 Steve Grubb <sgrubb@redhat.com> 1.7.12-4
-- Drop some debug code in libev
-
-* Tue Mar 17 2009 Steve Grubb <sgrubb@redhat.com> 1.7.12-3
-- Apply patch from dwalsh moving audit.py file to arch specific python dir
-
-* Thu Feb 25 2009 Steve Grubb <sgrubb@redhat.com> 1.7.12-2
-- Handle audit=0 boot option for 2.6.29 kernel (#487541)
-
-* Tue Feb 24 2009 Steve Grubb <sgrubb@redhat.com> 1.7.12-1
-- New upstream release
-
-* Mon Feb 23 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.11-2.1
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
-
-* Tue Jan 13 2009 Steve Grubb <sgrubb@redhat.com> 1.7.11-2
-- Add crypto event definitions
-
-* Sat Jan 10 2009 Steve Grubb <sgrubb@redhat.com> 1.7.11-1
-- New upstream release
-
-* Wed Dec 17 2008 Steve Grubb <sgrubb@redhat.com> 1.7.10-2
-- Fix bz 476798 -  "auditd -n" does not work
-
-* Sat Dec 13 2008 Steve Grubb <sgrubb@redhat.com> 1.7.10-1
-- New upstream release
-
-* Sat Nov 29 2008 Ignacio Vazquez-Abrams <ivazqueznet+rpm@gmail.com> - 1.7.9-1.1
-- Rebuild for Python 2.6
-
-* Wed Nov 05 2008 Steve Grubb <sgrubb@redhat.com> 1.7.9-1
-- New upstream release
-
-* Tue Oct 28 2008 Steve Grubb <sgrubb@redhat.com> 1.7.8-6
-- Update specfile requires to include dist
-
-* Mon Oct 27 2008 Steve Grubb <sgrubb@redhat.com> 1.7.8-5
-- Fix ausearch/report recent and now time keyword lookups (#468668)
-
-* Sat Oct 25 2008 Steve Grubb <sgrubb@redhat.com> 1.7.8-4
-- If kernel is in immutable mode, auditd should not send enable command
-
-* Fri Oct 24 2008 Steve Grubb <sgrubb@redhat.com> 1.7.8-3
-- Fix ausearch interpretting i386 syscalls on x86_64 machine
-
-* Thu Oct 23 2008 Steve Grubb <sgrubb@redhat.com> 1.7.8-2
-- Fix segfault when using file input to aureport
-- Quieten down messages about missing gssapi support
-
-* Wed Oct 22 2008 Steve Grubb <sgrubb@redhat.com> 1.7.8-1
-- Disable GSSAPI support until its reworked as plugin
-- Interpret TTY audit data in auparse (Miloslav Trmač)
-- Extract terminal from USER_AVC events for ausearch/report (Peng Haitao)
-- Add USER_AVCs to aureport's avc reporting (Peng Haitao)
-- Short circuit hostname resolution in libaudit if host is empty
-- If log_group and user are not root, don't check dispatcher perms
-- Fix a bug when executing "ausearch -te today PM"
-- Add --exit search option to ausearch
-- Fix parsing config file when kerberos is disabled
-
-* Thu Oct 16 2008 Steve Grubb <sgrubb@redhat.com> 1.7.7-2
-- Remove selinux policy for zos-remote
-
-* Wed Sep 17 2008 Steve Grubb <sgrubb@redhat.com> 1.7.7-1
-- Bug fixes for GSSAPI code in remote logging (DJ Delorie)
-- Add watched syscall support to audisp-prelude
-- Enable tcp_wrappers support in auditd
-
-* Wed Sep 11 2008 Steve Grubb <sgrubb@redhat.com> 1.7.6-1
-- Add subject to audit daemon events (Chu Li)
-- Add tcp_wrappers support for auditd
-- Updated syscall tables for 2.6.27 kernel
-- Audit connect/disconnect of remote clients
-- Add GSS/Kerberos encryption to the remote protocol (DJ Delorie)
-
-* Mon Aug 25 2008 Steve Grubb <sgrubb@redhat.com> 1.7.5-1
-- Update system-config-audit to 0.4.8
-- Whole lot of bug fixes - see ChangeLog for details
-- Reimplement auditd main loop using libev
-- Add TCP listener to auditd to receive remote events
-- Fix scheduler problem (#457061)
-
-* Thu Jul 03 2008 Steve Grubb <sgrubb@redhat.com> 1.7.4-2
-- Move ausearch-expression to main package (#453437)
-
-* Mon May 19 2008 Steve Grubb <sgrubb@redhat.com> 1.7.4-1
-- Fix interpreting of keys in syscall records
-- Don't error on name=(null) PATH records in ausearch/report
-- Add key report to aureport
-- Update system-config-audit to 0.4.7 (Miloslav Trmac)
-- Add support for the filetype field option in auditctl new to 2.6.26 kernels
-
-* Fri May 09 2008 Steve Grubb <sgrubb@redhat.com> 1.7.3-1
-- Fix output of keys in ausearch interpretted mode
-- Fix ausearch/report --start now to not be reset to midnight
-- audispd now has a priority boost config option
-- Look for laddr in avcs reported via prelude
-- Detect page 0 mmaps and alert via prelude
-
-* Fri Apr 18 2008 Steve Grubb <sgrubb@redhat.com> 1.7.2-6
-- Fix overflow in audit_log_user_command, better (#438840)
-- ausearch was not matching path in avc records
-- audisp-prelude attempt to reposition index after examining each type
-- correct building of mls policy
-- Fix auparse iterating in auparse_find_field and next_field
-- Don't alert on USER_AVC's - they are not quite right
-
-* Tue Apr 08 2008 Steve Grubb <sgrubb@redhat.com> 1.7.1-1
-- Fix buffer overflow in audit_log_user_command, again (#438840)
-- Fix memory leak in EOE code in auditd (#440075)
-- In auditctl, don't use new operators in legacy rule format
-- Made a couple corrections in alpha & x86_64 syscall tables (Miloslav Trmac)
-
-* Fri Apr 04 2008 Steve Grubb <sgrubb@redhat.com> 1.7-3
-- Fix memleak in auditd eoe code
-
-* Tue Apr 01 2008 Steve Grubb <sgrubb@redhat.com> 1.7-2
-- Remove LSB headers from init scripts
-- Fix buffer overflow in audit_log_user_command again
-
-* Sun Mar 30 2008 Steve Grubb <sgrubb@redhat.com> 1.7-1
-- Handle user space avcs in prelude plugin
-- Fix watched account login detection for some failed login attempts
-- Couple fixups in audit logging functions (Miloslav Trmac)
-- Add support in auditctl for virtual keys
-- auparse_find_field_next was not iterating correctly, fixed it
-- Add idmef alerts for access or execution of watched file
-- Fix buffer overflow in audit_log_user_command
-- Add basic remote logging plugin - only sends & no flow control
-- Update ausearch with interpret fixes from auparse
