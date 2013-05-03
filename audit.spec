@@ -6,7 +6,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -149,6 +149,10 @@ rm -rf $RPM_BUILD_ROOT
 %post libs -p /sbin/ldconfig
 
 %post
+# Copy default rules into place on new installation
+if [ ! -e /etc/audit/audit.rules ] ; then
+	cp /etc/audit/rules.d/audit.rules /etc/audit/audit.rules
+fi
 %if %{WITH_SYSTEMD}
 %systemd_post auditd.service
 %else
@@ -273,6 +277,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri May 03 2013 Steve Grubb <sgrubb@redhat.com> 2.3-2
+- If no rules exist, copy shipped rules into place
+
 * Tue Apr 30 2013 Steve Grubb <sgrubb@redhat.com> 2.3-1
 - New upstream bugfix release
 
