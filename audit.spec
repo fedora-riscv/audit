@@ -5,8 +5,8 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.3
-Release: 2%{?dist}
+Version: 2.3.1
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -242,6 +242,7 @@ fi
 %attr(750,root,root) %dir %{_libexecdir}/initscripts/legacy-actions/auditd
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/resume
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/rotate
+%attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/stop
 %else
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
@@ -277,6 +278,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Thu May 30 2013 Steve Grubb <sgrubb@redhat.com> 2.3.1-1
+- New upstream bugfix/enhancement release
+
 * Fri May 03 2013 Steve Grubb <sgrubb@redhat.com> 2.3-2
 - If no rules exist, copy shipped rules into place
 
