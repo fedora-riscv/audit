@@ -16,7 +16,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
-BuildRequires: autoconf
+BuildRequires: autoconf automake libtool
 Requires: %{name}-libs = %{version}-%{release}
 %if %{WITH_SYSTEMD}
 BuildRequires: systemd-units
