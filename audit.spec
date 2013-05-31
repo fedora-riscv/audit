@@ -6,15 +6,17 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.3.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
+Patch1: audit-2.3.2-restart.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
+BuildRequires: autoconf automake libtool
 Requires: %{name}-libs = %{version}-%{release}
 %if %{WITH_SYSTEMD}
 BuildRequires: systemd-units
@@ -89,6 +91,8 @@ behavior.
 
 %prep
 %setup -q
+%patch1 -p1
+autoreconf -fv --install
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-prelude --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-armeb \
@@ -161,6 +165,7 @@ fi
 
 %preun
 %if %{WITH_SYSTEMD}
+/sbin/service auditd stop > /dev/null 2>&1
 %systemd_preun auditd.service
 %else
 if [ $1 -eq 0 ]; then
@@ -172,13 +177,9 @@ fi
 %postun libs -p /sbin/ldconfig
 
 %postun
-%if %{WITH_SYSTEMD}
-%systemd_postun_with_restart auditd.service
-%else
 if [ $1 -ge 1 ]; then
    /sbin/service auditd condrestart > /dev/null 2>&1 || :
 fi
-%endif
 
 %files libs
 %defattr(-,root,root,-)
@@ -243,6 +244,8 @@ fi
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/resume
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/rotate
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/stop
+%attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/restart
+%attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/condrestart
 %else
 %attr(755,root,root) /etc/rc.d/init.d/auditd
 %config(noreplace) %attr(640,root,root) /etc/sysconfig/auditd
@@ -278,6 +281,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri May 31 2013 Steve Grubb <sgrubb@redhat.com> 2.3.1-2
+- Fix unknown lvalue in auditd.service (#969345)
+
 * Thu May 30 2013 Steve Grubb <sgrubb@redhat.com> 2.3.1-1
 - New upstream bugfix/enhancement release
 
@@ -330,7 +336,7 @@ fi
 * Mon Aug 15 2011 Steve Grubb <sgrubb@redhat.com> 2.1.3-1
 - New upstream release
 
-* Thu Jul 26 2011 Jóhann B. Guðmundsson <johannbg@gmail.com> - 2.1.2-2
+* Tue Jul 26 2011 Jóhann B. Guðmundsson <johannbg@gmail.com> - 2.1.2-2
 - Introduce systemd unit file, drop SysV support
 
 * Sat Jun 11 2011 Steve Grubb <sgrubb@redhat.com> 2.1.2-1
