@@ -92,7 +92,7 @@ behavior.
 %prep
 %setup -q
 %patch1 -p1
-autoreconf -fv
+autoreconf -fv --install
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-prelude --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-armeb \
@@ -336,7 +336,7 @@ fi
 * Mon Aug 15 2011 Steve Grubb <sgrubb@redhat.com> 2.1.3-1
 - New upstream release
 
-* Thu Jul 26 2011 Jóhann B. Guðmundsson <johannbg@gmail.com> - 2.1.2-2
+* Tue Jul 26 2011 Jóhann B. Guðmundsson <johannbg@gmail.com> - 2.1.2-2
 - Introduce systemd unit file, drop SysV support
 
 * Sat Jun 11 2011 Steve Grubb <sgrubb@redhat.com> 2.1.2-1
