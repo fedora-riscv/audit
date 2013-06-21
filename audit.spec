@@ -19,7 +19,7 @@ BuildRequires: kernel-headers >= 2.6.29
 BuildRequires: autoconf automake libtool
 Requires: %{name}-libs = %{version}-%{release}
 %if %{WITH_SYSTEMD}
-BuildRequires: systemd-
+BuildRequires: systemd
 Requires(post): systemd-units systemd-sysv chkconfig coreutils
 Requires(preun): systemd-units
 Requires(postun): systemd-units coreutils
