@@ -6,7 +6,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.3.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -19,7 +19,7 @@ BuildRequires: kernel-headers >= 2.6.29
 BuildRequires: autoconf automake libtool
 Requires: %{name}-libs = %{version}-%{release}
 %if %{WITH_SYSTEMD}
-BuildRequires: systemd-units
+BuildRequires: systemd-
 Requires(post): systemd-units systemd-sysv chkconfig coreutils
 Requires(preun): systemd-units
 Requires(postun): systemd-units coreutils
@@ -78,7 +78,6 @@ Summary: Plugins for the audit event dispatcher
 License: GPLv2+
 Group: System Environment/Daemons
 BuildRequires: openldap-devel
-BuildRequires: libprelude-devel >= 0.9.16
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-libs = %{version}-%{release}
 Requires: openldap
@@ -95,7 +94,7 @@ behavior.
 autoreconf -fv --install
 
 %build
-%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-prelude --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-armeb \
+%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-armeb \
 %if %{WITH_SYSTEMD}
 	--enable-systemd
 %endif
@@ -268,11 +267,6 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/audispd-zos-remote.conf
 %config(noreplace) %attr(640,root,root) /etc/audisp/zos-remote.conf
 %attr(750,root,root) /sbin/audispd-zos-remote
-%config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/au-prelude.conf
-%config(noreplace) %attr(640,root,root) /etc/audisp/audisp-prelude.conf
-%attr(750,root,root) /sbin/audisp-prelude
-%attr(644,root,root) %{_mandir}/man5/audisp-prelude.conf.5.gz
-%attr(644,root,root) %{_mandir}/man8/audisp-prelude.8.gz
 %config(noreplace) %attr(640,root,root) /etc/audisp/audisp-remote.conf
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/au-remote.conf
 %attr(750,root,root) /sbin/audisp-remote
@@ -281,6 +275,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri Jun 21 2013 Steve Grubb <sgrubb@redhat.com> 2.3.1-3
+- Drop prelude support
+
 * Fri May 31 2013 Steve Grubb <sgrubb@redhat.com> 2.3.1-2
 - Fix unknown lvalue in auditd.service (#969345)
 
