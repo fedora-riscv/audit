@@ -5,13 +5,12 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.3.1
-Release: 3%{?dist}
+Version: 2.3.2
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
-Patch1: audit-2.3.2-restart.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
@@ -90,11 +89,9 @@ behavior.
 
 %prep
 %setup -q
-%patch1 -p1
-autoreconf -fv --install
 
 %build
-%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-armeb \
+%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-armeb --with-aarch64 \
 %if %{WITH_SYSTEMD}
 	--enable-systemd
 %endif
@@ -275,6 +272,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Mon Jul 29 2013 Steve Grubb <sgrubb@redhat.com> 2.3.2-1
+- New upstream bugfix/enhancement release
+
 * Fri Jun 21 2013 Steve Grubb <sgrubb@redhat.com> 2.3.1-3
 - Drop prelude support
 
