@@ -5,7 +5,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.3.3
+Version: 2.3.4
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -161,7 +161,6 @@ fi
 
 %preun
 %if %{WITH_SYSTEMD}
-/sbin/service auditd stop > /dev/null 2>&1
 %systemd_preun auditd.service
 %else
 if [ $1 -eq 0 ]; then
@@ -272,6 +271,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Thu Feb 27 2014 Steve Grubb <sgrubb@redhat.com> 2.3.4-1
+- New upstream bugfix/enhancement release
+
 * Thu Jan 16 2014 Steve Grubb <sgrubb@redhat.com> 2.3.3-1
 - New upstream bugfix/enhancement release
 
