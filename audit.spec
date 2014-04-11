@@ -5,7 +5,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.3.5
+Version: 2.3.6
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -91,7 +91,7 @@ behavior.
 %setup -q
 
 %build
-%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-armeb --with-aarch64 \
+%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-arm --with-aarch64 \
 %if %{WITH_SYSTEMD}
 	--enable-systemd
 %endif
@@ -271,6 +271,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri Apr 11 2014 Steve Grubb <sgrubb@redhat.com> 2.3.6-1
+- New upstream bugfix/enhancement release
+
 * Mon Mar 17 2014 Steve Grubb <sgrubb@redhat.com> 2.3.5-1
 - New upstream bugfix/enhancement release
 
