@@ -6,11 +6,12 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.3.7
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
+Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
@@ -89,6 +90,7 @@ behavior.
 
 %prep
 %setup -q
+cp %{SOURCE1} .
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-arm --with-aarch64 \
@@ -178,6 +180,8 @@ fi
 
 %files libs
 %defattr(-,root,root,-)
+%{!?_licensedir:%global license %%doc}
+%license lgpl-2.1.txt
 %attr(755,root,root) /%{_lib}/libaudit.so.1*
 %attr(755,root,root) /%{_lib}/libauparse.*
 %config(noreplace) %attr(640,root,root) /etc/libaudit.conf
@@ -195,6 +199,8 @@ fi
 
 %files libs-static
 %defattr(-,root,root,-)
+%{!?_licensedir:%global license %%doc}
+%license lgpl-2.1.txt
 %{_libdir}/libaudit.a
 %{_libdir}/libauparse.a
 
@@ -206,7 +212,9 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc  README COPYING ChangeLog contrib/capp.rules contrib/nispom.rules contrib/lspp.rules contrib/stig.rules init.d/auditd.cron
+%doc README ChangeLog contrib/capp.rules contrib/nispom.rules contrib/lspp.rules contrib/stig.rules init.d/auditd.cron
+%{!?_licensedir:%global license %%doc}
+%license COPYING
 %attr(644,root,root) %{_mandir}/man8/audispd.8.gz
 %attr(644,root,root) %{_mandir}/man8/auditctl.8.gz
 %attr(644,root,root) %{_mandir}/man8/auditd.8.gz
@@ -272,6 +280,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri Jul 11 2014 Tom Callaway <spot@fedoraproject.org> - 2.3.7-3
+- mark license files properly
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.3.7-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
