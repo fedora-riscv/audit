@@ -6,12 +6,14 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.3.7
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
+# FESCO asked for audit to be off by default. #1117953
+Patch1: never-audit.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: swig python-devel
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
@@ -91,6 +93,7 @@ behavior.
 %prep
 %setup -q
 cp %{SOURCE1} .
+%patch1 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-arm --with-aarch64 \
@@ -280,6 +283,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Tue Jun 03 2014 Steve Grubb <sgrubb@redhat.com> 2.3.7-4
+- Bug 1117953 - Per fesco#1311, please disable syscall auditing by default
+
 * Fri Jul 11 2014 Tom Callaway <spot@fedoraproject.org> - 2.3.7-3
 - mark license files properly
 
