@@ -283,7 +283,7 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
-* Tue Jun 03 2014 Steve Grubb <sgrubb@redhat.com> 2.3.7-4
+* Tue Jul 22 2014 Steve Grubb <sgrubb@redhat.com> 2.3.7-4
 - Bug 1117953 - Per fesco#1311, please disable syscall auditing by default
 
 * Fri Jul 11 2014 Tom Callaway <spot@fedoraproject.org> - 2.3.7-3
