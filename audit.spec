@@ -20,6 +20,8 @@ BuildRequires: swig python-devel golang
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
 BuildRequires: autoconf automake libtool
+# Temporary fix for make check in golang. Needs libaudit.so
+BuildRequires: audit-libs-devel
 Requires: %{name}-libs = %{version}-%{release}
 %if %{WITH_SYSTEMD}
 BuildRequires: systemd
