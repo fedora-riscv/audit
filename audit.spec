@@ -2,7 +2,7 @@
 
 # Do we want systemd?
 %define WITH_SYSTEMD 1
-%define snapshot .svn20140802
+%define snapshot .svn20140803
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
@@ -290,7 +290,7 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
-* Fri Aug 01 2014 Steve Grubb <sgrubb@redhat.com> 2.3.8-0.1.svn20140802
+* Sat Aug 02 2014 Steve Grubb <sgrubb@redhat.com> 2.3.8-0.1.svn20140803
 - New upstream svn snapshot
 
 * Tue Jul 22 2014 Steve Grubb <sgrubb@redhat.com> 2.3.7-4
