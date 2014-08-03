@@ -2,23 +2,26 @@
 
 # Do we want systemd?
 %define WITH_SYSTEMD 1
+%define snapshot .svn20140803
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.3.7
-Release: 4%{?dist}
+Version: 2.3.8
+Release: 0.1%{snapshot}%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
-Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
+Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}%{snapshot}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 # FESCO asked for audit to be off by default. #1117953
 Patch1: never-audit.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: swig python-devel
+BuildRequires: swig python-devel golang
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
 BuildRequires: autoconf automake libtool
+# Temporary fix for make check in golang. Needs libaudit.so
+BuildRequires: audit-libs-devel
 Requires: %{name}-libs = %{version}-%{release}
 %if %{WITH_SYSTEMD}
 BuildRequires: systemd
@@ -91,12 +94,12 @@ like relay events to remote machines or analyze events for suspicious
 behavior.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}
 cp %{SOURCE1} .
 %patch1 -p1
 
 %build
-%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-arm --with-aarch64 \
+%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-golang --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-arm --with-aarch64 \
 %if %{WITH_SYSTEMD}
 	--enable-systemd
 %endif
@@ -138,6 +141,9 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_auparse.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_auparse.la
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/auparse.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/auparse.la
+
+# Move the pkgconfig file
+mv $RPM_BUILD_ROOT/%{_lib}/pkgconfig $RPM_BUILD_ROOT%{_libdir}
 
 # On platforms with 32 & 64 bit libs, we need to coordinate the timestamp
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
@@ -185,8 +191,8 @@ fi
 %defattr(-,root,root,-)
 %{!?_licensedir:%global license %%doc}
 %license lgpl-2.1.txt
-%attr(755,root,root) /%{_lib}/libaudit.so.1*
-%attr(755,root,root) /%{_lib}/libauparse.*
+/%{_lib}/libaudit.so.1*
+/%{_lib}/libauparse.*
 %config(noreplace) %attr(640,root,root) /etc/libaudit.conf
 %{_mandir}/man5/libaudit.conf.5.gz
 
@@ -195,9 +201,12 @@ fi
 %doc contrib/skeleton.c contrib/plugin
 %{_libdir}/libaudit.so
 %{_libdir}/libauparse.so
+%dir %{_prefix}/lib/golang/src/pkg/redhat.com/audit
+%{_prefix}/lib/golang/src/pkg/redhat.com/audit/audit.go
 %{_includedir}/libaudit.h
 %{_includedir}/auparse.h
 %{_includedir}/auparse-defs.h
+%{_libdir}/pkgconfig/audit.pc
 %{_mandir}/man3/*
 
 %files libs-static
@@ -283,6 +292,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Sat Aug 02 2014 Steve Grubb <sgrubb@redhat.com> 2.3.8-0.1.svn20140803
+- New upstream svn snapshot
+
 * Tue Jul 22 2014 Steve Grubb <sgrubb@redhat.com> 2.3.7-4
 - Bug 1117953 - Per fesco#1311, please disable syscall auditing by default
 
