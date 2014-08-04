@@ -7,7 +7,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.3.8
-Release: 0.1%{snapshot}%{?dist}
+Release: 0.2%{snapshot}%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -15,13 +15,16 @@ Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}%{snapshot}.tar
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 # FESCO asked for audit to be off by default. #1117953
 Patch1: never-audit.patch
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: swig python-devel golang
+
+BuildRequires: swig python-devel
+%ifnarch aarch64 %{power64} s390 s390x
+BuildRequires: golang
+# Temporary fix for make check in golang. Needs libaudit.so
+BuildRequires: audit-libs-devel
+%endif
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
 BuildRequires: autoconf automake libtool
-# Temporary fix for make check in golang. Needs libaudit.so
-BuildRequires: audit-libs-devel
 Requires: %{name}-libs = %{version}-%{release}
 %if %{WITH_SYSTEMD}
 BuildRequires: systemd
@@ -99,7 +102,12 @@ cp %{SOURCE1} .
 %patch1 -p1
 
 %build
-%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-golang --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-arm --with-aarch64 \
+%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
+           --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes \
+	   --with-arm --with-aarch64 \
+%ifnarch aarch64 %{power64} s390 s390x
+           --with-golang \
+%endif
 %if %{WITH_SYSTEMD}
 	--enable-systemd
 %endif
@@ -107,7 +115,6 @@ cp %{SOURCE1} .
 make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{sbin,etc/audispd/plugins.d}
 %if !%{WITH_SYSTEMD}
 mkdir -p $RPM_BUILD_ROOT/{etc/{sysconfig,rc.d/init.d}}
@@ -149,7 +156,7 @@ mv $RPM_BUILD_ROOT/%{_lib}/pkgconfig $RPM_BUILD_ROOT%{_libdir}
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
 
-%ifnarch ppc ppc64
+%ifnarch aarch64 %{power64} s390 s390x
 %check
 make check
 %endif
@@ -201,8 +208,10 @@ fi
 %doc contrib/skeleton.c contrib/plugin
 %{_libdir}/libaudit.so
 %{_libdir}/libauparse.so
+%ifnarch aarch64 %{power64} s390 s390x
 %dir %{_prefix}/lib/golang/src/pkg/redhat.com/audit
 %{_prefix}/lib/golang/src/pkg/redhat.com/audit/audit.go
+%endif
 %{_includedir}/libaudit.h
 %{_includedir}/auparse.h
 %{_includedir}/auparse-defs.h
@@ -292,6 +301,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Mon Aug  4 2014 Peter Robinson <pbrobinson@fedoraproject.org> 2.3.8-0.2.svn20140803
+- aarch64/PPC/s390 don't have golang
+
 * Sat Aug 02 2014 Steve Grubb <sgrubb@redhat.com> 2.3.8-0.1.svn20140803
 - New upstream svn snapshot
 
