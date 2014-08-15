@@ -7,7 +7,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.3.8
-Release: 0.2%{snapshot}%{?dist}
+Release: 0.3%{snapshot}%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -301,6 +301,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri Aug 15 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.3.8-0.3.svn20140803
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
 * Mon Aug  4 2014 Peter Robinson <pbrobinson@fedoraproject.org> 2.3.8-0.2.svn20140803
 - aarch64/PPC/s390 don't have golang
 
