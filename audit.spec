@@ -2,12 +2,12 @@
 
 # Do we want systemd?
 %define WITH_SYSTEMD 1
-%define snapshot .svn20140803
+# %define snapshot .svn20140803
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.3.8
-Release: 0.3%{snapshot}%{?dist}
+Version: 2.4
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -97,7 +97,7 @@ like relay events to remote machines or analyze events for suspicious
 behavior.
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q
 cp %{SOURCE1} .
 %patch1 -p1
 
@@ -301,6 +301,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Sun Aug 24 2014 Steve Grubb <sgrubb@redhat.com> 2.4-1
+- New upstream feature and bugfix release
+
 * Fri Aug 15 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.3.8-0.3.svn20140803
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
