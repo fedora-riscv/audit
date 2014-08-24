@@ -2,17 +2,26 @@
 
 # Do we want systemd?
 %define WITH_SYSTEMD 1
+# %define snapshot .svn20140803
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.3.7
+Version: 2.4
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
+# FESCO asked for audit to be off by default. #1117953
+Patch1: never-audit.patch
+
 BuildRequires: swig python-devel
+%ifnarch aarch64 %{power64} s390 s390x
+BuildRequires: golang
+# Temporary fix for make check in golang. Needs libaudit.so
+BuildRequires: audit-libs-devel
+%endif
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
 BuildRequires: autoconf automake libtool
@@ -89,9 +98,16 @@ behavior.
 
 %prep
 %setup -q
+cp %{SOURCE1} .
+%patch1 -p1
 
 %build
-%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes --with-arm --with-aarch64 \
+%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
+           --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes \
+	   --with-arm --with-aarch64 \
+%ifnarch aarch64 %{power64} s390 s390x
+           --with-golang \
+%endif
 %if %{WITH_SYSTEMD}
 	--enable-systemd
 %endif
@@ -99,7 +115,6 @@ behavior.
 make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/{sbin,etc/audispd/plugins.d}
 %if !%{WITH_SYSTEMD}
 mkdir -p $RPM_BUILD_ROOT/{etc/{sysconfig,rc.d/init.d}}
@@ -134,11 +149,14 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_auparse.la
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/auparse.a
 rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/auparse.la
 
+# Move the pkgconfig file
+mv $RPM_BUILD_ROOT/%{_lib}/pkgconfig $RPM_BUILD_ROOT%{_libdir}
+
 # On platforms with 32 & 64 bit libs, we need to coordinate the timestamp
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
 
-%ifnarch ppc ppc64
+%ifnarch aarch64 %{power64} s390 s390x
 %check
 make check
 %endif
@@ -178,8 +196,10 @@ fi
 
 %files libs
 %defattr(-,root,root,-)
-%attr(755,root,root) /%{_lib}/libaudit.so.1*
-%attr(755,root,root) /%{_lib}/libauparse.*
+%{!?_licensedir:%global license %%doc}
+%license lgpl-2.1.txt
+/%{_lib}/libaudit.so.1*
+/%{_lib}/libauparse.*
 %config(noreplace) %attr(640,root,root) /etc/libaudit.conf
 %{_mandir}/man5/libaudit.conf.5.gz
 
@@ -188,13 +208,20 @@ fi
 %doc contrib/skeleton.c contrib/plugin
 %{_libdir}/libaudit.so
 %{_libdir}/libauparse.so
+%ifnarch aarch64 %{power64} s390 s390x
+%dir %{_prefix}/lib/golang/src/pkg/redhat.com/audit
+%{_prefix}/lib/golang/src/pkg/redhat.com/audit/audit.go
+%endif
 %{_includedir}/libaudit.h
 %{_includedir}/auparse.h
 %{_includedir}/auparse-defs.h
+%{_libdir}/pkgconfig/audit.pc
 %{_mandir}/man3/*
 
 %files libs-static
 %defattr(-,root,root,-)
+%{!?_licensedir:%global license %%doc}
+%license lgpl-2.1.txt
 %{_libdir}/libaudit.a
 %{_libdir}/libauparse.a
 
@@ -206,7 +233,9 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc  README COPYING ChangeLog contrib/capp.rules contrib/nispom.rules contrib/lspp.rules contrib/stig.rules init.d/auditd.cron
+%doc README ChangeLog contrib/capp.rules contrib/nispom.rules contrib/lspp.rules contrib/stig.rules init.d/auditd.cron
+%{!?_licensedir:%global license %%doc}
+%license COPYING
 %attr(644,root,root) %{_mandir}/man8/audispd.8.gz
 %attr(644,root,root) %{_mandir}/man8/auditctl.8.gz
 %attr(644,root,root) %{_mandir}/man8/auditd.8.gz
@@ -252,6 +281,7 @@ fi
 %attr(750,root,root) %dir /etc/audisp/plugins.d
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/rules.d/audit.rules
+%ghost %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/audisp/audispd.conf
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/af_unix.conf
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/syslog.conf
@@ -271,6 +301,27 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Sun Aug 24 2014 Steve Grubb <sgrubb@redhat.com> 2.4-1
+- New upstream feature and bugfix release
+
+* Fri Aug 15 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.3.8-0.3.svn20140803
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
+* Mon Aug  4 2014 Peter Robinson <pbrobinson@fedoraproject.org> 2.3.8-0.2.svn20140803
+- aarch64/PPC/s390 don't have golang
+
+* Sat Aug 02 2014 Steve Grubb <sgrubb@redhat.com> 2.3.8-0.1.svn20140803
+- New upstream svn snapshot
+
+* Tue Jul 22 2014 Steve Grubb <sgrubb@redhat.com> 2.3.7-4
+- Bug 1117953 - Per fesco#1311, please disable syscall auditing by default
+
+* Fri Jul 11 2014 Tom Callaway <spot@fedoraproject.org> - 2.3.7-3
+- mark license files properly
+
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.3.7-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Tue Jun 03 2014 Steve Grubb <sgrubb@redhat.com> 2.3.7-1
 - New upstream bugfix release
 
