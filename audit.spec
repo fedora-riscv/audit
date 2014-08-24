@@ -13,8 +13,6 @@ Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
-# FESCO asked for audit to be off by default. #1117953
-Patch1: never-audit.patch
 
 BuildRequires: swig python-devel
 %ifnarch aarch64 %{power64} s390 s390x
@@ -99,7 +97,6 @@ behavior.
 %prep
 %setup -q
 cp %{SOURCE1} .
-%patch1 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
