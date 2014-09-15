@@ -7,7 +7,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -15,7 +15,7 @@ Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 
 BuildRequires: swig python-devel
-%ifnarch aarch64 %{power64} s390 s390x
+%ifnarch aarch64 ppc %{power64} s390 s390x
 BuildRequires: golang
 # Temporary fix for make check in golang. Needs libaudit.so
 BuildRequires: audit-libs-devel
@@ -102,7 +102,7 @@ cp %{SOURCE1} .
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
            --with-libwrap --enable-gssapi-krb5=yes --with-libcap-ng=yes \
 	   --with-arm --with-aarch64 \
-%ifnarch aarch64 %{power64} s390 s390x
+%ifnarch aarch64 ppc %{power64} s390 s390x
            --with-golang \
 %endif
 %if %{WITH_SYSTEMD}
@@ -205,7 +205,7 @@ fi
 %doc contrib/skeleton.c contrib/plugin
 %{_libdir}/libaudit.so
 %{_libdir}/libauparse.so
-%ifnarch aarch64 %{power64} s390 s390x
+%ifnarch aarch64 ppc %{power64} s390 s390x
 %dir %{_prefix}/lib/golang/src/pkg/redhat.com/audit
 %{_prefix}/lib/golang/src/pkg/redhat.com/audit/audit.go
 %endif
@@ -298,6 +298,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Mon Sep 15 2014 Karsten Hopp <karsten@redhat.com> 2.4-2
+- ppc doesn't have golang either
+
 * Sun Aug 24 2014 Steve Grubb <sgrubb@redhat.com> 2.4-1
 - New upstream feature and bugfix release
 
