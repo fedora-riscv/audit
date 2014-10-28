@@ -6,8 +6,8 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.4
-Release: 2%{?dist}
+Version: 2.4.1
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -298,6 +298,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Tue Oct 28 2014 Steve Grubb <sgrubb@redhat.com> 2.4.1-1
+- New upstream feature and bugfix release
+
 * Mon Sep 15 2014 Karsten Hopp <karsten@redhat.com> 2.4-2
 - ppc doesn't have golang either
 
