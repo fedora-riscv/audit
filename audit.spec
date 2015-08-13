@@ -6,7 +6,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.4.3
+Version: 2.4.4
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -318,6 +318,10 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Thu Aug 13 2015 Steve Grubb <sgrubb@redhat.com> 2.4.4-1
+- New upstream bugfix release
+- Fixes CVE-2015-5186 Audit: log terminal emulator escape sequences handling
+
 * Thu Jul 16 2015 Steve Grubb <sgrubb@redhat.com> 2.4.3-1
 - New upstream bugfix release
 - Adds python3 support
