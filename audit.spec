@@ -7,7 +7,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.4.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -16,16 +16,20 @@ Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 # FESCO asked for audit to be off by default. #1117953
 Patch1: never-audit.patch
 
-BuildRequires: swig python-devel
-%ifnarch aarch64 %{power64} s390 s390x
+BuildRequires: openldap-devel
+BuildRequires: swig
+BuildRequires: python-devel
+BuildRequires: python3-devel
+BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
+BuildRequires: kernel-headers >= 2.6.29
+BuildRequires: autoconf automake libtool
+%ifarch %{golang_arches}
 BuildRequires: golang
 # Temporary fix for make check in golang. Needs libaudit.so
 BuildRequires: audit-libs-devel
 %endif
-BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
-BuildRequires: kernel-headers >= 2.6.29
-BuildRequires: autoconf automake libtool
-Requires: %{name}-libs = %{version}-%{release}
+
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 %if %{WITH_SYSTEMD}
 BuildRequires: systemd
 Requires(post): systemd-units systemd-sysv chkconfig coreutils
@@ -53,7 +57,7 @@ applications to use the audit framework.
 Summary: Header files for libaudit
 License: LGPLv2+
 Group: Development/Libraries
-Requires: %{name}-libs = %{version}
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Requires: kernel-headers >= 2.6.29
 
 %description libs-devel
@@ -75,7 +79,7 @@ framework libraries
 Summary: Python bindings for libaudit
 License: LGPLv2+
 Group: Development/Libraries
-Requires: %{name}-libs = %{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 
 %description libs-python
 The audit-libs-python package contains the bindings so that libaudit
@@ -85,8 +89,8 @@ and libauparse can be used by python.
 Summary: Python3 bindings for libaudit
 License: LGPLv2+
 Group: Development/Libraries
-BuildRequires: python3-devel swig
-Requires: %{name} = %{version}-%{release}
+Requires: %{name}%{?_isa} = %{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 
 %description libs-python3
 The audit-libs-python3 package contains the bindings so that libaudit
@@ -96,9 +100,8 @@ and libauparse can be used by python3.
 Summary: Plugins for the audit event dispatcher
 License: GPLv2+
 Group: System Environment/Daemons
-BuildRequires: openldap-devel
-Requires: %{name} = %{version}-%{release}
-Requires: %{name}-libs = %{version}-%{release}
+Requires: %{name}%{?_isa} = %{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Requires: openldap
 
 %description -n audispd-plugins
@@ -117,14 +120,14 @@ cp %{SOURCE1} .
            --with-python3=yes --with-libwrap --enable-gssapi-krb5=yes \
            --with-libcap-ng=yes --with-arm --with-aarch64 \
            --enable-zos-remote \
-%ifnarch aarch64 %{power64} s390 s390x
+%ifarch %{golang_arches}
            --with-golang \
 %endif
 %if %{WITH_SYSTEMD}
-	--enable-systemd
+           --enable-systemd
 %endif
 
-make %{?_smp_mflags}
+make CFLAGS="%{optflags}" %{?_smp_mflags}
 
 %install
 mkdir -p $RPM_BUILD_ROOT/{sbin,etc/audispd/plugins.d}
@@ -152,14 +155,9 @@ cd $curdir
 # Remove these items so they don't get picked up.
 rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.so
 rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.so
-rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.la
-rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.la
-rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_audit.a
-rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_audit.la
-rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_auparse.a
-rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/_auparse.la
-rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/auparse.a
-rm -f $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages/auparse.la
+
+find $RPM_BUILD_ROOT -name '*.la' -delete
+find $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages -name '*.a' -delete
 
 # Move the pkgconfig file
 mv $RPM_BUILD_ROOT/%{_lib}/pkgconfig $RPM_BUILD_ROOT%{_libdir}
@@ -168,7 +166,7 @@ mv $RPM_BUILD_ROOT/%{_lib}/pkgconfig $RPM_BUILD_ROOT%{_libdir}
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
 
-%ifnarch aarch64 %{power64} s390 s390x
+%ifarch %{golang_arches}
 %check
 make check
 %endif
@@ -220,7 +218,7 @@ fi
 %doc contrib/skeleton.c contrib/plugin
 %{_libdir}/libaudit.so
 %{_libdir}/libauparse.so
-%ifnarch aarch64 %{power64} s390 s390x
+%ifarch %{golang_arches}
 %dir %{_prefix}/lib/golang/src/pkg/redhat.com/audit
 %{_prefix}/lib/golang/src/pkg/redhat.com/audit/audit.go
 %endif
@@ -318,6 +316,12 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Wed Sep 16 2015 Peter Robinson <pbrobinson@fedoraproject.org> 2.4.4-2
+- Fix FTBFS with hardened flags by using the distro CFLAGS
+- Tighten deps with the _isa macro
+- Use goarches macro to define supported GO architectures
+- Minor cleanups
+
 * Thu Aug 13 2015 Steve Grubb <sgrubb@redhat.com> 2.4.4-1
 - New upstream bugfix release
 - Fixes CVE-2015-5186 Audit: log terminal emulator escape sequences handling
