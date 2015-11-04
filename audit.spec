@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.4.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -287,6 +287,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Wed Nov 04 2015 Robert Kuska <rkuska@redhat.com> - 2.4.4-3
+- Rebuilt for Python3.5 rebuild
+
 * Wed Sep 16 2015 Peter Robinson <pbrobinson@fedoraproject.org> 2.4.4-2
 - Fix FTBFS with hardened flags by using the distro CFLAGS
 - Tighten deps with the _isa macro
