@@ -2,8 +2,8 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.4.4
-Release: 3%{?dist}
+Version: 2.4.5
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -201,6 +201,7 @@ fi
 %{_includedir}/libaudit.h
 %{_includedir}/auparse.h
 %{_includedir}/auparse-defs.h
+%{_datadir}/aclocal/audit.m4
 %{_libdir}/pkgconfig/audit.pc
 %{_libdir}/pkgconfig/auparse.pc
 %{_mandir}/man3/*
@@ -287,6 +288,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri Dec 18 2015 Steve Grubb <sgrubb@redhat.com> 2.4.4-1
+- New upstream bugfix release
+
 * Wed Nov 04 2015 Robert Kuska <rkuska@redhat.com> - 2.4.4-3
 - Rebuilt for Python3.5 rebuild
 
