@@ -11,6 +11,7 @@ Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 # FESCO asked for audit to be off by default. #1117953
 Patch1: never-audit.patch
+Patch2: audit-2.3.3-augenrules.patch
 
 BuildRequires: openldap-devel
 BuildRequires: swig
@@ -106,6 +107,7 @@ behavior.
 %setup -q
 cp %{SOURCE1} .
 %patch1 -p1
+%patch2 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
