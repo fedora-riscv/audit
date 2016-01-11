@@ -2,17 +2,13 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.4.5
+Version: 2.5
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
-# FESCO asked for audit to be off by default. #1117953
-Patch1: never-audit.patch
-Patch2: audit-2.3.3-augenrules.patch
-
 BuildRequires: openldap-devel
 BuildRequires: swig
 BuildRequires: python-devel
@@ -106,8 +102,6 @@ behavior.
 %prep
 %setup -q
 cp %{SOURCE1} .
-%patch1 -p1
-%patch2 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
@@ -122,7 +116,7 @@ cp %{SOURCE1} .
 make CFLAGS="%{optflags}" %{?_smp_mflags}
 
 %install
-mkdir -p $RPM_BUILD_ROOT/{sbin,etc/audispd/plugins.d}
+mkdir -p $RPM_BUILD_ROOT/{sbin,etc/audispd/plugins.d,etc/audit/rules.d}
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/{man5,man8}
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
@@ -167,8 +161,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 # Copy default rules into place on new installation
-if [ ! -e /etc/audit/audit.rules ] ; then
-	cp /etc/audit/rules.d/audit.rules /etc/audit/audit.rules
+files=`ls /etc/audit/rules.d/ 2>/dev/null | wc -w`
+if [ "$files" -eq 0 ] ; then
+# FESCO asked for audit to be off by default. #1117953
+        cp /usr/share/doc/audit/rules/10-no-audit.rules /etc/audit/rules.d/audit.rules
 fi
 %systemd_post auditd.service
 
@@ -227,7 +223,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc README ChangeLog contrib/capp.rules contrib/nispom.rules contrib/lspp.rules contrib/stig.rules init.d/auditd.cron
+%doc README ChangeLog rules init.d/auditd.cron
 %{!?_licensedir:%global license %%doc}
 %license COPYING
 %attr(644,root,root) %{_mandir}/man8/audispd.8.gz
@@ -256,7 +252,7 @@ fi
 %attr(755,root,root) %{_bindir}/aulastlog
 %attr(755,root,root) %{_bindir}/ausyscall
 %attr(755,root,root) %{_bindir}/auvirt
-%attr(640,root,root) %{_unitdir}/auditd.service
+%attr(644,root,root) %{_unitdir}/auditd.service
 %attr(750,root,root) %dir %{_libexecdir}/initscripts/legacy-actions/auditd
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/resume
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/rotate
@@ -269,7 +265,7 @@ fi
 %attr(750,root,root) %dir /etc/audisp
 %attr(750,root,root) %dir /etc/audisp/plugins.d
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
-%config(noreplace) %attr(640,root,root) /etc/audit/rules.d/audit.rules
+%ghost %config(noreplace) %attr(640,root,root) /etc/audit/rules.d/audit.rules
 %ghost %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/audisp/audispd.conf
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/af_unix.conf
@@ -290,6 +286,11 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Mon Jan 11 2016 Steve Grubb <sgrubb@redhat.com> 2.5.1-1
+- New upstream release
+- Fixes #1241565 - still logs way too much
+- Fixes #1238051 - audit.rules should be generated from by augenrules
+
 * Fri Dec 18 2015 Steve Grubb <sgrubb@redhat.com> 2.4.4-1
 - New upstream bugfix release
 
@@ -377,96 +378,3 @@ fi
 * Fri May 03 2013 Steve Grubb <sgrubb@redhat.com> 2.3-2
 - If no rules exist, copy shipped rules into place
 
-* Tue Apr 30 2013 Steve Grubb <sgrubb@redhat.com> 2.3-1
-- New upstream bugfix release
-
-* Thu Mar 21 2013 Steve Grubb <sgrubb@redhat.com> 2.2.3-2
-- Fix clone syscall interpretation
-
-* Tue Mar 19 2013 Steve Grubb <sgrubb@redhat.com> 2.2.3-1
-- New upstream bugfix release
-
-* Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2.2-5
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
-
-* Wed Jan 16 2013 Steve Grubb <sgrubb@redhat.com> 2.2.2-4
-- Don't make auditd.service file executable (#896113)
-
-* Fri Jan 11 2013 Steve Grubb <sgrubb@redhat.com> 2.2.2-3
-- Do not own /usr/lib64/audit
-
-* Wed Dec 12 2012 Steve Grubb <sgrubb@redhat.com> 2.2.2-2
-- New upstream release
-
-* Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2.1-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
-
-* Fri Mar 23 2012 Steve Grubb <sgrubb@redhat.com> 2.2.1-1
-- New upstream release
-
-* Thu Mar 1 2012 Steve Grubb <sgrubb@redhat.com> 2.2-1
-- New upstream release
-
-* Thu Jan 12 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.1.3-5
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
-
-* Thu Sep 15 2011 Adam Williamson <awilliam@redhat.com> 2.1.3-4
-- add in some systemd scriptlets that were missed, including one which
-  will cause auditd to be enabled on upgrade from pre-systemd builds
-
-* Wed Sep 14 2011 Steve Grubb <sgrubb@redhat.com> 2.1.3-3
-- Enable by default (#737060)
-
-* Tue Aug 30 2011 Steve Grubb <sgrubb@redhat.com> 2.1.3-2
-- Correct misplaced %ifnarch (#734359)
-
-* Mon Aug 15 2011 Steve Grubb <sgrubb@redhat.com> 2.1.3-1
-- New upstream release
-
-* Tue Jul 26 2011 Jóhann B. Guðmundsson <johannbg@gmail.com> - 2.1.2-2
-- Introduce systemd unit file, drop SysV support
-
-* Sat Jun 11 2011 Steve Grubb <sgrubb@redhat.com> 2.1.2-1
-- New upstream release
-
-* Wed Apr 20 2011 Steve Grubb <sgrubb@redhat.com> 2.1.1-1
-- New upstream release
-
-* Tue Mar 29 2011 Steve Grubb <sgrubb@redhat.com> 2.1-1
-- New upstream release
-
-* Mon Feb 07 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.6-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
-
-* Fri Feb 04 2011 Steve Grubb <sgrubb@redhat.com> 2.0.6-1
-- New upstream release
-
-* Thu Jan 20 2011 Karsten Hopp <karsten@redhat.com> 2.0.5-2
-- bump and rebuild as 2.0.5-1 was erroneously linked with python-2.6 on ppc
-
-* Tue Nov 02 2010 Steve Grubb <sgrubb@redhat.com> 2.0.5-1
-- New upstream release
-
-* Wed Jul 21 2010 David Malcolm <dmalcolm@redhat.com> - 2.0.4-4
-- Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
-
-* Tue Feb 16 2010 Adam Jackson <ajax@redhat.com> 2.0.4-3
-- audit-2.0.4-add-needed.patch: Fix FTBFS for --no-add-needed
-
-* Fri Jan 29 2010 Steve Grubb <sgrubb@redhat.com> 2.0.4-2
-- Split out static libs (#556039)
-
-* Tue Dec 08 2009 Steve Grubb <sgrubb@redhat.com> 2.0.4-1
-- New upstream release
-
-* Sat Oct 17 2009 Steve Grubb <sgrubb@redhat.com> 2.0.3-1
-- New upstream release
-
-* Fri Oct 16 2009 Steve Grubb <sgrubb@redhat.com> 2.0.2-1
-- New upstream release
-
-* Mon Sep 28 2009 Steve Grubb <sgrubb@redhat.com> 2.0.1-1
-- New upstream release
-
-* Fri Aug 21 2009 Steve Grubb <sgrubb@redhat.com> 2.0-3
-- New upstream release
