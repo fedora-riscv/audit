@@ -241,8 +241,8 @@ fi
 %attr(644,root,root) %{_mandir}/man5/auditd.conf.5.gz
 %attr(644,root,root) %{_mandir}/man5/audispd.conf.5.gz
 %attr(644,root,root) %{_mandir}/man5/ausearch-expression.5.gz
-%attr(750,root,root) /sbin/auditctl
-%attr(750,root,root) /sbin/auditd
+%attr(755,root,root) /sbin/auditctl
+%attr(755,root,root) /sbin/auditd
 %attr(755,root,root) /sbin/ausearch
 %attr(755,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
