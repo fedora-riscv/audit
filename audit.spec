@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.5
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -164,7 +164,11 @@ rm -rf $RPM_BUILD_ROOT
 files=`ls /etc/audit/rules.d/ 2>/dev/null | wc -w`
 if [ "$files" -eq 0 ] ; then
 # FESCO asked for audit to be off by default. #1117953
-        cp /usr/share/doc/audit/rules/10-no-audit.rules /etc/audit/rules.d/audit.rules
+	if [ -e /usr/share/doc/audit/rules/10-no-audit.rules ] ; then
+	        cp /usr/share/doc/audit/rules/10-no-audit.rules /etc/audit/rules.d/audit.rules
+	else
+		touch /etc/audit/rules.d/audit.rules
+	fi
 fi
 %systemd_post auditd.service
 
@@ -286,6 +290,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Fri Mar 18 2016 Steve Grubb <sgrubb@redhat.com> 2.5.1-4
+- Fixes #1313152 - post script fails on dnf --setopt=tsflags=nodocs install
+
 * Mon Feb 22 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.5-3
 - https://fedoraproject.org/wiki/Changes/golang1.6
 
