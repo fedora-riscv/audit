@@ -290,7 +290,7 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
-* Fri Mar 18 2016 Steve Grubb <sgrubb@redhat.com> 2.5.1-4
+* Fri Mar 18 2016 Steve Grubb <sgrubb@redhat.com> 2.5-4
 - Fixes #1313152 - post script fails on dnf --setopt=tsflags=nodocs install
 
 * Mon Feb 22 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.5-3
@@ -299,7 +299,7 @@ fi
 * Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.5-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
-* Mon Jan 11 2016 Steve Grubb <sgrubb@redhat.com> 2.5.1-1
+* Mon Jan 11 2016 Steve Grubb <sgrubb@redhat.com> 2.5-1
 - New upstream release
 - Fixes #1241565 - still logs way too much
 - Fixes #1238051 - audit.rules should be generated from by augenrules
