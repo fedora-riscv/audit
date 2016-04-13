@@ -2,8 +2,8 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.5
-Release: 4%{?dist}
+Version: 2.5.1
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -15,7 +15,6 @@ BuildRequires: python-devel
 BuildRequires: python3-devel
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
-BuildRequires: autoconf automake libtool
 %ifarch %{golang_arches}
 BuildRequires: golang
 # Temporary fix for make check in golang. Needs libaudit.so
@@ -290,6 +289,9 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %changelog
+* Wed Apr 13 2016 Steve Grubb <sgrubb@redhat.com> 2.5.1-1
+- New upstream release
+
 * Fri Mar 18 2016 Steve Grubb <sgrubb@redhat.com> 2.5-4
 - Fixes #1313152 - post script fails on dnf --setopt=tsflags=nodocs install
 
