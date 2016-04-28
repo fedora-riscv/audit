@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.5.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -90,13 +90,25 @@ License: GPLv2+
 Group: System Environment/Daemons
 Requires: %{name}%{?_isa} = %{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
-Requires: openldap
 
 %description -n audispd-plugins
 The audispd-plugins package provides plugins for the real-time
 interface to the audit system, audispd. These plugins can do things
-like relay events to remote machines or analyze events for suspicious
-behavior.
+like relay events to remote machines.
+
+%package -n audispd-plugins-zos
+Summary: ZOS plugins for the audit event dispatcher
+License: GPLv2+
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
+Requires: openldap
+
+%description -n audispd-plugins-zos
+The audispd-plugins-zos package provides a plugin that will forward all
+incoming audit events, as they happen, to a configured z/OS SMF (Service
+Management Facility) database, through an IBM Tivoli Directory Server
+(ITDS) set for Remote Audit service.
 
 %prep
 %setup -q
@@ -276,11 +288,6 @@ fi
 
 %files -n audispd-plugins
 %defattr(-,root,root,-)
-%attr(644,root,root) %{_mandir}/man8/audispd-zos-remote.8.gz
-%attr(644,root,root) %{_mandir}/man5/zos-remote.conf.5.gz
-%config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/audispd-zos-remote.conf
-%config(noreplace) %attr(640,root,root) /etc/audisp/zos-remote.conf
-%attr(750,root,root) /sbin/audispd-zos-remote
 %config(noreplace) %attr(640,root,root) /etc/audisp/audisp-remote.conf
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/au-remote.conf
 %attr(750,root,root) /sbin/audisp-remote
@@ -288,7 +295,18 @@ fi
 %attr(644,root,root) %{_mandir}/man5/audisp-remote.conf.5.gz
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
+%files -n audispd-plugins-zos
+%defattr(-,root,root,-)
+%attr(644,root,root) %{_mandir}/man8/audispd-zos-remote.8.gz
+%attr(644,root,root) %{_mandir}/man5/zos-remote.conf.5.gz
+%config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/audispd-zos-remote.conf
+%config(noreplace) %attr(640,root,root) /etc/audisp/zos-remote.conf
+%attr(750,root,root) /sbin/audispd-zos-remote
+
 %changelog
+* Thu Apr 28 2016 Steve Grubb <sgrubb@redhat.com> 2.5.1-2
+- Refactor plugins to split out zos-remote to lower dependencies
+
 * Wed Apr 13 2016 Steve Grubb <sgrubb@redhat.com> 2.5.1-1
 - New upstream release
 
