@@ -2,8 +2,8 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.5.1
-Release: 2%{?dist}
+Version: 2.5.2
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -97,7 +97,7 @@ interface to the audit system, audispd. These plugins can do things
 like relay events to remote machines.
 
 %package -n audispd-plugins-zos
-Summary: ZOS plugins for the audit event dispatcher
+Summary: z/OS plugin for the audit event dispatcher
 License: GPLv2+
 Group: System Environment/Daemons
 Requires: %{name}%{?_isa} = %{version}-%{release}
@@ -304,6 +304,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Fri Apr 29 2016 Steve Grubb <sgrubb@redhat.com> 2.5.2-1
+- New upstream release
+
 * Thu Apr 28 2016 Steve Grubb <sgrubb@redhat.com> 2.5.1-2
 - Refactor plugins to split out zos-remote to lower dependencies
 
