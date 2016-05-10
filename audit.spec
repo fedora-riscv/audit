@@ -180,6 +180,7 @@ if [ "$files" -eq 0 ] ; then
 	else
 		touch /etc/audit/rules.d/audit.rules
 	fi
+	chmod 0640 /etc/audit/rules.d/audit.rules
 fi
 %systemd_post auditd.service
 
