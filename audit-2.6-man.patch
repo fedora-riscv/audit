@@ -1,0 +1,18 @@
+diff -ur audit-2.6.orig/docs/auditd.conf.5 audit-2.6/docs/auditd.conf.5
+--- audit-2.6.orig/docs/auditd.conf.5	2016-06-22 14:42:34.000000000 -0400
++++ audit-2.6/docs/auditd.conf.5	2016-06-22 15:56:24.511250872 -0400
+@@ -24,10 +24,11 @@
+ Normally you want this so the default is yes.
+ .TP
+ .I log_format
+-The log format describes how the information should be stored on disk. There are 2 options: raw and nolog.
+-If set to
++The log format describes how the information should be stored on disk. There are 2 options: raw and enriched. The nolog option is deprecated. If set to
+ .IR RAW ,
+-the audit records will be stored in a format exactly as the kernel sends it. 
++the audit records will be stored in a format exactly as the kernel sends it. The
++.IR ENRICHED
++option will resolve all uid, gid, syscall, architecture, and socket address information before writing the event to disk. This aids in making sense of events created on one system but reported/analized on another system.
+ The 
+ .I NOLOG
+ option is now deprecated. If you were setting this format, now you should set

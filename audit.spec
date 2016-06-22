@@ -3,12 +3,13 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.6
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
+Patch1: audit-2.6-man.patch
 BuildRequires: openldap-devel
 BuildRequires: swig
 BuildRequires: python-devel
@@ -305,7 +306,7 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
-* Wed Jun 22 2016 Steve Grubb <sgrubb@redhat.com> 2.6-1
+* Wed Jun 22 2016 Steve Grubb <sgrubb@redhat.com> 2.6-2
 - New upstream release
 
 * Fri Apr 29 2016 Steve Grubb <sgrubb@redhat.com> 2.5.2-1
