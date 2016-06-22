@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.6
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -114,6 +114,7 @@ Management Facility) database, through an IBM Tivoli Directory Server
 %prep
 %setup -q
 cp %{SOURCE1} .
+%patch1 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
@@ -306,7 +307,7 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
-* Wed Jun 22 2016 Steve Grubb <sgrubb@redhat.com> 2.6-2
+* Wed Jun 22 2016 Steve Grubb <sgrubb@redhat.com> 2.6-3
 - New upstream release
 
 * Fri Apr 29 2016 Steve Grubb <sgrubb@redhat.com> 2.5.2-1
