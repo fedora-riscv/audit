@@ -160,10 +160,12 @@ mv $RPM_BUILD_ROOT/%{_lib}/pkgconfig $RPM_BUILD_ROOT%{_libdir}
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
 
-%ifarch %{golang_arches}
 %check
+%ifarch %{golang_arches}
 make check
 %endif
+# Get rid of make files so that they don't get packaged.
+rm -f rules/Makefile*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
