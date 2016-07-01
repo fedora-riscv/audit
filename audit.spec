@@ -306,7 +306,7 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
-* Fri July 01 2016 Steve Grubb <sgrubb@redhat.com> 2.6.2-1
+* Fri Jul 01 2016 Steve Grubb <sgrubb@redhat.com> 2.6.2-1
 - New upstream bugfix release
 - Fixes 1351954 - prevents virtual machine from starting up in GNOME Boxes
 
