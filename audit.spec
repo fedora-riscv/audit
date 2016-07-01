@@ -310,7 +310,7 @@ fi
 - New upstream bugfix release
 - Fixes 1351954 - prevents virtual machine from starting up in GNOME Boxes
 
-* Thu Jun 28 2016 Steve Grubb <sgrubb@redhat.com> 2.6.1-1
+* Tue Jun 28 2016 Steve Grubb <sgrubb@redhat.com> 2.6.1-1
 - New upstream bugfix release
 
 * Wed Jun 22 2016 Steve Grubb <sgrubb@redhat.com> 2.6-3
