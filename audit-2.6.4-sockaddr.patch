@@ -1,0 +1,86 @@
+diff -urp audit-2.6.4.orig/auparse/interpret.c audit-2.6.4/auparse/interpret.c
+--- audit-2.6.4.orig/auparse/interpret.c	2016-07-05 16:14:50.000000000 -0400
++++ audit-2.6.4/auparse/interpret.c	2016-07-05 17:00:04.711844356 -0400
+@@ -342,32 +342,42 @@ void init_interpretation_list(void)
+ int load_interpretation_list(const char *buffer)
+ {
+ 	char *saved = NULL, *ptr;
+-	char *buf;
++	char *buf, *val;
++	nvnode n;
+ 
+ 	if (buffer == NULL)
+ 		return 0;
+ 
+ 	buf = strdup(buffer);
+-	ptr = audit_strsplit_r(buf, &saved);
+-	if (ptr == NULL) {
++	if (strncmp(buf, "SADDR=", 6) == 0) {
++		// We have SOCKADDR record. It has no other values.
++		// Handle it by itself.
++		ptr = strchr(buf+6, '{');
++		if (ptr) {
++			val = ptr;
++			ptr = strchr(val, '}');
++			if (ptr) {
++				n.name = strdup("saddr");
++				n.val = strdup(val);
++				nvlist_append(&il, &n);
++				nvlist_interp_fixup(&il);
++				free(buf);
++				return 1;
++			}
++		}
+ 		free(buf);
+ 		return 0;
+-	}
++	} else {
++		// We handle everything else in this branch
++		ptr = audit_strsplit_r(buf, &saved);
++		if (ptr == NULL) {
++			free(buf);
++			return 0;
++		}
+ 
+-	do {
+-		nvnode n;
+-		char tmp, *val;
++		do {
++			char tmp;
+ 
+-		if (*ptr == '{') {
+-			val = ptr+1;
+-			ptr = strchr(val, '}');
+-			if (ptr) {
+-				tmp = *ptr;
+-				*ptr = 0;
+-			} else
+-				continue;	// Malformed - skip
+-			n.name = strdup("saddr");
+-		} else {
+ 			val = strchr(ptr, '=');
+ 			if (val) {
+ 				*val = 0;
+@@ -386,15 +396,14 @@ int load_interpretation_list(const char
+ 				*ptr = 0;
+ 			} else
+ 				tmp = 0;
+-		}
+-
+-		n.val = strdup(val);
+-		nvlist_append(&il, &n);
+-		nvlist_interp_fixup(&il);
+-		if (ptr)
+-			*ptr = tmp;
+-	} while((ptr = audit_strsplit_r(NULL, &saved)));
+ 
++			n.val = strdup(val);
++			nvlist_append(&il, &n);
++			nvlist_interp_fixup(&il);
++			if (ptr)
++				*ptr = tmp;
++		} while((ptr = audit_strsplit_r(NULL, &saved)));
++	}
+ 	free(buf);
+ 	return 1;
+ }
