@@ -2,7 +2,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.6.2
+Version: 2.6.3
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -308,6 +308,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Tue Jul 05 2016 Steve Grubb <sgrubb@redhat.com> 2.6.3-1
+- New upstream bugfix release
+
 * Fri Jul 01 2016 Steve Grubb <sgrubb@redhat.com> 2.6.2-1
 - New upstream bugfix release
 - Fixes 1351954 - prevents virtual machine from starting up in GNOME Boxes
