@@ -2,14 +2,13 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.6.3
-Release: 2%{?dist}
+Version: 2.6.4
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
-Patch1: audit-2.6.4-sockaddr.patch
 BuildRequires: openldap-devel
 BuildRequires: swig
 BuildRequires: python-devel
@@ -114,7 +113,6 @@ Management Facility) database, through an IBM Tivoli Directory Server
 %prep
 %setup -q
 cp %{SOURCE1} .
-%patch1 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
@@ -310,6 +308,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Fri Jul 08 2016 Steve Grubb <sgrubb@redhat.com> 2.6.4-1
+- New upstream bugfix release
+
 * Tue Jul 05 2016 Steve Grubb <sgrubb@redhat.com> 2.6.3-2
 - Fix sockaddr event interpretation
 
