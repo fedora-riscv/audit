@@ -2,14 +2,13 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.6.4
-Release: 2%{?dist}
+Version: 2.6.5
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
-Patch1: audit-2.6.5-disp-hdr.patch
 BuildRequires: openldap-devel
 BuildRequires: swig
 BuildRequires: python-devel
@@ -114,7 +113,6 @@ Management Facility) database, through an IBM Tivoli Directory Server
 %prep
 %setup -q
 cp %{SOURCE1} .
-%patch1 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
@@ -184,7 +182,7 @@ if [ "$files" -eq 0 ] ; then
 	else
 		touch /etc/audit/rules.d/audit.rules
 	fi
-	chmod 0640 /etc/audit/rules.d/audit.rules
+	chmod 0600 /etc/audit/rules.d/audit.rules
 fi
 %systemd_post auditd.service
 
@@ -310,6 +308,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Thu Jul 14 2016 Steve Grubb <sgrubb@redhat.com> 2.6.5-1
+- New upstream bugfix release
+
 * Fri Jul 08 2016 Steve Grubb <sgrubb@redhat.com> 2.6.4-2
 - Correct size information of dispatched event
 
