@@ -311,6 +311,12 @@ fi
 * Mon Aug 01 2016 Steve Grubb <sgrubb@redhat.com> 2.6.6-1
 - New upstream bugfix release
 
+* Thu Jul 21 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.6.5-3
+- https://fedoraproject.org/wiki/Changes/golang1.7
+
+* Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.6.5-2
+- https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
+
 * Thu Jul 14 2016 Steve Grubb <sgrubb@redhat.com> 2.6.5-1
 - New upstream bugfix release
 
