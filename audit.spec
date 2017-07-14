@@ -9,7 +9,6 @@ Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
-Patch1: audit-2.7.7-debug.patch
 BuildRequires: openldap-devel
 BuildRequires: swig
 BuildRequires: python-devel
@@ -114,7 +113,6 @@ Management Facility) database, through an IBM Tivoli Directory Server
 %prep
 %setup -q
 cp %{SOURCE1} .
-%patch1 -p1
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
@@ -310,9 +308,6 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
-* Fri Jul 14 2017 Steve Grubb <sgrubb@redhat.com> 2.7.7-2
-- Scratch build
-
 * Fri Jun 16 2017 Steve Grubb <sgrubb@redhat.com> 2.7.7-1
 - New upstream bugfix release
 
