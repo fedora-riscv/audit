@@ -1,0 +1,126 @@
+diff -ur audit-2.7.7.orig/src/auditd.c audit-2.7.7/src/auditd.c
+--- audit-2.7.7.orig/src/auditd.c	2017-06-16 15:01:41.000000000 -0400
++++ audit-2.7.7/src/auditd.c	2017-07-14 10:54:46.390612992 -0400
+@@ -692,6 +692,7 @@
+ 		return 1;
+ 	}
+ 
++       	audit_msg(LOG_WARNING, "Starting dispatcher");
+ 	if (init_dispatcher(&config)) {
+ 		if (pidfile)
+ 			unlink(pidfile);
+@@ -701,6 +702,7 @@
+ 	}
+ 
+ 	/* Get machine name ready for use */
++       	audit_msg(LOG_WARNING, "Resolving node");
+ 	if (resolve_node(&config)) {
+ 		if (pidfile)
+ 			unlink(pidfile);
+@@ -710,6 +712,7 @@
+ 	}
+ 
+ 	/* Setup the reconfig notification pipe */
++       	audit_msg(LOG_WARNING, "Creating reconfig socket");
+ 	if (socketpair(AF_UNIX, SOCK_STREAM, 0, pipefds)) {
+         	audit_msg(LOG_ERR, "Cannot open reconfig socket");
+ 		if (pidfile)
+@@ -718,19 +721,23 @@
+ 		free_config(&config);
+ 		return 1;
+ 	}
++       	audit_msg(LOG_WARNING, "Setting CLOEXEC");
+ 	fcntl(pipefds[0], F_SETFD, FD_CLOEXEC);
+ 	fcntl(pipefds[1], F_SETFD, FD_CLOEXEC);
+ 
+ 	/* This had to wait until now so the child exec has happened */
++       	audit_msg(LOG_WARNING, "Making dispatcher fd private");
+ 	make_dispatcher_fd_private();
+ 
+ 	/* Write message to log that we are alive */
++       	audit_msg(LOG_WARNING, "Creating DAEMON_START event");
+ 	{
+ 		struct utsname ubuf;
+ 		char start[DEFAULT_BUF_SZ];
+ 		const char *fmt = audit_lookup_format((int)config.log_format);
+ 		if (fmt == NULL)
+ 			fmt = "UNKNOWN";
++       		audit_msg(LOG_WARNING, "Calling uname");
+ 		if (uname(&ubuf) != 0) {
+ 			if (pidfile)
+ 				unlink(pidfile);
+@@ -739,6 +746,7 @@
+ 			free_config(&config);
+ 			return 1;
+ 		}
++       		audit_msg(LOG_WARNING, "Getting subject");
+ 		if (getsubj(subj))
+ 			snprintf(start, sizeof(start),
+ 				"op=start ver=%s format=%s "
+@@ -755,6 +763,7 @@
+ 				VERSION, fmt, ubuf.release,
+ 				audit_getloginuid(), getpid(),
+ 				getuid(), session);
++       		audit_msg(LOG_WARNING, "Sending event");
+ 		if (send_audit_event(AUDIT_DAEMON_START, start)) {
+         		audit_msg(LOG_ERR, "Cannot send start message");
+ 			if (pidfile)
+@@ -765,14 +774,18 @@
+ 			free_config(&config);
+ 			return 1;
+ 		}
++       		audit_msg(LOG_WARNING, "Event sent");
+ 	}
+ 
+ 	/* Tell kernel not to kill us */
++	audit_msg(LOG_WARNING, "Avoiding oom");
+ 	avoid_oom_killer();
+ 
+ 	/* let config manager init */
++	audit_msg(LOG_WARNING, "Initting config manager");
+ 	init_config_manager();
+ 
++	audit_msg(LOG_WARNING, "Setting enabled");
+ 	if (opt_startup != startup_nochange && !opt_aggregate_only &&
+ 			(audit_is_enabled(fd) < 2) &&
+ 			audit_set_enabled(fd, (int)opt_startup) < 0) {
+@@ -805,6 +818,7 @@
+ 	}
+ 
+ 	/* Tell the kernel we are alive */
++	audit_msg(LOG_WARNING, "Setting pid");
+ 	if (!opt_aggregate_only && audit_set_pid(fd, getpid(), WAIT_YES) < 0) {
+ 		char emsg[DEFAULT_BUF_SZ];
+ 		if (*subj)
+@@ -833,13 +847,16 @@
+ 	}
+ 
+ 	/* Depending on value of opt_startup (-s) set initial audit state */
++	audit_msg(LOG_WARNING, "Creating event loop");
+ 	loop = ev_default_loop (EVFLAG_NOENV);
+ 
+ 	if (!opt_aggregate_only) {
++		audit_msg(LOG_WARNING, "Setting netlink handler");
+ 		ev_io_init (&netlink_watcher, netlink_handler, fd, EV_READ);
+ 		ev_io_start (loop, &netlink_watcher);
+ 	}
+ 
++	audit_msg(LOG_WARNING, "Setting signal handlers");
+ 	ev_signal_init (&sigterm_watcher, term_handler, SIGTERM);
+ 	ev_signal_start (loop, &sigterm_watcher);
+ 
+@@ -855,11 +872,14 @@
+ 	ev_signal_init (&sigchld_watcher, child_handler, SIGCHLD);
+ 	ev_signal_start (loop, &sigchld_watcher);
+ 
++	audit_msg(LOG_WARNING, "Setting pipe handler");
+ 	ev_io_init (&pipe_watcher, pipe_handler, pipefds[0], EV_READ);
+ 	ev_io_start (loop, &pipe_watcher);
+ 
++	audit_msg(LOG_WARNING, "Starting tcp handler");
+ 	if (auditd_tcp_listen_init(loop, &config)) {
+ 		char emsg[DEFAULT_BUF_SZ];
++		audit_msg(LOG_WARNING, "Start failed");
+ 		if (*subj)
+ 			snprintf(emsg, sizeof(emsg),
+ 				"op=network-init auid=%u pid=%d uid=%u "
