@@ -2,8 +2,8 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.7.7
-Release: 5%{?dist}
+Version: 2.7.8
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -308,6 +308,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Mon Sep 18 2017 Steve Grubb <sgrubb@redhat.com> 2.7.8-1
+- New upstream bugfix release
+
 * Wed Aug 02 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.7.7-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
