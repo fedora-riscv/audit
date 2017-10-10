@@ -2,7 +2,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.7.8
+Version: 2.8
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -131,7 +131,7 @@ mkdir -p $RPM_BUILD_ROOT/{sbin,etc/audispd/plugins.d,etc/audit/rules.d}
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/{man5,man8}
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
-mkdir -p $RPM_BUILD_ROOT/%{_var}/log/audit
+mkdir -p --mode=0700 $RPM_BUILD_ROOT/%{_var}/log/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/spool/audit
 make DESTDIR=$RPM_BUILD_ROOT install
 
@@ -264,8 +264,8 @@ fi
 %attr(755,root,root) /sbin/ausearch
 %attr(755,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
-%attr(750,root,root) /sbin/audispd
-%attr(750,root,root) /sbin/augenrules
+%attr(755,root,root) /sbin/audispd
+%attr(755,root,root) /sbin/augenrules
 %attr(755,root,root) %{_bindir}/aulast
 %attr(755,root,root) %{_bindir}/aulastlog
 %attr(755,root,root) %{_bindir}/ausyscall
@@ -308,6 +308,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Tue Oct 10 2017 Steve Grubb <sgrubb@redhat.com> 2.8-1
+- New upstream feature release
+
 * Mon Sep 18 2017 Steve Grubb <sgrubb@redhat.com> 2.7.8-1
 - New upstream bugfix release
 
