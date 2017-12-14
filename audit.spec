@@ -2,7 +2,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.8.1
+Version: 2.8.2
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -308,6 +308,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Thu Dec 14 2017 Steve Grubb <sgrubb@redhat.com> 2.8.2-1
+- New upstream bugfix release
+
 * Thu Oct 12 2017 Steve Grubb <sgrubb@redhat.com> 2.8.1-1
 - New upstream bugfix release
 
