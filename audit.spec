@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.8.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -11,8 +11,6 @@ Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 BuildRequires: openldap-devel
 BuildRequires: swig
-BuildRequires: python-devel
-BuildRequires: python3-devel
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
 %ifarch %{golang_arches}
@@ -63,20 +61,22 @@ The audit-libs-static package contains the static libraries
 needed for developing applications that need to use static audit
 framework libraries
 
-%package libs-python
+%package libs-python2
 Summary: Python bindings for libaudit
 License: LGPLv2+
 Group: Development/Libraries
+BuildRequires: python2-devel
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 
-%description libs-python
-The audit-libs-python package contains the bindings so that libaudit
-and libauparse can be used by python.
+%description libs-python2
+The audit-libs-python2 package contains the bindings so that libaudit
+and libauparse can be used by python2.
 
 %package libs-python3
 Summary: Python3 bindings for libaudit
 License: LGPLv2+
 Group: Development/Libraries
+BuildRequires: python3-devel
 Requires: %{name}%{?_isa} = %{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 
@@ -229,7 +229,7 @@ fi
 %{_libdir}/libaudit.a
 %{_libdir}/libauparse.a
 
-%files libs-python
+%files libs-python2
 %defattr(-,root,root,-)
 %attr(755,root,root) %{python_sitearch}/_audit.so
 %attr(755,root,root) %{python_sitearch}/auparse.so
@@ -308,6 +308,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Thu Dec 14 2017 Steve Grubb <sgrubb@redhat.com> 2.8.2-2
+- Rename things from python to python2
+
 * Thu Dec 14 2017 Steve Grubb <sgrubb@redhat.com> 2.8.2-1
 - New upstream bugfix release
 
