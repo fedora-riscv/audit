@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.8.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
@@ -67,6 +67,7 @@ License: LGPLv2+
 Group: Development/Libraries
 BuildRequires: python2-devel
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
+Provides: audit-libs-python = %{version}-%{release}
 
 %description libs-python2
 The audit-libs-python2 package contains the bindings so that libaudit
@@ -308,6 +309,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Wed Jan 24 2018 Steve Grubb <sgrubb@redhat.com> 2.8.2-3
+- Add a Provides audit-libs-python  (#1537864)
+
 * Thu Dec 14 2017 Steve Grubb <sgrubb@redhat.com> 2.8.2-2
 - Rename things from python to python2
 
