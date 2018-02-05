@@ -10,7 +10,7 @@ URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 BuildRequires: openldap-devel
-BuildRequires: swig python-devel
+BuildRequires: swig
 BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
 %ifarch %{golang_arches}
@@ -68,6 +68,7 @@ Group: Development/Libraries
 BuildRequires: python2-devel
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Provides: audit-libs-python = %{version}-%{release}
+Obsoletes: audit-libs-python <= 2.8.2-2
 
 %description libs-python2
 The audit-libs-python2 package contains the bindings so that libaudit
@@ -309,8 +310,8 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
-* Wed Jan 24 2018 Steve Grubb <sgrubb@redhat.com> 2.8.2-3
-- Add a Provides audit-libs-python  (#1537864)
+* Mon Feb 05 2018 Steve Grubb <sgrubb@redhat.com> 2.8.2-3
+- Add a Provides audit-libs-python (#1537864)
 
 * Thu Dec 14 2017 Steve Grubb <sgrubb@redhat.com> 2.8.2-2
 - Rename things from python to python2
