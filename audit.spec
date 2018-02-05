@@ -11,7 +11,7 @@ Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 BuildRequires: openldap-devel
 BuildRequires: swig
-BuildRequires: tcp_wrappers-devel krb5-devel libcap-ng-devel
+BuildRequires: krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
 %ifarch %{golang_arches}
 BuildRequires: golang
@@ -79,7 +79,6 @@ Summary: Python3 bindings for libaudit
 License: LGPLv2+
 Group: Development/Libraries
 BuildRequires: python3-devel
-Requires: %{name}%{?_isa} = %{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 
 %description libs-python3
@@ -118,7 +117,7 @@ cp %{SOURCE1} .
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
-           --with-python3=yes --with-libwrap --enable-gssapi-krb5=yes \
+           --with-python3=yes --enable-gssapi-krb5=yes \
            --with-libcap-ng=yes --with-arm --with-aarch64 \
            --enable-zos-remote \
 %ifarch %{golang_arches}
@@ -312,6 +311,7 @@ fi
 %changelog
 * Mon Feb 05 2018 Steve Grubb <sgrubb@redhat.com> 2.8.2-3
 - Add a Provides audit-libs-python (#1537864)
+- Remove tcp_wrappers support?
 
 * Thu Dec 14 2017 Steve Grubb <sgrubb@redhat.com> 2.8.2-2
 - Rename things from python to python2
