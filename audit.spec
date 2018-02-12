@@ -5,7 +5,6 @@ Name: audit
 Version: 2.8.2
 Release: 4%{?dist}
 License: GPLv2+
-Group: System Environment/Daemons
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
@@ -18,7 +17,6 @@ BuildRequires: golang
 # Temporary fix for make check in golang. Needs libaudit.so
 BuildRequires: audit-libs-devel
 %endif
-
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 BuildRequires: systemd
 Requires(post): systemd-units systemd-sysv chkconfig coreutils
@@ -33,7 +31,6 @@ the audit subsystem in the Linux 2.6 and later kernels.
 %package libs
 Summary: Dynamic library for libaudit
 License: LGPLv2+
-Group: Development/Libraries
 
 %description libs
 The audit-libs package contains the dynamic libraries needed for 
@@ -42,7 +39,6 @@ applications to use the audit framework.
 %package libs-devel
 Summary: Header files for libaudit
 License: LGPLv2+
-Group: Development/Libraries
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Requires: kernel-headers >= 2.6.29
 
@@ -53,7 +49,6 @@ developing applications that need to use the audit framework libraries.
 %package libs-static
 Summary: Static version of libaudit library
 License: LGPLv2+
-Group: Development/Libraries
 Requires: kernel-headers >= 2.6.29
 
 %description libs-static
@@ -64,7 +59,6 @@ framework libraries
 %package libs-python2
 Summary: Python bindings for libaudit
 License: LGPLv2+
-Group: Development/Libraries
 BuildRequires: python2-devel
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Provides: audit-libs-python = %{version}-%{release}
@@ -77,7 +71,6 @@ and libauparse can be used by python2.
 %package libs-python3
 Summary: Python3 bindings for libaudit
 License: LGPLv2+
-Group: Development/Libraries
 BuildRequires: python3-devel
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 
@@ -88,7 +81,6 @@ and libauparse can be used by python3.
 %package -n audispd-plugins
 Summary: Plugins for the audit event dispatcher
 License: GPLv2+
-Group: System Environment/Daemons
 Requires: %{name}%{?_isa} = %{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 
@@ -100,7 +92,6 @@ like relay events to remote machines.
 %package -n audispd-plugins-zos
 Summary: z/OS plugin for the audit event dispatcher
 License: GPLv2+
-Group: System Environment/Daemons
 Requires: %{name}%{?_isa} = %{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Requires: openldap
@@ -198,7 +189,6 @@ if [ $1 -ge 1 ]; then
 fi
 
 %files libs
-%defattr(-,root,root,-)
 %{!?_licensedir:%global license %%doc}
 %license lgpl-2.1.txt
 /%{_lib}/libaudit.so.1*
@@ -207,7 +197,6 @@ fi
 %{_mandir}/man5/libaudit.conf.5.gz
 
 %files libs-devel
-%defattr(-,root,root,-)
 %doc contrib/skeleton.c contrib/plugin
 %{_libdir}/libaudit.so
 %{_libdir}/libauparse.so
@@ -224,24 +213,20 @@ fi
 %{_mandir}/man3/*
 
 %files libs-static
-%defattr(-,root,root,-)
 %{!?_licensedir:%global license %%doc}
 %license lgpl-2.1.txt
 %{_libdir}/libaudit.a
 %{_libdir}/libauparse.a
 
 %files libs-python2
-%defattr(-,root,root,-)
 %attr(755,root,root) %{python_sitearch}/_audit.so
 %attr(755,root,root) %{python_sitearch}/auparse.so
 %{python_sitearch}/audit.py*
 
 %files libs-python3
-%defattr(-,root,root,-)
 %attr(755,root,root) %{python3_sitearch}/*
 
 %files
-%defattr(-,root,root,-)
 %doc README ChangeLog rules init.d/auditd.cron
 %{!?_licensedir:%global license %%doc}
 %license COPYING
@@ -292,7 +277,6 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/syslog.conf
 
 %files -n audispd-plugins
-%defattr(-,root,root,-)
 %config(noreplace) %attr(640,root,root) /etc/audisp/audisp-remote.conf
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/au-remote.conf
 %attr(750,root,root) /sbin/audisp-remote
@@ -301,7 +285,6 @@ fi
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 
 %files -n audispd-plugins-zos
-%defattr(-,root,root,-)
 %attr(644,root,root) %{_mandir}/man8/audispd-zos-remote.8.gz
 %attr(644,root,root) %{_mandir}/man5/zos-remote.conf.5.gz
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/audispd-zos-remote.conf
