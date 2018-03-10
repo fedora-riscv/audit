@@ -2,7 +2,7 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.8.2
+Version: 2.8.3
 Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Daemons
@@ -272,11 +272,12 @@ fi
 %attr(755,root,root) %{_bindir}/auvirt
 %attr(644,root,root) %{_unitdir}/auditd.service
 %attr(750,root,root) %dir %{_libexecdir}/initscripts/legacy-actions/auditd
+%attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/condrestart
+%attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/reload
+%attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/restart
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/resume
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/rotate
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/stop
-%attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/restart
-%attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/condrestart
 %attr(750,root,root) %dir %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
 %attr(750,root,root) %dir /etc/audit/rules.d
@@ -308,6 +309,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Sat Mar 10 2018 Steve Grubb <sgrubb@redhat.com> 2.8.3-1
+- New upstream bugfix release
+
 * Thu Dec 14 2017 Steve Grubb <sgrubb@redhat.com> 2.8.2-1
 - New upstream bugfix release
 
