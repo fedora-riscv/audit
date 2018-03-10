@@ -2,14 +2,14 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.8.2
-Release: 4%{?dist}
+Version: 2.8.3
+Release: 1%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
+BuildRequires: gcc swig
 BuildRequires: openldap-devel
-BuildRequires: swig
 BuildRequires: krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
 %ifarch %{golang_arches}
@@ -289,6 +289,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Sat Mar 10 2018 Steve Grubb <sgrubb@redhat.com> 2.8.3-1
+- New upstream bugfix release
+
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.8.2-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
