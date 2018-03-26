@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.8.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
@@ -62,7 +62,7 @@ License: LGPLv2+
 BuildRequires: python2-devel
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Provides: audit-libs-python = %{version}-%{release}
-Obsoletes: audit-libs-python <= 2.8.2-2
+Obsoletes: audit-libs-python <= 2.8.3
 
 %description libs-python2
 The audit-libs-python2 package contains the bindings so that libaudit
@@ -290,6 +290,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Mon Mar 26 2018 Steve Grubb <sgrubb@redhat.com> 2.8.3-2
+- Fix Obsoletion of audit-libs-python not handled properly (#1559674)
+
 * Sat Mar 10 2018 Steve Grubb <sgrubb@redhat.com> 2.8.3-1
 - New upstream bugfix release
 
