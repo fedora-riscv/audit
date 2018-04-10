@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.8.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
@@ -56,26 +56,33 @@ The audit-libs-static package contains the static libraries
 needed for developing applications that need to use static audit
 framework libraries
 
-%package libs-python2
-Summary: Python bindings for libaudit
+%package -n python2-audit
+Summary: Python2 bindings for libaudit
 License: LGPLv2+
 BuildRequires: python2-devel
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Provides: audit-libs-python = %{version}-%{release}
-Obsoletes: audit-libs-python <= 2.8.3
+Provides: audit-libs-python%{?_isa} = %{version}-%{release}
+Obsoletes: audit-libs-python < %{version}-%{release}
+Provides: audit-libs-python2 = %{version}-%{release}
+Provides: audit-libs-python2%{?_isa} = %{version}-%{release}
+Obsoletes: audit-libs-python2 < %{version}-%{release}
 
-%description libs-python2
-The audit-libs-python2 package contains the bindings so that libaudit
+%description -n python2-audit
+The python2-audit package contains the bindings so that libaudit
 and libauparse can be used by python2.
 
-%package libs-python3
+%package -n python3-audit
 Summary: Python3 bindings for libaudit
 License: LGPLv2+
 BuildRequires: python3-devel
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
+Provides: audit-libs-python3 = %{version}-%{release}
+Provides: audit-libs-python3%{?_isa} = %{version}-%{release}
+Obsoletes: audit-libs-python3 < %{version}-%{release}
 
-%description libs-python3
-The audit-libs-python3 package contains the bindings so that libaudit
+%description -n python3-audit
+The python3-audit package contains the bindings so that libaudit
 and libauparse can be used by python3.
 
 %package -n audispd-plugins
@@ -215,12 +222,12 @@ fi
 %{_libdir}/libaudit.a
 %{_libdir}/libauparse.a
 
-%files libs-python2
+%files -n python2-audit
 %attr(755,root,root) %{python_sitearch}/_audit.so
 %attr(755,root,root) %{python_sitearch}/auparse.so
 %{python_sitearch}/audit.py*
 
-%files libs-python3
+%files -n python3-audit
 %attr(755,root,root) %{python3_sitearch}/*
 
 %files
@@ -290,6 +297,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Tue Apr 10 2018 Pete Walter <pwalter@fedoraproject.org> - 2.8.3-3
+- Rename Python 2 and 3 subpackages to python2-audit and python3-audit as per guidelines
+
 * Mon Mar 26 2018 Steve Grubb <sgrubb@redhat.com> 2.8.3-2
 - Fix Obsoletion of audit-libs-python not handled properly (#1559674)
 
