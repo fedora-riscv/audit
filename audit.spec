@@ -2,8 +2,8 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.8.3
-Release: 4%{?dist}
+Version: 2.8.4
+Release: 1%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
@@ -267,6 +267,7 @@ fi
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/restart
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/resume
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/rotate
+%attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/state
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/stop
 %attr(750,root,root) %dir %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
@@ -297,6 +298,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Tue Jun 19 2018 Steve Grubb <sgrubb@redhat.com> 2.8.4-1
+- New upstream bugfix release
+
 * Tue Jun 19 2018 Miro Hrončok <mhroncok@redhat.com> - 2.8.3-4
 - Rebuilt for Python 3.7
 
