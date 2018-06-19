@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.8.3
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
@@ -297,6 +297,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Tue Jun 19 2018 Miro Hrončok <mhroncok@redhat.com> - 2.8.3-4
+- Rebuilt for Python 3.7
+
 * Tue Apr 10 2018 Pete Walter <pwalter@fedoraproject.org> - 2.8.3-3
 - Rename Python 2 and 3 subpackages to python2-audit and python3-audit as per guidelines
 
