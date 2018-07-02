@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.8.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
@@ -298,6 +298,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Mon Jul 02 2018 Miro Hrončok <mhroncok@redhat.com> - 2.8.4-2
+- Rebuilt for Python 3.7
+
 * Tue Jun 19 2018 Steve Grubb <sgrubb@redhat.com> 2.8.4-1
 - New upstream bugfix release
 
