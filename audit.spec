@@ -8,10 +8,12 @@ License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
+
 BuildRequires: gcc swig
 BuildRequires: openldap-devel
 BuildRequires: krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
+BuildRequires: python2 python-unversioned-command
 %ifarch %{golang_arches}
 BuildRequires: golang
 # Temporary fix for make check in golang. Needs libaudit.so
