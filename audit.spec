@@ -19,9 +19,9 @@ BuildRequires: audit-libs-devel
 %endif
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 BuildRequires: systemd
-Requires(post): systemd-units systemd-sysv chkconfig coreutils
-Requires(preun): systemd-units
-Requires(postun): systemd-units coreutils
+Requires(post): systemd coreutils
+Requires(preun): systemd
+Requires(postun): systemd coreutils
 
 %description
 The audit package contains the user space utilities for
@@ -298,6 +298,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Wed Jul  4 2018 Peter Robinson <pbrobinson@fedoraproject.org> 2.8.4-3
+- Remove unused sys V initscripts legacy bits
+
 * Mon Jul 02 2018 Miro Hrončok <mhroncok@redhat.com> - 2.8.4-2
 - Rebuilt for Python 3.7
 
