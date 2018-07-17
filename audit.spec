@@ -277,7 +277,7 @@ ghost %{_localstatedir}/run/auditd.state
 %ghost %config(noreplace) %attr(640,root,root) /etc/audit/rules.d/audit.rules
 %ghost %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/audit/audit-stop.rules
-%config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/af_unix.conf
+%config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/af_unix.conf
 
 %files -n audispd-plugins
 %config(noreplace) %attr(640,root,root) /etc/audit/audisp-remote.conf
@@ -292,8 +292,8 @@ ghost %{_localstatedir}/run/auditd.state
 %files -n audispd-plugins-zos
 %attr(644,root,root) %{_mandir}/man8/audispd-zos-remote.8.gz
 %attr(644,root,root) %{_mandir}/man5/zos-remote.conf.5.gz
-%config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/audispd-zos-remote.conf
-%config(noreplace) %attr(640,root,root) /etc/audisp/zos-remote.conf
+%config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/audispd-zos-remote.conf
+%config(noreplace) %attr(640,root,root) /etc/audit/zos-remote.conf
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
