@@ -13,7 +13,7 @@ BuildRequires: gcc swig
 BuildRequires: openldap-devel
 BuildRequires: krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
-#BuildRequires: python-unversioned-command
+BuildRequires: python2 python-unversioned-command
 %ifarch %{golang_arches}
 BuildRequires: golang
 # Temporary fix for make check in golang. Needs libaudit.so
