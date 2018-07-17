@@ -2,18 +2,18 @@
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
-Version: 2.8.4
-Release: 4%{?dist}
+Version: 3.0
+Release: 0.1.20180717gitacd53d1%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
-Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
+Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 
 BuildRequires: gcc swig
 BuildRequires: openldap-devel
 BuildRequires: krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
-BuildRequires: python2 python-unversioned-command
+#BuildRequires: python-unversioned-command
 %ifarch %{golang_arches}
 BuildRequires: golang
 # Temporary fix for make check in golang. Needs libaudit.so
@@ -117,9 +117,9 @@ cp %{SOURCE1} .
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
-           --with-python3=yes --enable-gssapi-krb5=yes \
-           --with-libcap-ng=yes --with-arm --with-aarch64 \
-           --enable-zos-remote \
+           --with-python3=yes \
+	   --enable-gssapi-krb5=yes --with-arm --with-aarch64 \
+           --with-libcap-ng=yes --enable-zos-remote \
 %ifarch %{golang_arches}
            --with-golang \
 %endif
@@ -128,7 +128,7 @@ cp %{SOURCE1} .
 make CFLAGS="%{optflags}" %{?_smp_mflags}
 
 %install
-mkdir -p $RPM_BUILD_ROOT/{sbin,etc/audispd/plugins.d,etc/audit/rules.d}
+mkdir -p $RPM_BUILD_ROOT/{sbin,etc/audit/plugins.d,etc/audit/rules.d}
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/{man5,man8}
 mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
@@ -203,7 +203,7 @@ fi
 %{_mandir}/man5/libaudit.conf.5.gz
 
 %files libs-devel
-%doc contrib/skeleton.c contrib/plugin
+%doc contrib/plugin
 %{_libdir}/libaudit.so
 %{_libdir}/libauparse.so
 %ifarch %{golang_arches}
@@ -236,7 +236,6 @@ fi
 %doc README ChangeLog rules init.d/auditd.cron
 %{!?_licensedir:%global license %%doc}
 %license COPYING
-%attr(644,root,root) %{_mandir}/man8/audispd.8.gz
 %attr(644,root,root) %{_mandir}/man8/auditctl.8.gz
 %attr(644,root,root) %{_mandir}/man8/auditd.8.gz
 %attr(644,root,root) %{_mandir}/man8/aureport.8.gz
@@ -249,14 +248,12 @@ fi
 %attr(644,root,root) %{_mandir}/man8/ausyscall.8.gz
 %attr(644,root,root) %{_mandir}/man7/audit.rules.7.gz
 %attr(644,root,root) %{_mandir}/man5/auditd.conf.5.gz
-%attr(644,root,root) %{_mandir}/man5/audispd.conf.5.gz
 %attr(644,root,root) %{_mandir}/man5/ausearch-expression.5.gz
 %attr(755,root,root) /sbin/auditctl
 %attr(755,root,root) /sbin/auditd
 %attr(755,root,root) /sbin/ausearch
 %attr(755,root,root) /sbin/aureport
 %attr(750,root,root) /sbin/autrace
-%attr(755,root,root) /sbin/audispd
 %attr(755,root,root) /sbin/augenrules
 %attr(755,root,root) %{_bindir}/aulast
 %attr(755,root,root) %{_bindir}/aulastlog
@@ -271,23 +268,23 @@ fi
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/rotate
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/state
 %attr(750,root,root) %{_libexecdir}/initscripts/legacy-actions/auditd/stop
+ghost %{_localstatedir}/run/auditd.state
 %attr(750,root,root) %dir %{_var}/log/audit
 %attr(750,root,root) %dir /etc/audit
 %attr(750,root,root) %dir /etc/audit/rules.d
-%attr(750,root,root) %dir /etc/audisp
-%attr(750,root,root) %dir /etc/audisp/plugins.d
+%attr(750,root,root) %dir /etc/audit/plugins.d
 %config(noreplace) %attr(640,root,root) /etc/audit/auditd.conf
 %ghost %config(noreplace) %attr(640,root,root) /etc/audit/rules.d/audit.rules
 %ghost %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/audit/audit-stop.rules
-%config(noreplace) %attr(640,root,root) /etc/audisp/audispd.conf
 %config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/af_unix.conf
-%config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/syslog.conf
 
 %files -n audispd-plugins
-%config(noreplace) %attr(640,root,root) /etc/audisp/audisp-remote.conf
-%config(noreplace) %attr(640,root,root) /etc/audisp/plugins.d/au-remote.conf
+%config(noreplace) %attr(640,root,root) /etc/audit/audisp-remote.conf
+%config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/au-remote.conf
+%config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/syslog.conf
 %attr(750,root,root) /sbin/audisp-remote
+%attr(750,root,root) /sbin/audisp-syslog
 %attr(700,root,root) %dir %{_var}/spool/audit
 %attr(644,root,root) %{_mandir}/man5/audisp-remote.conf.5.gz
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
@@ -300,6 +297,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Tue Jul 17 2018 Steve Grubb <sgrubb@redhat.com> 3.0-0.1.20180717gitacd53d1
+- New upstream feature prerelease
+
 * Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.8.4-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
