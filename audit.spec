@@ -3,11 +3,19 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.8.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
+# Fix a segfault on shutdown
+Patch1: audit-2.8.4-close.patch
+# Fix a hang on boot (#1587995)
+Patch2: audit-2.8.4-fix-hang.patch
+# Add a sleep so that the report can run before displying it
+Patch3: audit-3.0-state-sleep.patch
+# Add support for ausearch --format text for SOFTWARE_UPDATE events
+Patch4: audit-3.0-sw-update.patch
 BuildRequires: gcc swig
 BuildRequires: openldap-devel
 BuildRequires: krb5-devel libcap-ng-devel
@@ -111,6 +119,10 @@ Management Facility) database, through an IBM Tivoli Directory Server
 
 %prep
 %setup -q
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
 cp %{SOURCE1} .
 
 %build
@@ -298,6 +310,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Wed Jul 18 2018 Steve Grubb <sgrubb@redhat.com> 2.8.4-2
+- Fix various problems discovered after 2.8.4 release
+
 * Tue Jun 19 2018 Steve Grubb <sgrubb@redhat.com> 2.8.4-1
 - New upstream bugfix release
 
