@@ -227,7 +227,7 @@ fi
 %files -n python2-audit
 %attr(755,root,root) %{python_sitearch}/_audit.so
 %attr(755,root,root) %{python_sitearch}/auparse.so
-%{python_sitearch}/audit.py*
+%{python2_sitearch}/audit.py*
 
 %files -n python3-audit
 %attr(755,root,root) %{python3_sitearch}/*
