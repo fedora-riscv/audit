@@ -3,10 +3,10 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.1.20180717gitacd53d1%{?dist}
+Release: 0.2.20180808git77fbcf3%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
-Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha.tar.gz
+Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha2.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 
 BuildRequires: gcc swig
@@ -249,6 +249,7 @@ fi
 %attr(644,root,root) %{_mandir}/man7/audit.rules.7.gz
 %attr(644,root,root) %{_mandir}/man5/auditd.conf.5.gz
 %attr(644,root,root) %{_mandir}/man5/ausearch-expression.5.gz
+%attr(644,root,root) %{_mandir}/man5/auditd-plugins.5.gz
 %attr(755,root,root) /sbin/auditctl
 %attr(755,root,root) /sbin/auditd
 %attr(755,root,root) /sbin/ausearch
@@ -297,6 +298,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Wed Aug 08 2018 Steve Grubb <sgrubb@redhat.com> 3.0-0.2.20180808git77fbcf3
+- New upstream feature prerelease
+
 * Tue Jul 17 2018 Steve Grubb <sgrubb@redhat.com> 3.0-0.1.20180717gitacd53d1
 - New upstream feature prerelease
 
