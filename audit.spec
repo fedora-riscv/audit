@@ -6,7 +6,7 @@ Version: 3.0
 Release: 0.3.20180831git5597b31%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
-Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha2.tar.gz
+Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha3.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 
 BuildRequires: gcc swig
