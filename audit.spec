@@ -3,10 +3,10 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.4.20180831git0047a6c%{?dist}
+Release: 0.5.20181218gitbdb72c0%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
-Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha5.tar.gz
+Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha6.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 
 BuildRequires: gcc swig
@@ -14,11 +14,6 @@ BuildRequires: openldap-devel
 BuildRequires: krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
 BuildRequires: python2 python-unversioned-command
-%ifarch %{golang_arches}
-BuildRequires: golang
-# Temporary fix for make check in golang. Needs libaudit.so
-BuildRequires: audit-libs-devel
-%endif
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 BuildRequires: systemd
 Requires(post): systemd coreutils
@@ -47,16 +42,6 @@ Requires: kernel-headers >= 2.6.29
 %description libs-devel
 The audit-libs-devel package contains the header files needed for
 developing applications that need to use the audit framework libraries.
-
-%package libs-static
-Summary: Static version of libaudit library
-License: LGPLv2+
-Requires: kernel-headers >= 2.6.29
-
-%description libs-static
-The audit-libs-static package contains the static libraries
-needed for developing applications that need to use static audit
-framework libraries
 
 %package -n python2-audit
 Summary: Python2 bindings for libaudit
@@ -120,9 +105,6 @@ cp %{SOURCE1} .
            --with-python3=yes \
 	   --enable-gssapi-krb5=yes --with-arm --with-aarch64 \
            --with-libcap-ng=yes --enable-zos-remote \
-%ifarch %{golang_arches}
-           --with-golang \
-%endif
            --enable-systemd
 
 make CFLAGS="%{optflags}" %{?_smp_mflags}
@@ -137,9 +119,6 @@ mkdir -p $RPM_BUILD_ROOT/%{_var}/spool/audit
 make DESTDIR=$RPM_BUILD_ROOT install
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}
-# This winds up in the wrong place when libtool is involved
-mv $RPM_BUILD_ROOT/%{_lib}/libaudit.a $RPM_BUILD_ROOT%{_libdir}
-mv $RPM_BUILD_ROOT/%{_lib}/libauparse.a $RPM_BUILD_ROOT%{_libdir}
 curdir=`pwd`
 cd $RPM_BUILD_ROOT/%{_libdir}
 LIBNAME=`basename \`ls $RPM_BUILD_ROOT/%{_lib}/libaudit.so.1.*.*\``
@@ -150,6 +129,8 @@ cd $curdir
 # Remove these items so they don't get picked up.
 rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.so
 rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.so
+rm $RPM_BUILD_ROOT/%{_lib}/libaudit.a
+rm $RPM_BUILD_ROOT/%{_lib}/libauparse.a
 
 find $RPM_BUILD_ROOT -name '*.la' -delete
 find $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages -name '*.a' -delete
@@ -162,13 +143,9 @@ touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
 
 %check
-%ifarch %{golang_arches}
 make check
-%endif
 # Get rid of make files so that they don't get packaged.
 rm -f rules/Makefile*
-
-%post libs -p /sbin/ldconfig
 
 %post
 # Copy default rules into place on new installation
@@ -187,8 +164,6 @@ fi
 %preun
 %systemd_preun auditd.service
 
-%postun libs -p /sbin/ldconfig
-
 %postun
 if [ $1 -ge 1 ]; then
    /sbin/service auditd condrestart > /dev/null 2>&1 || :
@@ -206,10 +181,6 @@ fi
 %doc contrib/plugin
 %{_libdir}/libaudit.so
 %{_libdir}/libauparse.so
-%ifarch %{golang_arches}
-%dir %{_prefix}/lib/golang/src/pkg/redhat.com/audit
-%{_prefix}/lib/golang/src/pkg/redhat.com/audit/audit.go
-%endif
 %{_includedir}/libaudit.h
 %{_includedir}/auparse.h
 %{_includedir}/auparse-defs.h
@@ -217,12 +188,6 @@ fi
 %{_libdir}/pkgconfig/audit.pc
 %{_libdir}/pkgconfig/auparse.pc
 %{_mandir}/man3/*
-
-%files libs-static
-%{!?_licensedir:%global license %%doc}
-%license lgpl-2.1.txt
-%{_libdir}/libaudit.a
-%{_libdir}/libauparse.a
 
 %files -n python2-audit
 %attr(755,root,root) %{python_sitearch}/_audit.so
@@ -299,6 +264,10 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Tue Dec 18 2018 Steve Grubb <sgrubb@redhat.com> 3.0-0.5.20181218gitbdb72c0
+- New upstream git snapshot prerelease
+- Remove historical ldconfig scriptlet (#1644056)
+
 * Fri Aug 31 2018 Steve Grubb <sgrubb@redhat.com> 3.0-0.4.20180831git0047a6c
 - New upstream feature prerelease
 
