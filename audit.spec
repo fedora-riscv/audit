@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.5.20181218gitbdb72c0%{?dist}
+Release: 0.6.20181218gitbdb72c0%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha6.tar.gz
@@ -264,6 +264,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.0-0.6.20181218gitbdb72c0
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Tue Dec 18 2018 Steve Grubb <sgrubb@redhat.com> 3.0-0.5.20181218gitbdb72c0
 - New upstream git snapshot prerelease
 - Remove historical ldconfig scriptlet (#1644056)
