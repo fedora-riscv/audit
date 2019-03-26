@@ -6,7 +6,7 @@ Version: 3.0
 Release: 0.7.20190326git03e7489%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
-Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha6.tar.gz
+Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha7.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 Patch1: audit-2.8.6-memleak.patch
 
