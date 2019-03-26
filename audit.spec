@@ -112,7 +112,7 @@ Management Facility) database, through an IBM Tivoli Directory Server
 
 %prep
 %setup -q
-%patch -p1
+%patch1 -p1
 cp %{SOURCE1} .
 
 %build
