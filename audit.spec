@@ -3,11 +3,12 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.6.20181218gitbdb72c0%{?dist}
+Release: 0.7.20190326git03e7489%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha6.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
+Patch1: audit-2.8.6-memleak.patch
 
 BuildRequires: gcc swig
 BuildRequires: openldap-devel
@@ -98,6 +99,7 @@ Management Facility) database, through an IBM Tivoli Directory Server
 
 %prep
 %setup -q
+%patch1 -p1
 cp %{SOURCE1} .
 
 %build
@@ -264,6 +266,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Tue Mar 26 2019 Steve Grubb <sgrubb@redhat.com> 3.0-0.7.20190326git03e7489
+- New upstream git snapshot prerelease which fixes a memory leak
+
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.0-0.6.20181218gitbdb72c0
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
