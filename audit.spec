@@ -3,11 +3,12 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 2.8.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
+Patch1: audit-2.8.6-memleak.patch
 BuildRequires: gcc swig
 BuildRequires: openldap-devel
 BuildRequires: krb5-devel libcap-ng-devel
@@ -111,6 +112,7 @@ Management Facility) database, through an IBM Tivoli Directory Server
 
 %prep
 %setup -q
+%patch -p1
 cp %{SOURCE1} .
 
 %build
@@ -298,6 +300,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Tue Mar 26 2019 Steve Grubb <sgrubb@redhat.com> 2.8.5-2
+- Fix memory leak in auparse
+
 * Fri Mar 01 2019 Steve Grubb <sgrubb@redhat.com> 2.8.5-1
 - New upstream bugfix release
 
