@@ -8,7 +8,6 @@ License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha7.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
-Patch1: audit-2.8.6-memleak.patch
 
 BuildRequires: gcc swig
 BuildRequires: openldap-devel
@@ -99,7 +98,6 @@ Management Facility) database, through an IBM Tivoli Directory Server
 
 %prep
 %setup -q
-%patch1 -p1
 cp %{SOURCE1} .
 
 %build
