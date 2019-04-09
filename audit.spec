@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.7.20190326git03e7489%{?dist}
+Release: 0.8.20190326git03e7489%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha7.tar.gz
@@ -163,6 +163,9 @@ fi
 
 %preun
 %systemd_preun auditd.service
+if [ $1 -eq 0 ]; then
+   /sbin/service auditd stop > /dev/null 2>&1
+fi
 
 %postun
 if [ $1 -ge 1 ]; then
@@ -264,6 +267,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Tue Apr 09 2019 Steve Grubb <sgrubb@redhat.com> 3.0-0.8.20190326git03e7489
+- Fixed 1698130 - removing audit.rpm doesn't stop auditd
+
 * Tue Mar 26 2019 Steve Grubb <sgrubb@redhat.com> 3.0-0.7.20190326git03e7489
 - New upstream git snapshot prerelease which fixes a memory leak
 
