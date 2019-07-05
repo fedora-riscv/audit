@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.9.20190507gitf58ec40%{?dist}
+Release: 0.10.20190507gitf58ec40%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha8.tar.gz
@@ -17,8 +17,8 @@ BuildRequires: python2 python-unversioned-command
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 BuildRequires: systemd
 Requires(post): systemd coreutils
-Requires(preun): systemd
-Requires(postun): systemd coreutils
+Requires(preun): systemd initscripts
+Requires(postun): systemd coreutils initscripts
 
 %description
 The audit package contains the user space utilities for
@@ -267,6 +267,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Fri Jul 05 2019 Steve Grubb <sgrubb@redhat.com> 3.0-0.10.20190507gitf58ec40
+- Add initscripts package to the requires (bz #1727058)
+
 * Mon Jun 10 2019 Steve Grubb <sgrubb@redhat.com> 3.0-0.9.20190507gitf58ec40
 - New upstream git snapshot prerelease which fixes several problems
 - Fixed 1698130 - removing audit.rpm doesn't stop auditd
