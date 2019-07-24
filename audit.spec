@@ -3,7 +3,7 @@
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.10.20190507gitf58ec40%{?dist}
+Release: 0.11.20190507gitf58ec40%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha8.tar.gz
@@ -267,6 +267,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.0-0.11.20190507gitf58ec40
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Fri Jul 05 2019 Steve Grubb <sgrubb@redhat.com> 3.0-0.10.20190507gitf58ec40
 - Add initscripts package to the requires (bz #1727058)
 
