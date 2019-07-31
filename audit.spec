@@ -1,9 +1,8 @@
-%{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Summary: User space tools for 2.6 kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.11.20190507gitf58ec40%{?dist}
+Release: 0.12.20190507gitf58ec40%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha8.tar.gz
@@ -193,8 +192,8 @@ fi
 %{_mandir}/man3/*
 
 %files -n python2-audit
-%attr(755,root,root) %{python_sitearch}/_audit.so
-%attr(755,root,root) %{python_sitearch}/auparse.so
+%attr(755,root,root) %{python2_sitearch}/_audit.so
+%attr(755,root,root) %{python2_sitearch}/auparse.so
 %{python2_sitearch}/audit.py*
 
 %files -n python3-audit
@@ -267,6 +266,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Wed Jul 31 2019 Steve Grubb <sgrubb@redhat.com> 3.0-0.12.20190507gitf58ec40
+- Fix 1734953 - audit: FTBFS in Fedora rawhide/f31 
+
 * Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.0-0.11.20190507gitf58ec40
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
