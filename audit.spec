@@ -12,7 +12,7 @@ BuildRequires: gcc swig
 BuildRequires: openldap-devel
 BuildRequires: krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
-BuildRequires: python2 python-unversioned-command
+BuildRequires: python2
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 BuildRequires: systemd
 Requires(post): systemd coreutils
@@ -100,6 +100,9 @@ Management Facility) database, through an IBM Tivoli Directory Server
 cp %{SOURCE1} .
 
 %build
+# autotools expect "python" to be Python 2, but have a configurable PYTHON variable
+export PYTHON=%{__python2}
+
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
            --with-python3=yes \
 	   --enable-gssapi-krb5=yes --with-arm --with-aarch64 \
