@@ -1,11 +1,11 @@
 
-Summary: User space tools for 2.6 kernel auditing
+Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.14.20190507gitf58ec40%{?dist}
+Release: 0.15.20191104git1c2f876%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
-Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha8.tar.gz
+Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha9.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 
 BuildRequires: gcc swig
@@ -13,8 +13,9 @@ BuildRequires: openldap-devel
 BuildRequires: krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
 BuildRequires: python2
-Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 BuildRequires: systemd
+
+Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Requires(post): systemd coreutils
 Requires(preun): systemd initscripts
 Requires(postun): systemd coreutils initscripts
@@ -100,14 +101,11 @@ Management Facility) database, through an IBM Tivoli Directory Server
 cp %{SOURCE1} .
 
 %build
-# autotools expect "python" to be Python 2, but have a configurable PYTHON variable
-export PYTHON=%{__python2}
-
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
            --with-python3=yes \
 	   --enable-gssapi-krb5=yes --with-arm --with-aarch64 \
-           --with-libcap-ng=yes --enable-zos-remote \
-           --enable-systemd
+	   --with-libcap-ng=yes --enable-zos-remote \
+	   --enable-systemd
 
 make CFLAGS="%{optflags}" %{?_smp_mflags}
 
@@ -131,8 +129,8 @@ cd $curdir
 # Remove these items so they don't get picked up.
 rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.so
 rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.so
-rm $RPM_BUILD_ROOT/%{_lib}/libaudit.a
-rm $RPM_BUILD_ROOT/%{_lib}/libauparse.a
+rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.a
+rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.a
 
 find $RPM_BUILD_ROOT -name '*.la' -delete
 find $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages -name '*.a' -delete
@@ -154,8 +152,8 @@ rm -f rules/Makefile*
 files=`ls /etc/audit/rules.d/ 2>/dev/null | wc -w`
 if [ "$files" -eq 0 ] ; then
 # FESCO asked for audit to be off by default. #1117953
-	if [ -e /usr/share/doc/audit/rules/10-no-audit.rules ] ; then
-	        cp /usr/share/doc/audit/rules/10-no-audit.rules /etc/audit/rules.d/audit.rules
+	if [ -e %{_datadir}/%{name}/sample-rules/10-no-audit.rules ] ; then
+	        cp %{_datadir}/%{name}/sample-rules/10-no-audit.rules /etc/audit/rules.d/audit.rules
 	else
 		touch /etc/audit/rules.d/audit.rules
 	fi
@@ -166,12 +164,12 @@ fi
 %preun
 %systemd_preun auditd.service
 if [ $1 -eq 0 ]; then
-   /sbin/service auditd stop > /dev/null 2>&1
+    /sbin/service auditd stop > /dev/null 2>&1
 fi
 
 %postun
 if [ $1 -ge 1 ]; then
-   /sbin/service auditd condrestart > /dev/null 2>&1 || :
+    /sbin/service auditd condrestart > /dev/null 2>&1 || :
 fi
 
 %files libs
@@ -203,9 +201,10 @@ fi
 %attr(755,root,root) %{python3_sitearch}/*
 
 %files
-%doc README ChangeLog rules init.d/auditd.cron
+%doc README ChangeLog init.d/auditd.cron
 %{!?_licensedir:%global license %%doc}
 %license COPYING
+%attr(644,root,root) %{_datadir}/%{name}/sample-rules/*
 %attr(644,root,root) %{_mandir}/man8/auditctl.8.gz
 %attr(644,root,root) %{_mandir}/man8/auditd.8.gz
 %attr(644,root,root) %{_mandir}/man8/aureport.8.gz
@@ -269,6 +268,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Mon Nov 04 2019 Steve Grubb <sgrubb@redhat.com> 3.0-0.14.20191104git1c2f876
+- New upstream git snapshot prerelease
+
 * Thu Oct 03 2019 Miro Hrončok <mhroncok@redhat.com> - 3.0-0.14.20190507gitf58ec40
 - Rebuilt for Python 3.8.0rc1 (#1748018)
 
