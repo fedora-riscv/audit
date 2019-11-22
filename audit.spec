@@ -2,7 +2,7 @@
 Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.15.20191104git1c2f876%{?dist}
+Release: 0.16.20191104git1c2f876%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha9.tar.gz
@@ -12,7 +12,6 @@ BuildRequires: gcc swig
 BuildRequires: openldap-devel
 BuildRequires: krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
-BuildRequires: python2
 BuildRequires: systemd
 
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
@@ -42,22 +41,6 @@ Requires: kernel-headers >= 2.6.29
 %description libs-devel
 The audit-libs-devel package contains the header files needed for
 developing applications that need to use the audit framework libraries.
-
-%package -n python2-audit
-Summary: Python2 bindings for libaudit
-License: LGPLv2+
-BuildRequires: python2-devel
-Requires: %{name}-libs%{?_isa} = %{version}-%{release}
-Provides: audit-libs-python = %{version}-%{release}
-Provides: audit-libs-python%{?_isa} = %{version}-%{release}
-Obsoletes: audit-libs-python < %{version}-%{release}
-Provides: audit-libs-python2 = %{version}-%{release}
-Provides: audit-libs-python2%{?_isa} = %{version}-%{release}
-Obsoletes: audit-libs-python2 < %{version}-%{release}
-
-%description -n python2-audit
-The python2-audit package contains the bindings so that libaudit
-and libauparse can be used by python2.
 
 %package -n python3-audit
 Summary: Python3 bindings for libaudit
@@ -101,7 +84,7 @@ Management Facility) database, through an IBM Tivoli Directory Server
 cp %{SOURCE1} .
 
 %build
-%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=yes \
+%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=no \
            --with-python3=yes \
 	   --enable-gssapi-krb5=yes --with-arm --with-aarch64 \
 	   --with-libcap-ng=yes --enable-zos-remote \
@@ -192,11 +175,6 @@ fi
 %{_libdir}/pkgconfig/auparse.pc
 %{_mandir}/man3/*
 
-%files -n python2-audit
-%attr(755,root,root) %{python2_sitearch}/_audit.so
-%attr(755,root,root) %{python2_sitearch}/auparse.so
-%{python2_sitearch}/audit.py*
-
 %files -n python3-audit
 %attr(755,root,root) %{python3_sitearch}/*
 
@@ -268,6 +246,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Fri Nov 22 2019 Steve Grubb <sgrubb@redhat.com> 3.0-0.16.20191104git1c2f876
+- Drop python2 subpackage (#1775076)
+
 * Mon Nov 04 2019 Steve Grubb <sgrubb@redhat.com> 3.0-0.14.20191104git1c2f876
 - New upstream git snapshot prerelease
 
