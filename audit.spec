@@ -2,7 +2,7 @@
 Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.16.20191104git1c2f876%{?dist}
+Release: 0.17.20191104git1c2f876%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha9.tar.gz
@@ -246,6 +246,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.0-0.17.20191104git1c2f876
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Fri Nov 22 2019 Steve Grubb <sgrubb@redhat.com> 3.0-0.16.20191104git1c2f876
 - Drop python2 subpackage (#1775076)
 
