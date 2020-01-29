@@ -1,0 +1,22 @@
+From 3c9672de4743e34c33c2ebb6d9b46aefcec5fb44 Mon Sep 17 00:00:00 2001
+From: Steve Grubb <sgrubb@redhat.com>
+Date: Thu, 23 Jan 2020 17:27:20 -0500
+Subject: [PATCH] fix compiler warning
+
+---
+ audisp/plugins/syslog/audisp-syslog.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/audisp/plugins/syslog/audisp-syslog.c b/audisp/plugins/syslog/audisp-syslog.c
+index 9daa021..d4fc565 100644
+--- a/audisp/plugins/syslog/audisp-syslog.c
++++ b/audisp/plugins/syslog/audisp-syslog.c
+@@ -207,7 +207,7 @@ static inline void write_syslog(char *s)
+ 	}
+ }
+ 
+-int main(int argc, char *argv[])
++int main(int argc, const char *argv[])
+ {
+ 	char tmp[MAX_AUDIT_MESSAGE_LENGTH+1];
+ 	struct sigaction sa;

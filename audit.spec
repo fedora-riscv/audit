@@ -2,7 +2,7 @@
 Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.17.20191104git1c2f876%{?dist}
+Release: 0.18.20191104git1c2f876%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha9.tar.gz
@@ -246,6 +246,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Wed Jan 29 2020 Steve Grubb <sgrubb@redhat.com> 3.0-0.18.20191104git1c2f876
+- Fix multiple definition of `event_node_list' (#1794446)
+
 * Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.0-0.17.20191104git1c2f876
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
