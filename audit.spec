@@ -91,7 +91,7 @@ cp %{SOURCE1} .
 
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=no \
-           --with-python3=yes \
+	   --with-python3=yes \
 	   --enable-gssapi-krb5=yes --with-arm --with-aarch64 \
 	   --with-libcap-ng=yes --enable-zos-remote \
 	   --enable-systemd
