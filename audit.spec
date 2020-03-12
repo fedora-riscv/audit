@@ -2,7 +2,7 @@
 Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.18.20191104git1c2f876%{?dist}
+Release: 0.19.20191104git1c2f876%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha9.tar.gz
@@ -19,6 +19,10 @@ Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Requires(post): systemd coreutils
 Requires(preun): systemd initscripts
 Requires(postun): systemd coreutils initscripts
+
+# Placing this here under the assumption that anything using the
+# python libraries expects the system to have an audit daemon
+Obsoletes: python2-audit < %{version}-%{release}
 
 %description
 The audit package contains the user space utilities for
@@ -248,6 +252,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Thu Mar 12 2020 Steve Grubb <sgrubb@redhat.com> 3.0-0.19.20191104git1c2f876
+- Add Obsolete python2-audit (#1783061)
+
 * Wed Jan 29 2020 Steve Grubb <sgrubb@redhat.com> 3.0-0.18.20191104git1c2f876
 - Fix multiple definition of `event_node_list' (#1794446)
 
