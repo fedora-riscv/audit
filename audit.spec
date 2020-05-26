@@ -2,7 +2,7 @@
 Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.0
-Release: 0.19.20191104git1c2f876%{?dist}
+Release: 0.20.20191104git1c2f876%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}-alpha9.tar.gz
@@ -252,6 +252,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Tue May 26 2020 Miro Hrončok <mhroncok@redhat.com> - 3.0-0.20.20191104git1c2f876
+- Rebuilt for Python 3.9
+
 * Thu Mar 12 2020 Steve Grubb <sgrubb@redhat.com> 3.0-0.19.20191104git1c2f876
 - Add Obsolete python2-audit (#1783061)
 
