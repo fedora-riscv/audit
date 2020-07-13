@@ -122,7 +122,7 @@ rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.a
 rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.a
 
 find $RPM_BUILD_ROOT -name '*.la' -delete
-find $RPM_BUILD_ROOT/%{_libdir}/python?.?/site-packages -name '*.a' -delete
+find $RPM_BUILD_ROOT/%{_libdir}/python%{python3_version}/site-packages -name '*.a' -delete
 
 # Move the pkgconfig file
 mv $RPM_BUILD_ROOT/%{_lib}/pkgconfig $RPM_BUILD_ROOT%{_libdir}
