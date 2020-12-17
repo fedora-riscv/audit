@@ -50,6 +50,7 @@ developing applications that need to use the audit framework libraries.
 Summary: Python3 bindings for libaudit
 License: LGPLv2+
 BuildRequires: python3-devel
+BuildRequires: make
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Provides: audit-libs-python3 = %{version}-%{release}
 Provides: audit-libs-python3%{?_isa} = %{version}-%{release}
