@@ -88,6 +88,9 @@ Management Facility) database, through an IBM Tivoli Directory Server
 %setup -q
 cp %{SOURCE1} .
 
+# Remove the ids code, its not ready
+sed -i 's/ ids / /' audisp/plugins/Makefile.in
+
 %build
 %configure --sbindir=/sbin --libdir=/%{_lib} --with-python=no \
 	   --with-python3=yes \
@@ -129,11 +132,6 @@ mv $RPM_BUILD_ROOT/%{_lib}/pkgconfig $RPM_BUILD_ROOT%{_libdir}
 # On platforms with 32 & 64 bit libs, we need to coordinate the timestamp
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
-
-# Remove the ids code it's not ready
-rm -f $RPM_BUILD_ROOT/sbin/audisp-ids
-rm -r $RPM_BUILD_ROOT/etc/audit/ids.conf
-rm -f $RPM_BUILD_ROOT/etc/audit/plugins.d/audisp-ids.conf
 
 %check
 make check
@@ -262,6 +260,7 @@ fi
 %changelog
 * Fri Feb 12 2021 Steve Grubb <sgrubb@redhat.com> 3.0.1-1
 - New upstream feature and bugfix release
+- Enable building the audisp-statsd plugin
 
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 3.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
