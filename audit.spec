@@ -1,14 +1,14 @@
 
 Summary: User space tools for kernel auditing
 Name: audit
-Version: 3.0
-Release: 2%{?dist}
+Version: 3.0.1
+Release: 1%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 
-BuildRequires: gcc swig
+BuildRequires: make gcc swig
 BuildRequires: openldap-devel
 BuildRequires: krb5-devel libcap-ng-devel
 BuildRequires: kernel-headers >= 2.6.29
@@ -93,7 +93,7 @@ cp %{SOURCE1} .
 	   --with-python3=yes \
 	   --enable-gssapi-krb5=yes --with-arm --with-aarch64 \
 	   --with-libcap-ng=yes --enable-zos-remote \
-	   --enable-systemd
+	   --enable-systemd --enable-experimental
 
 make CFLAGS="%{optflags}" %{?_smp_mflags}
 
@@ -129,6 +129,11 @@ mv $RPM_BUILD_ROOT/%{_lib}/pkgconfig $RPM_BUILD_ROOT%{_libdir}
 # On platforms with 32 & 64 bit libs, we need to coordinate the timestamp
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
+
+# Remove the ids code it's not ready
+rm -f $RPM_BUILD_ROOT/sbin/audisp-ids
+rm -r $RPM_BUILD_ROOT/etc/audit/ids.conf
+rm -f $RPM_BUILD_ROOT/etc/audit/plugins.d/audisp-ids.conf
 
 %check
 make check
@@ -236,12 +241,16 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/audit/audisp-remote.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/au-remote.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/syslog.conf
+%config(noreplace) %attr(640,root,root) /etc/audit/audisp-statsd.conf
+%config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/au-statsd.conf
 %attr(750,root,root) /sbin/audisp-remote
 %attr(750,root,root) /sbin/audisp-syslog
+%attr(750,root,root) /sbin/audisp-statsd
 %attr(700,root,root) %dir %{_var}/spool/audit
 %attr(644,root,root) %{_mandir}/man5/audisp-remote.conf.5.gz
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
 %attr(644,root,root) %{_mandir}/man8/audisp-syslog.8.gz
+%attr(644,root,root) %{_mandir}/man8/audisp-statsd.8.gz
 
 %files -n audispd-plugins-zos
 %attr(644,root,root) %{_mandir}/man8/audispd-zos-remote.8.gz
@@ -251,6 +260,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Fri Feb 12 2021 Steve Grubb <sgrubb@redhat.com> 3.0.1-1
+- New upstream feature and bugfix release
+
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 3.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
