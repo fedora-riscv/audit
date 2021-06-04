@@ -2,7 +2,7 @@
 Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.0.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
@@ -260,6 +260,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Fri Jun 04 2021 Python Maint <python-maint@redhat.com> - 3.0.1-3
+- Rebuilt for Python 3.10
+
 * Thu Feb 18 2021 Steve Grubb <sgrubb@redhat.com> 3.0.1-2
 - Add patch fixing segafult in the audisp-statsd plugin
 
