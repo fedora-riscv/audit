@@ -1,13 +1,12 @@
 
 Summary: User space tools for kernel auditing
 Name: audit
-Version: 3.0.1
-Release: 3%{?dist}
+Version: 3.0.2
+Release: 1%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
-Patch1: audit-3.0.2-sockaddr.patch
 
 BuildRequires: make gcc swig
 BuildRequires: openldap-devel
@@ -260,6 +259,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Thu Jun 10 2021 Steve Grubb <sgrubb@redhat.com> 3.0.2-1
+- New upstream feature and bugfix release
+
 * Fri Jun 04 2021 Python Maint <python-maint@redhat.com> - 3.0.1-3
 - Rebuilt for Python 3.10
 
