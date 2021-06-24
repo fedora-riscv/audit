@@ -2,7 +2,7 @@
 Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.0.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
@@ -92,7 +92,7 @@ cp %{SOURCE1} .
 sed -i 's/ ids / /' audisp/plugins/Makefile.in
 
 %build
-%configure --sbindir=/sbin --libdir=/%{_lib} --with-python=no \
+%configure --with-python=no \
 	   --with-python3=yes \
 	   --enable-gssapi-krb5=yes --with-arm --with-aarch64 \
 	   --with-libcap-ng=yes --enable-zos-remote \
@@ -109,25 +109,12 @@ mkdir -p --mode=0700 $RPM_BUILD_ROOT/%{_var}/log/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/spool/audit
 make DESTDIR=$RPM_BUILD_ROOT install
 
-mkdir -p $RPM_BUILD_ROOT/%{_libdir}
-curdir=`pwd`
-cd $RPM_BUILD_ROOT/%{_libdir}
-LIBNAME=`basename \`ls $RPM_BUILD_ROOT/%{_lib}/libaudit.so.1.*.*\``
-ln -s ../../%{_lib}/$LIBNAME libaudit.so
-LIBNAME=`basename \`ls $RPM_BUILD_ROOT/%{_lib}/libauparse.so.0.*.*\``
-ln -s ../../%{_lib}/$LIBNAME libauparse.so
-cd $curdir
 # Remove these items so they don't get picked up.
-rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.so
-rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.so
-rm -f $RPM_BUILD_ROOT/%{_lib}/libaudit.a
-rm -f $RPM_BUILD_ROOT/%{_lib}/libauparse.a
+rm -f $RPM_BUILD_ROOT/%{_libdir}/libaudit.a
+rm -f $RPM_BUILD_ROOT/%{_libdir}/libauparse.a
 
 find $RPM_BUILD_ROOT -name '*.la' -delete
 find $RPM_BUILD_ROOT/%{_libdir}/python%{python3_version}/site-packages -name '*.a' -delete
-
-# Move the pkgconfig file
-mv $RPM_BUILD_ROOT/%{_lib}/pkgconfig $RPM_BUILD_ROOT%{_libdir}
 
 # On platforms with 32 & 64 bit libs, we need to coordinate the timestamp
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
@@ -166,8 +153,8 @@ fi
 %files libs
 %{!?_licensedir:%global license %%doc}
 %license lgpl-2.1.txt
-/%{_lib}/libaudit.so.1*
-/%{_lib}/libauparse.*
+%{_libdir}/libaudit.so.1*
+%{_libdir}/libauparse.*
 %config(noreplace) %attr(640,root,root) /etc/libaudit.conf
 %{_mandir}/man5/libaudit.conf.5.gz
 
@@ -205,12 +192,12 @@ fi
 %attr(644,root,root) %{_mandir}/man5/auditd.conf.5.gz
 %attr(644,root,root) %{_mandir}/man5/ausearch-expression.5.gz
 %attr(644,root,root) %{_mandir}/man5/auditd-plugins.5.gz
-%attr(755,root,root) /sbin/auditctl
-%attr(755,root,root) /sbin/auditd
-%attr(755,root,root) /sbin/ausearch
-%attr(755,root,root) /sbin/aureport
-%attr(750,root,root) /sbin/autrace
-%attr(755,root,root) /sbin/augenrules
+%attr(755,root,root) %{_sbindir}/auditctl
+%attr(755,root,root) %{_sbindir}/auditd
+%attr(755,root,root) %{_sbindir}/ausearch
+%attr(755,root,root) %{_sbindir}/aureport
+%attr(750,root,root) %{_sbindir}/autrace
+%attr(755,root,root) %{_sbindir}/augenrules
 %attr(755,root,root) %{_bindir}/aulast
 %attr(755,root,root) %{_bindir}/aulastlog
 %attr(755,root,root) %{_bindir}/ausyscall
@@ -241,9 +228,9 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/syslog.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/audisp-statsd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/au-statsd.conf
-%attr(750,root,root) /sbin/audisp-remote
-%attr(750,root,root) /sbin/audisp-syslog
-%attr(750,root,root) /sbin/audisp-statsd
+%attr(750,root,root) %{_sbindir}/audisp-remote
+%attr(750,root,root) %{_sbindir}/audisp-syslog
+%attr(750,root,root) %{_sbindir}/audisp-statsd
 %attr(700,root,root) %dir %{_var}/spool/audit
 %attr(644,root,root) %{_mandir}/man5/audisp-remote.conf.5.gz
 %attr(644,root,root) %{_mandir}/man8/audisp-remote.8.gz
@@ -255,9 +242,12 @@ fi
 %attr(644,root,root) %{_mandir}/man5/zos-remote.conf.5.gz
 %config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/audispd-zos-remote.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/zos-remote.conf
-%attr(750,root,root) /sbin/audispd-zos-remote
+%attr(750,root,root) %{_sbindir}/audispd-zos-remote
 
 %changelog
+* Thu Jun 24 2021 Sergio Correia <scorreia@redhat.com> - 3.0.2-2
+- Do not use custom sbindir and libdir in configure
+
 * Thu Jun 10 2021 Steve Grubb <sgrubb@redhat.com> 3.0.2-1
 - New upstream feature and bugfix release
 
