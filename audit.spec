@@ -90,6 +90,7 @@ Management Facility) database, through an IBM Tivoli Directory Server
 %prep
 %setup -q
 cp %{SOURCE1} .
+%patch1 -p1
 
 # Remove the ids code, its not ready
 sed -i 's/ ids / /' audisp/plugins/Makefile.in
