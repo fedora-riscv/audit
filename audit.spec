@@ -92,11 +92,11 @@ Management Facility) database, through an IBM Tivoli Directory Server
 cp %{SOURCE1} .
 %patch1 -p1
 
-# Remove the ids code, its not ready
-sed -i 's/ ids / /' audisp/plugins/Makefile.in
-
 # Remove next line for audit-3.0.6
 autoreconf -fv --install
+
+# Remove the ids code, its not ready
+sed -i 's/ ids / /' audisp/plugins/Makefile.in
 
 %build
 %configure --with-python=no \
