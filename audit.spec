@@ -2,11 +2,14 @@
 Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.0.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
+# Remove the next 2 lines for audit-3.0.6
+Patch1: audit-ipx.patch
+BuildRequires: autoconf automake libtool
 
 BuildRequires: make gcc swig
 BuildRequires: openldap-devel
@@ -90,6 +93,9 @@ cp %{SOURCE1} .
 
 # Remove the ids code, its not ready
 sed -i 's/ ids / /' audisp/plugins/Makefile.in
+
+# Remove next line for audit-3.0.6
+autoreconf -fv --install
 
 %build
 %configure --with-python=no \
@@ -245,6 +251,9 @@ fi
 %attr(750,root,root) %{_sbindir}/audispd-zos-remote
 
 %changelog
+* Tue Sep 14 2021 Steve Grubb <sgrubb@redhat.com> 3.0.5-2
+- Drop IPX interpretation support
+
 * Wed Aug 11 2021 Steve Grubb <sgrubb@redhat.com> 3.0.5-1
 - New upstream bugfix release
 
