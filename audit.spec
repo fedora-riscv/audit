@@ -2,7 +2,7 @@
 Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.0.5
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
@@ -11,9 +11,7 @@ Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 Patch1: audit-ipx.patch
 BuildRequires: autoconf automake libtool
 
-BuildRequires: make gcc swig
-BuildRequires: openldap-devel
-BuildRequires: krb5-devel libcap-ng-devel
+BuildRequires: make gcc
 BuildRequires: kernel-headers >= 2.6.29
 BuildRequires: systemd
 
@@ -42,6 +40,7 @@ applications to use the audit framework.
 %package libs-devel
 Summary: Header files for libaudit
 License: LGPLv2+
+BuildRequires: libcap-ng-devel
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Requires: kernel-headers >= 2.6.29
 
@@ -53,7 +52,7 @@ developing applications that need to use the audit framework libraries.
 Summary: Python3 bindings for libaudit
 License: LGPLv2+
 BuildRequires: python3-devel
-BuildRequires: make
+BuildRequires: make swig
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Provides: audit-libs-python3 = %{version}-%{release}
 Provides: audit-libs-python3%{?_isa} = %{version}-%{release}
@@ -66,6 +65,7 @@ and libauparse can be used by python3.
 %package -n audispd-plugins
 Summary: Plugins for the audit event dispatcher
 License: GPLv2+
+BuildRequires: krb5-devel libcap-ng-devel
 Requires: %{name}%{?_isa} = %{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 
@@ -77,9 +77,9 @@ like relay events to remote machines.
 %package -n audispd-plugins-zos
 Summary: z/OS plugin for the audit event dispatcher
 License: GPLv2+
+BuildRequires: openldap-devel libcap-ng-devel
 Requires: %{name}%{?_isa} = %{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
-Requires: openldap
 
 %description -n audispd-plugins-zos
 The audispd-plugins-zos package provides a plugin that will forward all
@@ -252,6 +252,9 @@ fi
 %attr(750,root,root) %{_sbindir}/audispd-zos-remote
 
 %changelog
+* Tue Sep 14 2021 Steve Grubb <sgrubb@redhat.com> 3.0.5-3
+- Move BuildRequires around to what actually needs it
+
 * Tue Sep 14 2021 Steve Grubb <sgrubb@redhat.com> 3.0.5-2
 - Drop IPX interpretation support
 
