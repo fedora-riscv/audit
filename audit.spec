@@ -12,6 +12,7 @@ Patch1: audit-ipx.patch
 BuildRequires: autoconf automake libtool
 
 BuildRequires: make gcc
+BuildRequires: krb5-devel
 BuildRequires: kernel-headers >= 2.6.29
 BuildRequires: systemd
 
@@ -32,6 +33,7 @@ the audit subsystem in the Linux 2.6 and later kernels.
 %package libs
 Summary: Dynamic library for libaudit
 License: LGPLv2+
+BuildRequires: libcap-ng-devel
 
 %description libs
 The audit-libs package contains the dynamic libraries needed for 
@@ -40,7 +42,6 @@ applications to use the audit framework.
 %package libs-devel
 Summary: Header files for libaudit
 License: LGPLv2+
-BuildRequires: libcap-ng-devel
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Requires: kernel-headers >= 2.6.29
 
