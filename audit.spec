@@ -1,7 +1,7 @@
 
 Summary: User space tools for kernel auditing
 Name: audit
-Version: 3.0.5
+Version: 3.0.6
 Release: 1%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
@@ -258,6 +258,9 @@ fi
 %attr(750,root,root) /sbin/audispd-zos-remote
 
 %changelog
+* Fri Oct 01 2021 Steve Grubb <sgrubb@redhat.com> 3.0.6-1
+- New upstream bugfix release
+
 * Wed Aug 11 2021 Steve Grubb <sgrubb@redhat.com> 3.0.5-1
 - New upstream bugfix release
 
