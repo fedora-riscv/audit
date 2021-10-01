@@ -1,8 +1,8 @@
 
 Summary: User space tools for kernel auditing
 Name: audit
-Version: 3.0.5
-Release: 3%{?dist}
+Version: 3.0.6
+Release: 1%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
