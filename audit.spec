@@ -7,9 +7,6 @@ License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
-# Remove the next 2 lines for audit-3.0.6
-Patch1: audit-ipx.patch
-BuildRequires: autoconf automake libtool
 
 BuildRequires: make gcc
 BuildRequires: krb5-devel
@@ -91,10 +88,6 @@ Management Facility) database, through an IBM Tivoli Directory Server
 %prep
 %setup -q
 cp %{SOURCE1} .
-%patch1 -p1
-
-# Remove next line for audit-3.0.6
-autoreconf -fv --install
 
 # Remove the ids code, its not ready
 sed -i 's/ ids / /' audisp/plugins/Makefile.in
@@ -253,6 +246,9 @@ fi
 %attr(750,root,root) %{_sbindir}/audispd-zos-remote
 
 %changelog
+* Fri Oct 01 2021 Steve Grubb <sgrubb@redhat.com> 3.0.6-1
+- New upstream bugfix release
+
 * Tue Sep 14 2021 Steve Grubb <sgrubb@redhat.com> 3.0.5-3
 - Move BuildRequires around to what actually needs it
 
