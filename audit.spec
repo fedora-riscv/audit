@@ -178,6 +178,7 @@ fi
 %doc README ChangeLog init.d/auditd.cron
 %{!?_licensedir:%global license %%doc}
 %license COPYING
+%attr(750,root,root) %{_datadir}/%{name}
 %attr(644,root,root) %{_datadir}/%{name}/sample-rules/*
 %attr(644,root,root) %{_mandir}/man8/auditctl.8.gz
 %attr(644,root,root) %{_mandir}/man8/auditd.8.gz
