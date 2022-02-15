@@ -2,11 +2,13 @@
 Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.0.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
+Patch1: audit-3.0.7-func-attr.patch
+Patch2: audit-3.0.7-gcc-flags.patch
 
 BuildRequires: make gcc
 BuildRequires: krb5-devel
@@ -87,6 +89,8 @@ Management Facility) database, through an IBM Tivoli Directory Server
 
 %prep
 %setup -q
+%patch1 -p1
+%patch2 -p1
 cp %{SOURCE1} .
 
 # Remove the ids code, its not ready
@@ -178,7 +182,7 @@ fi
 %doc README ChangeLog init.d/auditd.cron
 %{!?_licensedir:%global license %%doc}
 %license COPYING
-%attr(750,root,root) %{_datadir}/%{name}
+%attr(755,root,root) %{_datadir}/%{name}
 %attr(644,root,root) %{_datadir}/%{name}/sample-rules/*
 %attr(644,root,root) %{_mandir}/man8/auditctl.8.gz
 %attr(644,root,root) %{_mandir}/man8/auditd.8.gz
@@ -248,6 +252,11 @@ fi
 %attr(750,root,root) %{_sbindir}/audispd-zos-remote
 
 %changelog
+* Mon Feb 14 2022 Steve Grubb <sgrubb@redhat.com> 3.0.7-2
+- Adjust sample-rules dir permissions
+- Add support for new access/dealloc function attributes
+- Adjust compile flags for less warnings
+
 * Sun Jan 23 2022 Steve Grubb <sgrubb@redhat.com> 3.0.7-1
 - New upstream bugfix and feature release
 
