@@ -14,6 +14,7 @@ BuildRequires: make gcc
 BuildRequires: krb5-devel
 BuildRequires: kernel-headers >= 2.6.29
 BuildRequires: systemd
+BuildRequires: autoconf automake libtool
 
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Requires(post): systemd coreutils
@@ -91,6 +92,7 @@ Management Facility) database, through an IBM Tivoli Directory Server
 %setup -q
 %patch1 -p1
 %patch2 -p1
+autoreconf -fv --install
 cp %{SOURCE1} .
 
 # Remove the ids code, its not ready
