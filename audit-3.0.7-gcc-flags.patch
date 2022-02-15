@@ -1,0 +1,77 @@
+From 36beaefbb4ecb0a222ac68ec9f17f854a82f7235 Mon Sep 17 00:00:00 2001
+From: Steve Grubb <sgrubb@redhat.com>
+Date: Mon, 14 Feb 2022 15:30:09 -0500
+Subject: [PATCH] Adjust compile flags
+
+---
+ audisp/plugins/remote/Makefile.am |  2 +-
+ auparse/Makefile.am               |  2 +-
+ configure.ac                      | 15 +++++++++++++++
+ src/Makefile.am                   |  2 +-
+ 4 files changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/audisp/plugins/remote/Makefile.am b/audisp/plugins/remote/Makefile.am
+index 217d477c5..1ac77ee8d 100644
+--- a/audisp/plugins/remote/Makefile.am
++++ b/audisp/plugins/remote/Makefile.am
+@@ -36,7 +36,7 @@ TESTS = $(check_PROGRAMS)
+ 
+ audisp_remote_DEPENDENCIES = ${top_builddir}/common/libaucommon.la
+ audisp_remote_SOURCES = audisp-remote.c remote-config.c queue.c
+-audisp_remote_CFLAGS = -fPIE -DPIE -g -D_REENTRANT -D_GNU_SOURCE -Wundef
++audisp_remote_CFLAGS = -fPIE -DPIE -g -D_REENTRANT -D_GNU_SOURCE -Wundef ${WFLAGS}
+ audisp_remote_LDFLAGS = -pie -Wl,-z,relro -Wl,-z,now
+ audisp_remote_LDADD = $(CAPNG_LDADD) $(gss_libs) ${top_builddir}/common/libaucommon.la
+ 
+diff --git a/auparse/Makefile.am b/auparse/Makefile.am
+index b34b6c042..1eb5352cf 100644
+--- a/auparse/Makefile.am
++++ b/auparse/Makefile.am
+@@ -26,7 +26,7 @@ SUBDIRS = test
+ EXTRA_DIST = expression-design.txt
+ CLEANFILES = $(BUILT_SOURCES)
+ CONFIG_CLEAN_FILES = *.loT *.rej *.orig
+-AM_CFLAGS = -fPIC -DPIC -D_GNU_SOURCE -g ${DEBUG} -Wno-pointer-sign -Wno-enum-compare -Wno-switch
++AM_CFLAGS = -fPIC -DPIC -D_GNU_SOURCE -g ${DEBUG} -Wno-pointer-sign -Wno-enum-compare -Wno-switch ${WFLAGS}
+ AM_CPPFLAGS = -I. -I${top_srcdir} -I${top_srcdir}/src -I${top_srcdir}/lib -I${top_srcdir}/common
+ LIBS =
+ 
+diff --git a/configure.ac b/configure.ac
+index e40d41e14..e74fd7036 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -341,6 +341,21 @@ else
+ fi
+ ],WARNS="$ALLWARNS")
+ 
++WFLAGS=""
++AC_MSG_CHECKING(for -Wformat-truncation)
++TMPCFLAGS="${CFLAGS}"
++CFLAGS="${CFLAGS} -Wformat-truncation"
++AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[WFLAGS="-Wno-format-truncation"
++	AC_MSG_RESULT(yes)],
++	[AC_MSG_RESULT(no)])
++CFLAGS="${TMPCFLAGS}"
++CFLAGS="${CFLAGS} -Wunused-but-set-variable"
++AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[WFLAGS="${WFLAGS} -Wno-unused-but-set-variable"
++	AC_MSG_RESULT(yes)],
++	[AC_MSG_RESULT(no)])
++CFLAGS="${TMPCFLAGS}"
++AC_SUBST(WFLAGS)
++
+ withval=""
+ AC_MSG_CHECKING(whether to include arm eabi processor support)
+ AC_ARG_WITH(arm,
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 9c68b42db..2bebf8d50 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -25,7 +25,7 @@ CONFIG_CLEAN_FILES = *.rej *.orig
+ SUBDIRS = test
+ AM_CPPFLAGS = -I${top_srcdir} -I${top_srcdir}/lib -I${top_srcdir}/src/libev -I${top_srcdir}/auparse -I${top_srcdir}/audisp -I${top_srcdir}/common
+ sbin_PROGRAMS = auditd auditctl aureport ausearch autrace
+-AM_CFLAGS = -D_GNU_SOURCE -Wno-pointer-sign
++AM_CFLAGS = -D_GNU_SOURCE -Wno-pointer-sign ${WFLAGS}
+ noinst_HEADERS = auditd-config.h auditd-event.h auditd-listen.h ausearch-llist.h ausearch-options.h auditctl-llist.h aureport-options.h ausearch-parse.h aureport-scan.h ausearch-lookup.h ausearch-int.h auditd-dispatch.h ausearch-string.h ausearch-nvpair.h ausearch-common.h ausearch-avc.h ausearch-time.h ausearch-lol.h auditctl-listing.h ausearch-checkpt.h
+ 
+ auditd_SOURCES = auditd.c auditd-event.c auditd-config.c auditd-reconfig.c auditd-sendmail.c auditd-dispatch.c

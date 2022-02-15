@@ -1,0 +1,178 @@
+diff -urp audit-3.0.7.orig/audisp/audispd-builtins.h audit-3.0.7/audisp/audispd-builtins.h
+--- audit-3.0.7.orig/audisp/audispd-builtins.h	2021-08-21 10:15:51.000000000 -0400
++++ audit-3.0.7/audisp/audispd-builtins.h	2022-02-14 21:24:43.946258118 -0500
+@@ -25,11 +25,16 @@
+ #ifndef AUDISPD_BUILTINS_HEADER
+ #define AUDISPD_BUILTINS_HEADER
+ 
++#include <features.h>
++#ifndef __attr_access
++#  define __attr_access(x)
++#endif
+ #include "queue.h"
+ 
+ void start_builtin(plugin_conf_t *conf);
+ void stop_builtin(plugin_conf_t *conf);
+-void send_af_unix_string(const char *s, unsigned int len);
++void send_af_unix_string(const char *s, unsigned int len)
++	__attr_access ((__read_only__, 1, 2));
+ void send_af_unix_binary(event_t *e);
+ void destroy_af_unix(void);
+ 
+diff -urp audit-3.0.7.orig/auparse/auparse.h audit-3.0.7/auparse/auparse.h
+--- audit-3.0.7.orig/auparse/auparse.h	2021-08-21 10:15:51.000000000 -0400
++++ audit-3.0.7/auparse/auparse.h	2022-02-14 21:24:43.947258108 -0500
+@@ -1,5 +1,5 @@
+ /* auparse.h --
+- * Copyright 2006-08,2012,2014-17 Red Hat Inc.
++ * Copyright 2006-08,2012,2014-17,2022 Red Hat Inc.
+  * All Rights Reserved.
+  *
+  * This library is free software; you can redistribute it and/or
+@@ -23,6 +23,15 @@
+ #ifndef AUPARSE_HEADER
+ #define AUPARSE_HEADER
+ 
++#include <features.h>
++#ifndef __attr_access
++#  define __attr_access(x)
++#endif
++#ifndef __attr_dealloc
++# define __attr_dealloc(dealloc, argno)
++# define __attr_dealloc_free
++#endif
++
+ #include "auparse-defs.h"
+ 
+ #ifdef __cplusplus
+@@ -40,9 +49,14 @@ typedef void (*auparse_callback_ptr)(aup
+ 			auparse_cb_event_t cb_event_type, void *user_data);
+ 
+ /* General functions that affect operation of the library */
+-auparse_state_t *auparse_init(ausource_t source, const void *b);
+-int auparse_new_buffer(auparse_state_t *au, const char *data, size_t data_len);
+-int auparse_feed(auparse_state_t *au, const char *data, size_t data_len);
++void auparse_destroy(auparse_state_t *au);
++void auparse_destroy_ext(auparse_state_t *au, auparse_destroy_what_t what);
++auparse_state_t *auparse_init(ausource_t source, const void *b)
++	__attribute_malloc__ __attr_dealloc (auparse_destroy, 1);
++int auparse_new_buffer(auparse_state_t *au, const char *data, size_t data_len)
++	__attr_access ((__read_only__, 2, 3));
++int auparse_feed(auparse_state_t *au, const char *data, size_t data_len)
++	__attr_access ((__read_only__, 2, 3));
+ void auparse_feed_age_events(auparse_state_t *au);
+ int auparse_flush_feed(auparse_state_t *au);
+ int auparse_feed_has_data(auparse_state_t *au);
+@@ -51,8 +65,6 @@ void auparse_add_callback(auparse_state_
+ 			void *user_data, user_destroy user_destroy_func);
+ void auparse_set_escape_mode(auparse_state_t *au, auparse_esc_t mode);
+ int auparse_reset(auparse_state_t *au);
+-void auparse_destroy(auparse_state_t *au);
+-void auparse_destroy_ext(auparse_state_t *au, auparse_destroy_what_t what);
+ 
+ /* Functions that are part of the search interface */
+ int ausearch_add_expression(auparse_state_t *au, const char *expression,
+@@ -119,7 +131,7 @@ const au_event_t *auparse_get_timestamp(
+ time_t auparse_get_time(auparse_state_t *au);
+ unsigned int auparse_get_milli(auparse_state_t *au);
+ unsigned long auparse_get_serial(auparse_state_t *au);
+-const char *auparse_get_node(auparse_state_t *au);
++const char *auparse_get_node(auparse_state_t *au) __attr_dealloc_free;
+ int auparse_node_compare(au_event_t *e1, au_event_t *e2);
+ int auparse_timestamp_compare(au_event_t *e1, au_event_t *e2);
+ unsigned int auparse_get_num_records(auparse_state_t *au);
+diff -urp audit-3.0.7.orig/common/common.h audit-3.0.7/common/common.h
+--- audit-3.0.7.orig/common/common.h	2021-08-21 10:15:51.000000000 -0400
++++ audit-3.0.7/common/common.h	2022-02-14 21:24:43.947258108 -0500
+@@ -23,13 +23,18 @@
+ #ifndef AUDIT_FGETS_HEADER
+ #define AUDIT_FGETS_HEADER
+ 
++#include <features.h>
++#ifndef __attr_access
++#  define __attr_access(x)
++#endif
+ #include <sys/types.h>
+ #include "dso.h"
+ AUDIT_HIDDEN_START
+ 
+ int audit_fgets_eof(void);
+ int audit_fgets_more(size_t blen);
+-int audit_fgets(char *buf, size_t blen, int fd);
++int audit_fgets(char *buf, size_t blen, int fd)
++	__attr_access ((__write_only__, 1, 2));
+ 
+ char *audit_strsplit_r(char *s, char **savedpp);
+ char *audit_strsplit(char *s);
+diff -urp audit-3.0.7.orig/lib/libaudit.h audit-3.0.7/lib/libaudit.h
+--- audit-3.0.7.orig/lib/libaudit.h	2021-10-28 17:18:27.000000000 -0400
++++ audit-3.0.7/lib/libaudit.h	2022-02-14 21:24:43.947258108 -0500
+@@ -27,7 +27,14 @@
+ extern "C" {
+ #endif
+ 
+-
++#include <features.h>
++#ifndef __attr_access
++#  define __attr_access(x)
++#endif
++#ifndef __attr_dealloc
++# define __attr_dealloc(dealloc, argno)
++# define __attr_dealloc_free
++#endif
+ #include <asm/types.h>
+ #include <stdint.h>
+ #include <sys/socket.h>
+@@ -605,7 +612,9 @@ extern int  audit_setloginuid(uid_t uid)
+ extern uint32_t audit_get_session(void);
+ extern int  audit_detect_machine(void);
+ extern int audit_determine_machine(const char *arch);
+-extern char *audit_format_signal_info(char *buf, int len, char *op, struct audit_reply *rep, char *res);
++extern char *audit_format_signal_info(char *buf, int len, char *op,
++			struct audit_reply *rep, char *res)
++			__attr_access ((__write_only__, 1, 2));
+ 
+ /* Translation functions */
+ extern int        audit_name_to_field(const char *field);
+@@ -675,10 +684,15 @@ extern int audit_delete_rule_data(int fd
+                                   int flags, int action);
+ 
+ /* The following are for standard formatting of messages */
+-extern int audit_value_needs_encoding(const char *str, unsigned int size);
+-extern char *audit_encode_value(char *final,const char *buf,unsigned int size);
++extern int audit_value_needs_encoding(const char *str, unsigned int size)
++	__attr_access ((__read_only__, 1, 2));
++extern char *audit_encode_value(char *final,const char *buf,unsigned int size)
++	__attr_access ((__write_only__, 1))
++	__attr_access ((__read_only__, 2, 3));
+ extern char *audit_encode_nv_string(const char *name, const char *value,
+-	unsigned int vlen);
++	unsigned int vlen)
++	__attr_access ((__read_only__, 2, 3))
++	__attr_dealloc_free;
+ extern int audit_log_user_message(int audit_fd, int type, const char *message,
+         const char *hostname, const char *addr, const char *tty, int result);
+ extern int audit_log_user_comm_message(int audit_fd, int type,
+diff -urp audit-3.0.7.orig/src/ausearch-lookup.h audit-3.0.7/src/ausearch-lookup.h
+--- audit-3.0.7.orig/src/ausearch-lookup.h	2021-08-21 10:15:51.000000000 -0400
++++ audit-3.0.7/src/ausearch-lookup.h	2022-02-14 21:24:37.207324496 -0500
+@@ -34,13 +34,16 @@
+ 
+ const char *aulookup_result(avc_t result);
+ const char *aulookup_success(int s);
+-const char *aulookup_syscall(llist *l, char *buf, size_t size);
+-const char *aulookup_uid(uid_t uid, char *buf, size_t size);
++const char *aulookup_syscall(llist *l, char *buf, size_t size)
++	__attr_access ((__write_only__, 2, 3));
++const char *aulookup_uid(uid_t uid, char *buf, size_t size)
++	__attr_access ((__write_only__, 2, 3));
+ void aulookup_destroy_uid_list(void);
+ char *unescape(const char *buf);
+ int is_hex_string(const char *str);
+ void print_tty_data(const char *val);
+-void safe_print_string_n(const char *s, unsigned int len, int ret);
++void safe_print_string_n(const char *s, unsigned int len, int ret)
++	__attr_access ((__read_only__, 1, 2));
+ void safe_print_string(const char *s, int ret);
+ 
+ #endif
