@@ -9,6 +9,7 @@ Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 Patch1: audit-3.0.7-func-attr.patch
 Patch2: audit-3.0.7-gcc-flags.patch
+Patch3: audit-3.0.8-flex-array-workaround.patch
 
 BuildRequires: make gcc
 BuildRequires: krb5-devel
@@ -94,6 +95,8 @@ Management Facility) database, through an IBM Tivoli Directory Server
 %patch2 -p1
 autoreconf -fv --install
 cp %{SOURCE1} .
+cp /usr/include/linux/audit.h lib/
+%patch3 -p1
 
 # Remove the ids code, its not ready
 sed -i 's/ ids / /' audisp/plugins/Makefile.am
