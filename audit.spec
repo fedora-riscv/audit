@@ -2,7 +2,7 @@
 Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.0.7
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
@@ -10,6 +10,7 @@ Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 Patch1: audit-3.0.7-func-attr.patch
 Patch2: audit-3.0.7-gcc-flags.patch
 Patch3: audit-3.0.8-flex-array-workaround.patch
+Patch4: audit-3.0.8-undo-flex-array.patch
 
 BuildRequires: make gcc
 BuildRequires: krb5-devel
@@ -118,6 +119,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
 mkdir -p --mode=0700 $RPM_BUILD_ROOT/%{_var}/log/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/spool/audit
+%patch4 -p1
 make DESTDIR=$RPM_BUILD_ROOT install
 
 # Remove these items so they don't get picked up.
@@ -258,6 +260,9 @@ fi
 %attr(750,root,root) %{_sbindir}/audispd-zos-remote
 
 %changelog
+* Thu Feb 24 2022 Steve Grubb <sgrubb@redhat.com> 3.0.7-3
+- Undo fix to libaudit.h before installing
+
 * Mon Feb 14 2022 Steve Grubb <sgrubb@redhat.com> 3.0.7-2
 - Adjust sample-rules dir permissions
 - Add support for new access/dealloc function attributes
