@@ -119,7 +119,6 @@ mkdir -p $RPM_BUILD_ROOT/%{_lib}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/audit
 mkdir -p --mode=0700 $RPM_BUILD_ROOT/%{_var}/log/audit
 mkdir -p $RPM_BUILD_ROOT/%{_var}/spool/audit
-%patch4 -p1
 make DESTDIR=$RPM_BUILD_ROOT install
 
 # Remove these items so they don't get picked up.
@@ -132,6 +131,9 @@ find $RPM_BUILD_ROOT/%{_libdir}/python%{python3_version}/site-packages -name '*.
 # On platforms with 32 & 64 bit libs, we need to coordinate the timestamp
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
+
+# undo the workaround
+%patch4 -p1
 
 %check
 make check
