@@ -133,7 +133,10 @@ touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
 
 # undo the workaround
-%patch4 -p1
+cur=`pwd`
+cd $RPM_BUILD_ROOT
+patch -p0 < %{PATCH4}
+cd $cur
 
 %check
 make check
