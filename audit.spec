@@ -1,16 +1,14 @@
 
 Summary: User space tools for kernel auditing
 Name: audit
-Version: 3.0.7
-Release: 3%{?dist}
+Version: 3.0.8
+Release: 1%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
-Patch1: audit-3.0.7-func-attr.patch
-Patch2: audit-3.0.7-gcc-flags.patch
-Patch3: audit-3.0.8-flex-array-workaround.patch
-Patch4: audit-3.0.8-undo-flex-array.patch
+Patch1: audit-3.0.8-flex-array-workaround.patch
+Patch2: audit-3.0.8-undo-flex-array.patch
 
 BuildRequires: make gcc
 BuildRequires: krb5-devel
@@ -92,12 +90,10 @@ Management Facility) database, through an IBM Tivoli Directory Server
 
 %prep
 %setup -q
-%patch1 -p1
-%patch2 -p1
 autoreconf -fv --install
 cp %{SOURCE1} .
 cp /usr/include/linux/audit.h lib/
-%patch3 -p1
+%patch1 -p1
 
 # Remove the ids code, its not ready
 sed -i 's/ ids / /' audisp/plugins/Makefile.am
@@ -135,7 +131,7 @@ touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
 # undo the workaround
 cur=`pwd`
 cd $RPM_BUILD_ROOT
-patch -p0 < %{PATCH4}
+patch -p0 < %{PATCH2}
 cd $cur
 
 %check
@@ -265,6 +261,9 @@ fi
 %attr(750,root,root) %{_sbindir}/audispd-zos-remote
 
 %changelog
+* Tue Mar 29 2022 Steve Grubb <sgrubb@redhat.com> 3.0.8-1
+- New upstream bugfix release
+
 * Thu Feb 24 2022 Steve Grubb <sgrubb@redhat.com> 3.0.7-3
 - Undo fix to libaudit.h before installing
 
