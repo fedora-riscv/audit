@@ -1,6 +1,6 @@
 diff -urp audit-3.0.8.orig/bindings/swig/src/auditswig.i audit-3.0.8/bindings/swig/src/auditswig.i
---- audit-3.0.8.orig/bindings/swig/src/auditswig.i	2021-08-21 10:15:51.000000000 -0400
-+++ audit-3.0.8/bindings/swig/src/auditswig.i	2022-02-23 14:19:18.389777267 -0500
+--- audit-3.0.8.orig/bindings/swig/src/auditswig.i	2022-03-29 16:52:34.000000000 -0400
++++ audit-3.0.8/bindings/swig/src/auditswig.i	2022-03-29 17:31:15.810268855 -0400
 @@ -39,7 +39,7 @@ signed
  #define __attribute(X) /*nothing*/
  typedef unsigned __u32;
@@ -11,8 +11,8 @@ diff -urp audit-3.0.8.orig/bindings/swig/src/auditswig.i audit-3.0.8/bindings/sw
  %include <stdint.i>
  %include "../lib/libaudit.h"
 diff -urp audit-3.0.8.orig/lib/audit.h audit-3.0.8/lib/audit.h
---- audit-3.0.8.orig/lib/audit.h	2022-02-23 13:35:24.915815547 -0500
-+++ audit-3.0.8/lib/audit.h	2022-02-23 13:34:46.356475888 -0500
+--- audit-3.0.8.orig/lib/audit.h	2022-03-29 17:29:30.358211892 -0400
++++ audit-3.0.8/lib/audit.h	2022-03-29 17:31:15.811268833 -0400
 @@ -514,7 +514,7 @@ struct audit_rule_data {
  	__u32		values[AUDIT_MAX_FIELDS];
  	__u32		fieldflags[AUDIT_MAX_FIELDS];
@@ -23,9 +23,9 @@ diff -urp audit-3.0.8.orig/lib/audit.h audit-3.0.8/lib/audit.h
  
  #endif /* _LINUX_AUDIT_H_ */
 diff -urp audit-3.0.8.orig/lib/libaudit.h audit-3.0.8/lib/libaudit.h
---- audit-3.0.8.orig/lib/libaudit.h	2022-02-14 14:14:08.000000000 -0500
-+++ audit-3.0.8/lib/libaudit.h	2022-02-23 13:35:52.638340789 -0500
-@@ -39,7 +39,7 @@ extern "C" {
+--- audit-3.0.8.orig/lib/libaudit.h	2022-03-29 16:52:34.000000000 -0400
++++ audit-3.0.8/lib/libaudit.h	2022-03-29 17:31:15.812268812 -0400
+@@ -27,7 +27,7 @@
  #include <stdint.h>
  #include <sys/socket.h>
  #include <linux/netlink.h>
@@ -33,4 +33,5 @@ diff -urp audit-3.0.8.orig/lib/libaudit.h audit-3.0.8/lib/libaudit.h
 +#include "audit.h"
  #include <stdarg.h>
  #include <syslog.h>
- 
+ #ifndef __attr_access
+Only in audit-3.0.8/lib: libaudit.h.orig
