@@ -7,6 +7,8 @@ License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
+Patch1: audit-3.0.8-flex-array-workaround.patch
+Patch2: audit-3.0.8-undo-flex-array.patch
 
 BuildRequires: make gcc
 BuildRequires: krb5-devel
