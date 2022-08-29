@@ -1,7 +1,7 @@
 
 Summary: User space tools for kernel auditing
 Name: audit
-Version: 3.0.8
+Version: 3.0.9
 Release: 1%{?dist}
 License: GPLv2+
 URL: http://people.redhat.com/sgrubb/audit/
@@ -255,6 +255,15 @@ fi
 %attr(750,root,root) %{_sbindir}/audispd-zos-remote
 
 %changelog
+* Mon Aug 29 2022 Steve Grubb <sgrubb@redhat.com> 3.0.9-1
+- New upstream bugfix release
+
+* Wed Jul 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 3.0.8-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
+
+* Mon Jun 13 2022 Python Maint <python-maint@redhat.com> - 3.0.8-2
+- Rebuilt for Python 3.11
+
 * Tue Mar 29 2022 Steve Grubb <sgrubb@redhat.com> 3.0.8-1
 - New upstream bugfix release
 
