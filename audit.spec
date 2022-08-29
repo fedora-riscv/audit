@@ -130,7 +130,10 @@ touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
 # undo the workaround
 cur=`pwd`
 cd $RPM_BUILD_ROOT
+patch -p0 < %{PATCH2}
+find . -name '*.orig' -delete
 cd $cur
+
 
 %check
 make check
