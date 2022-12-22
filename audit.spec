@@ -262,6 +262,7 @@ fi
 %changelog
 * Thu Dec 22 2022 Steve Grubb <sgrubb@redhat.com> 3.0.9-2
 - BuildRequires python-setuptools
+- SPDX Migration
 
 * Mon Aug 29 2022 Steve Grubb <sgrubb@redhat.com> 3.0.9-1
 - New upstream bugfix release
