@@ -2,13 +2,15 @@
 Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.1.1
-Release: 1%{?dist}
+Release: 1.rv64%{?dist}
 License: GPL-2.0-or-later AND LGPL-2.0-or-later
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 Patch1: audit-3.0.8-flex-array-workaround.patch
 Patch2: audit-3.0.8-undo-flex-array.patch
+
+Patch9: 0001-Add-support-for-RISC-V-32-bit-64-bit-riscv32-riscv64.patch
 
 BuildRequires: make gcc
 BuildRequires: krb5-devel
@@ -92,6 +94,10 @@ Management Facility) database, through an IBM Tivoli Directory Server
 cp %{SOURCE1} .
 cp /usr/include/linux/audit.h lib/
 %patch1 -p1
+%ifarch riscv64
+%patch9 -p1 -b .riscv~
+autoreconf -fiv
+%endif
 
 # Remove the ids code, its not ready
 sed -i 's/ ids / /' audisp/plugins/Makefile.am
@@ -261,8 +267,14 @@ fi
 %attr(750,root,root) %{_sbindir}/audispd-zos-remote
 
 %changelog
+* Wed May 03 2023 <Yang.Liu.sn@gmail.com> 3.1.1-1.rv64
+- cherry-pick davidlt's riscv64 patch.
+
 * Thu Apr 27 2023 Steve Grubb <sgrubb@redhat.com> 3.1.1-1
 - New upstream release
+
+* Tue Apr 25 2023 David Abdurachmanov <davidlt@rivosinc.com> 3.1-2.0.riscv64
+- Add support for riscv64
 
 * Thu Feb 09 2023 Steve Grubb <sgrubb@redhat.com> 3.1-2
 - New upstream feature release
