@@ -1,14 +1,12 @@
 
 Summary: User space tools for kernel auditing
 Name: audit
-Version: 3.1.1
+Version: 3.1.2
 Release: 1.rv64%{?dist}
 License: GPL-2.0-or-later AND LGPL-2.0-or-later
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
-Patch1: audit-3.0.8-flex-array-workaround.patch
-Patch2: audit-3.0.8-undo-flex-array.patch
 
 Patch9: 0001-Add-support-for-RISC-V-32-bit-64-bit-riscv32-riscv64.patch
 
@@ -92,8 +90,6 @@ Management Facility) database, through an IBM Tivoli Directory Server
 %prep
 %setup -q
 cp %{SOURCE1} .
-cp /usr/include/linux/audit.h lib/
-%patch1 -p1
 %ifarch riscv64
 %patch9 -p1 -b .riscv~
 autoreconf -fiv
@@ -132,13 +128,6 @@ find $RPM_BUILD_ROOT/%{_libdir}/python%{python3_version}/site-packages -name '*.
 touch -r ./audit.spec $RPM_BUILD_ROOT/etc/libaudit.conf
 touch -r ./audit.spec $RPM_BUILD_ROOT/usr/share/man/man5/libaudit.conf.5.gz
 
-# undo the workaround
-cur=`pwd`
-cd $RPM_BUILD_ROOT
-patch -p0 < %{PATCH2}
-find . -name '*.orig' -delete
-cd $cur
-
 %check
 make check
 # Get rid of make files so that they don't get packaged.
@@ -148,9 +137,14 @@ rm -f rules/Makefile*
 # Copy default rules into place on new installation
 files=`ls /etc/audit/rules.d/ 2>/dev/null | wc -w`
 if [ "$files" -eq 0 ] ; then
-# FESCO asked for audit to be off by default. #1117953
+%if 0%{?rhel}
+	if [ -e %{_datadir}/%{name}/sample-rules/10-base-config.rules ] ; then
+		cp %{_datadir}/%{name}/sample-rules/10-base-config.rules /etc/audit/rules.d/audit.rules
+%else
+        # FESCO asked for audit to be off by default. #1117953
 	if [ -e %{_datadir}/%{name}/sample-rules/10-no-audit.rules ] ; then
 	        cp %{_datadir}/%{name}/sample-rules/10-no-audit.rules /etc/audit/rules.d/audit.rules
+%endif
 	else
 		touch /etc/audit/rules.d/audit.rules
 	fi
@@ -240,7 +234,6 @@ fi
 %ghost %config(noreplace) %attr(600,root,root) /etc/audit/rules.d/audit.rules
 %ghost %config(noreplace) %attr(640,root,root) /etc/audit/audit.rules
 %config(noreplace) %attr(640,root,root) /etc/audit/audit-stop.rules
-%config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/af_unix.conf
 
 %files -n audispd-plugins
 %config(noreplace) %attr(640,root,root) /etc/audit/audisp-remote.conf
@@ -248,6 +241,7 @@ fi
 %config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/syslog.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/audisp-statsd.conf
 %config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/au-statsd.conf
+%config(noreplace) %attr(640,root,root) /etc/audit/plugins.d/af_unix.conf
 %attr(750,root,root) %{_sbindir}/audisp-remote
 %attr(750,root,root) %{_sbindir}/audisp-syslog
 %attr(750,root,root) %{_sbindir}/audisp-af_unix
@@ -267,6 +261,21 @@ fi
 %attr(750,root,root) %{_sbindir}/audispd-zos-remote
 
 %changelog
+* Thu Aug 17 2023 Songsong Zhang <U2FsdGVkX1@gmail.com> 3.1.2-1.rv64
+- New upstream release for rv64
+
+* Sun Aug 06 2023 Steve Grubb <sgrubb@redhat.com> 3.1.2-1
+- New upstream release
+
+* Wed Jul 19 2023 Fedora Release Engineering <releng@fedoraproject.org> - 3.1.1-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
+
+* Tue Jun 13 2023 Python Maint <python-maint@redhat.com> - 3.1.1-3
+- Rebuilt for Python 3.12
+
+* Tue May 09 2023 Davide Cavalca <dcavalca@fedoraproject.org> 3.1.1-2
+- Install the base ruleset on RHEL
+
 * Wed May 03 2023 <Yang.Liu.sn@gmail.com> 3.1.1-1.rv64
 - cherry-pick davidlt's riscv64 patch.
 
