@@ -16,7 +16,8 @@ BuildRequires: autoconf automake libtool
 
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Requires(post): systemd coreutils procps-ng
-Requires(preun): systemd initscripts-service
+Requires(preun): systemd
+Recommends: initscripts-service
 Requires(postun): systemd coreutils initscripts-service
 
 # Placing this here under the assumption that anything using the
@@ -148,13 +149,19 @@ fi
 
 %preun
 %systemd_preun auditd.service
-if [ $1 -eq 0 ]; then
-    /sbin/service auditd stop > /dev/null 2>&1
+if [ -e /usr/libexec/initscripts/legacy-actions/auditd/stop ] ; then
+	/usr/libexec/initscripts/legacy-actions/auditd/stop
+else
+	auditctl --signal stop
 fi
 
 %postun
 if [ $1 -ge 1 ]; then
-    /sbin/service auditd condrestart > /dev/null 2>&1 || :
+	state=$(systemctl status auditd | awk '/Active:/ { print $2 }')
+	if [ $state = "active" ] ; then
+		auditctl --signal stop
+		systemctl start auditd
+	fi
 fi
 
 %files libs
