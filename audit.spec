@@ -181,7 +181,7 @@ fi
 %attr(755,root,root) %{python3_sitearch}/*
 
 %files
-%doc README ChangeLog init.d/auditd.cron
+%doc ChangeLog init.d/auditd.cron
 %{!?_licensedir:%global license %%doc}
 %license COPYING
 %attr(755,root,root) %{_datadir}/%{name}
