@@ -1,0 +1,25 @@
+commit e1b75c41b3bd4f7de981b1c89b3a23c64cda53e1
+Author: cgzones <cgzones@googlemail.com>
+Date:   Wed Nov 1 20:35:40 2023 +0100
+
+    lib: close audit socket in load_feature_bitmap() (#334)
+
+diff --git a/lib/libaudit.c b/lib/libaudit.c
+index 0a52285..72b25a9 100644
+--- a/lib/libaudit.c
++++ b/lib/libaudit.c
+@@ -657,12 +657,14 @@ static void load_feature_bitmap(void)
+ 
+ 				/* Found it... */
+ 				features_bitmap = rep.status->feature_bitmap;
++				audit_close(fd);
+ 				return;
+ 			}
+ 		}
+ 	}
+ #endif
+ 	features_bitmap = AUDIT_FEATURES_UNSUPPORTED;
++	audit_close(fd);
+ }
+ 
+ uint32_t audit_get_features(void)
