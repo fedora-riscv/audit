@@ -9,9 +9,8 @@ Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
 Patch1: audit-3.9-1-aureport.patch
 Patch2: audit-3.9-2-no-io_uring.patch
-Patch3: audit-3.9-3-fix-arg.patch
-Patch4: audit-3.9-4-fix-leak.patch
-Patch5: audit-3.9-5-mk-static.patch
+Patch3: audit-3.9-4-fix-leak.patch
+Patch4: audit-3.9-5-mk-static.patch
 
 BuildRequires: make gcc
 BuildRequires: krb5-devel
@@ -98,7 +97,6 @@ cp %{SOURCE1} .
 %patch 2 -p1 
 %patch 3 -p1 
 %patch 4 -p1 
-%patch 5 -p1 
 
 # Remove the ids code, its not ready
 sed -i 's/ ids / /' audisp/plugins/Makefile.am
