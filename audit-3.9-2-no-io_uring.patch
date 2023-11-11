@@ -1,0 +1,19 @@
+commit b4cc077dac3e9bee1df59ee04cb2c466bc603033
+Author: Steve Grubb <sgrubb@redhat.com>
+Date:   Wed Nov 1 15:14:25 2023 -0400
+
+    completely disable io_uring code in libev
+
+diff --git a/src/libev/ev.c b/src/libev/ev.c
+index a4ef36f..c4a0070 100644
+--- a/src/libev/ev.c
++++ b/src/libev/ev.c
+@@ -128,7 +128,7 @@
+    
+ # if HAVE_LINUX_FS_H && HAVE_SYS_TIMERFD_H && HAVE_KERNEL_RWF_T
+ #  ifndef EV_USE_IOURING
+-#   define EV_USE_IOURING EV_FEATURE_BACKENDS
++#   define EV_USE_IOURING 0  // Intentionally drop the io_uring backend
+ #  endif
+ # else
+ #  undef EV_USE_IOURING

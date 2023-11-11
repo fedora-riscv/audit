@@ -2,11 +2,16 @@
 Summary: User space tools for kernel auditing
 Name: audit
 Version: 3.1.2
-Release: 1.rv64%{?dist}
+Release: 5.rv64%{?dist}
 License: GPL-2.0-or-later AND LGPL-2.0-or-later
 URL: http://people.redhat.com/sgrubb/audit/
 Source0: http://people.redhat.com/sgrubb/audit/%{name}-%{version}.tar.gz
 Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
+
+Patch1: audit-3.9-1-aureport.patch
+Patch2: audit-3.9-2-no-io_uring.patch
+Patch3: audit-3.9-4-fix-leak.patch
+Patch4: audit-3.9-5-mk-static.patch
 
 Patch9: 0001-Add-support-for-RISC-V-32-bit-64-bit-riscv32-riscv64.patch
 
@@ -17,9 +22,10 @@ BuildRequires: systemd
 BuildRequires: autoconf automake libtool
 
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
-Requires(post): systemd coreutils
-Requires(preun): systemd initscripts-service
-Requires(postun): systemd coreutils initscripts-service
+Requires(post): systemd coreutils procps-ng
+Requires(preun): systemd
+Recommends: initscripts-service
+Requires(postun): systemd coreutils
 
 # Placing this here under the assumption that anything using the
 # python libraries expects the system to have an audit daemon
@@ -32,7 +38,7 @@ the audit subsystem in the Linux 2.6 and later kernels.
 
 %package libs
 Summary: Dynamic library for libaudit
-License: LGPLv2+
+License: LGPL-2.0-or-later
 BuildRequires: libcap-ng-devel
 
 %description libs
@@ -41,7 +47,7 @@ applications to use the audit framework.
 
 %package libs-devel
 Summary: Header files for libaudit
-License: LGPLv2+
+License: LGPL-2.0-or-later
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Requires: kernel-headers >= 2.6.29
 
@@ -51,7 +57,7 @@ developing applications that need to use the audit framework libraries.
 
 %package -n python3-audit
 Summary: Python3 bindings for libaudit
-License: LGPLv2+
+License: LGPL-2.0-or-later
 BuildRequires: python3-devel python-setuptools swig
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
 Provides: audit-libs-python3 = %{version}-%{release}
@@ -64,7 +70,7 @@ and libauparse can be used by python3.
 
 %package -n audispd-plugins
 Summary: Plugins for the audit event dispatcher
-License: GPLv2+
+License: GPL-2.0-or-later
 BuildRequires: krb5-devel libcap-ng-devel
 Requires: %{name}%{?_isa} = %{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
@@ -76,7 +82,7 @@ like relay events to remote machines.
 
 %package -n audispd-plugins-zos
 Summary: z/OS plugin for the audit event dispatcher
-License: GPLv2+
+License: GPL-2.0-or-later
 BuildRequires: openldap-devel libcap-ng-devel
 Requires: %{name}%{?_isa} = %{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
@@ -90,6 +96,12 @@ Management Facility) database, through an IBM Tivoli Directory Server
 %prep
 %setup -q
 cp %{SOURCE1} .
+
+%patch 1 -p1 
+%patch 2 -p1 
+%patch 3 -p1 
+%patch 4 -p1 
+
 %ifarch riscv64
 %patch9 -p1 -b .riscv~
 autoreconf -fiv
@@ -141,7 +153,7 @@ if [ "$files" -eq 0 ] ; then
 	if [ -e %{_datadir}/%{name}/sample-rules/10-base-config.rules ] ; then
 		cp %{_datadir}/%{name}/sample-rules/10-base-config.rules /etc/audit/rules.d/audit.rules
 %else
-        # FESCO asked for audit to be off by default. #1117953
+	# FESCO asked for audit to be off by default. #1117953
 	if [ -e %{_datadir}/%{name}/sample-rules/10-no-audit.rules ] ; then
 	        cp %{_datadir}/%{name}/sample-rules/10-no-audit.rules /etc/audit/rules.d/audit.rules
 %endif
@@ -154,13 +166,25 @@ fi
 
 %preun
 %systemd_preun auditd.service
-if [ $1 -eq 0 ]; then
-    /sbin/service auditd stop > /dev/null 2>&1
+# Prefer script because it waits for auditd to terminate
+if [ -e /usr/libexec/initscripts/legacy-actions/auditd/stop ] ; then
+	/usr/libexec/initscripts/legacy-actions/auditd/stop
+else
+	auditctl --signal stop
 fi
 
 %postun
 if [ $1 -ge 1 ]; then
-    /sbin/service auditd condrestart > /dev/null 2>&1 || :
+    state=$(systemctl status auditd | awk '/Active:/ { print $2 }')
+    if [ $state = "active" ] ; then
+        # Prefer script because it waits for auditd to terminate
+        if [ -e /usr/libexec/initscripts/legacy-actions/auditd/stop ] ; then
+            /usr/libexec/initscripts/legacy-actions/auditd/stop
+        else
+            auditctl --signal stop
+        fi
+        systemctl start auditd
+    fi
 fi
 
 %files libs
@@ -187,7 +211,7 @@ fi
 %attr(755,root,root) %{python3_sitearch}/*
 
 %files
-%doc README ChangeLog init.d/auditd.cron
+%doc ChangeLog init.d/auditd.cron
 %{!?_licensedir:%global license %%doc}
 %license COPYING
 %attr(755,root,root) %{_datadir}/%{name}
@@ -261,11 +285,27 @@ fi
 %attr(750,root,root) %{_sbindir}/audispd-zos-remote
 
 %changelog
+* Sat Nov 11 2023 Zhengyu He <hezhy472013@gmail.com> 3.1.2-5.rv64
+- New upstream release for rv64
+
+* Sat Nov 04 2023 Steve Grubb <sgrubb@redhat.com> 3.1.2-5
+- Bug fixes pulled from upstrean
+
+* Wed Sep 13 2023 Dusty Mabe <dusty@dustymabe.com> 3.1.2-4
+- Remove initscripts-service from Requires(postun)
+
+* Fri Sep 01 2023 Steve Grubb <sgrubb@redhat.com> 3.1.2-3
+- Change initscrips-service to a Recommends
+
+* Sat Aug 26 2023 Steve Grubb <sgrubb@redhat.com> 3.1.2-2
+- SPDX Migration
+
 * Thu Aug 17 2023 Songsong Zhang <U2FsdGVkX1@gmail.com> 3.1.2-1.rv64
 - New upstream release for rv64
 
 * Sun Aug 06 2023 Steve Grubb <sgrubb@redhat.com> 3.1.2-1
 - New upstream release
+
 
 * Wed Jul 19 2023 Fedora Release Engineering <releng@fedoraproject.org> - 3.1.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
